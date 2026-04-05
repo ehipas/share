@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ehipas — Auction Simulator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Thai:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── TOKENS ── */
+:root{
+  --mono:'DM Mono',monospace;
+  --sans:'DM Sans','Noto Sans Thai','Noto Sans SC',sans-serif;
+  --r:10px; --rs:6px;
+  --c-english:#b8f73a; --c-english_nr:#4af7c9;
+  --c-flash:#f74a4a;   --c-dutch:#9b7ef7;
+  --teal:#4af7c9; --amber:#f7b74a;
+}
+
+/* dark */
+[data-theme="dark"]{
+  --bg:#0d0d0b; --bg2:#141412; --bg3:#1c1c19;
+  --bd:#2a2a26; --bd2:#3a3a36;
+  --tx:#e8e6dc; --tx2:#88887e; --tx3:#555550;
+  --crd:#141412; --inp:#1c1c19;
+  --acc:#b8f73a;          /* bright lime — accent for ALL uses */
+  --acc-btn:#b8f73a;      /* button bg */
+  --acc-btn-tx:#0d0d0b;   /* text on button */
+  --acc-dim:rgba(184,247,58,.09);
+  --acc-brd:rgba(184,247,58,.35);
+  --shd:0 2px 16px rgba(0,0,0,.55);
+}
+
+/* light */
+[data-theme="light"]{
+  --bg:#f4f3ee; --bg2:#ffffff; --bg3:#eceae2;
+  --bd:#dbd9d0; --bd2:#c8c5bc;
+  --tx:#1a1a17; --tx2:#5c5c58; --tx3:#99998f;
+  --crd:#ffffff; --inp:#eceae2;
+  --acc:#2e7d0e;          /* dark green — readable on light bg */
+  --acc-btn:#5cb82a;      /* medium green — visible button */
+  --acc-btn-tx:#ffffff;
+  --acc-dim:rgba(46,125,14,.07);
+  --acc-brd:rgba(46,125,14,.30);
+  --shd:0 2px 16px rgba(0,0,0,.09);
+}
+
+html,body{width:100%;overflow-x:hidden}
+
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--tx);
+  min-height:100vh;
+  font-size:14px;
+  line-height:1.5;
+  transition:background .2s,color .2s;
+}
+
+/* ── HEADER ── */
+.hdr{
+  border-bottom:1px solid var(--bd);
+  padding:11px 14px;
+  display:flex; align-items:center; gap:8px;
+  position:sticky; top:0; z-index:100;
+  background:var(--bg);
+}
+.logo{
+  font-family:var(--mono); font-size:13px; font-weight:500;
+  letter-spacing:.1em; color:var(--acc); text-transform:uppercase;
+  flex-shrink:0;
+}
+.hdr-title{
+  font-size:11px; color:var(--tx3);
+  flex:1; min-width:0; overflow:hidden;
+  text-overflow:ellipsis; white-space:nowrap;
+}
+.hdr-ctrls{display:flex;gap:5px;align-items:center;flex-shrink:0}
+
+/* ── DROPDOWN SYSTEM ── */
+.ddwrap{position:relative;display:inline-block}
+.ddtrig{
+  background:var(--bg3); border:1px solid var(--bd);
+  border-radius:var(--rs); color:var(--tx2);
+  font-family:var(--mono); font-size:11px;
+  padding:5px 8px; cursor:pointer;
+  display:flex; align-items:center; gap:4px;
+  white-space:nowrap; transition:border-color .15s,color .15s;
+}
+.ddtrig:hover{border-color:var(--bd2);color:var(--tx)}
+.ddarrow{font-size:9px;opacity:.5}
+.ddmenu{
+  display:none; position:absolute; right:0; top:calc(100% + 4px);
+  background:var(--bg2); border:1px solid var(--bd2);
+  border-radius:var(--rs); min-width:140px;
+  box-shadow:var(--shd); z-index:300; overflow:hidden;
+}
+.ddmenu.open{display:block}
+.ddi{
+  display:flex; align-items:center; gap:8px;
+  padding:9px 12px; font-size:12px; color:var(--tx2);
+  cursor:pointer; transition:background .1s;
+  border-bottom:1px solid var(--bd);
+}
+.ddi:last-child{border-bottom:none}
+.ddi:hover{background:var(--bg3);color:var(--tx)}
+.ddi.on{color:var(--acc)}
+.ddi .ck{font-size:10px;margin-left:auto;color:var(--acc)}
+.overlay{display:none;position:fixed;inset:0;z-index:99}
+.overlay.on{display:block}
+
+/* ── LAYOUT ── */
+.wrap{
+  display:grid;
+  grid-template-columns:270px 1fr;
+  min-height:calc(100vh - 45px);
+  align-items:start;
+}
+@media(max-width:767px){
+  .wrap{grid-template-columns:1fr}
+}
+
+/* ── SIDEBAR ── */
+.sb{
+  border-right:1px solid var(--bd);
+  padding:16px 13px;
+  background:var(--bg);
+  overflow:hidden;
+}
+@media(min-width:768px){
+  .sb{position:sticky;top:45px;height:calc(100vh - 45px);overflow-y:auto}
+  .sb::-webkit-scrollbar{width:3px}
+  .sb::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+}
+@media(max-width:767px){
+  .sb{border-right:none;border-bottom:1px solid var(--bd)}
+}
+
+.slbl{
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--tx3); margin-bottom:11px; margin-top:3px;
+}
+.ssec{margin-bottom:20px}
+
+/* ── PARAMS ── */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+@media(min-width:768px){.pgrid{grid-template-columns:1fr}}
+
+.pr{margin-bottom:13px}
+.ph{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.pn{font-size:11px;color:var(--tx2);font-weight:300}
+.pv{font-family:var(--mono);font-size:11px;color:var(--acc);font-weight:500}
+
+input[type=range]{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:2px;
+  background:var(--bd2);border-radius:1px;
+  outline:none;cursor:pointer;
+  display:block;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:16px;height:16px;
+  background:var(--acc-btn);border-radius:50%;
+  cursor:pointer;transition:transform .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+input[type=range]::-moz-range-thumb{
+  width:16px;height:16px;border:none;
+  background:var(--acc-btn);border-radius:50%;cursor:pointer;
+}
+
+/* ── TYPE TOGGLES ── */
+.tgrid{display:grid;grid-template-columns:1fr;gap:5px}
+@media(max-width:767px){.tgrid{grid-template-columns:1fr 1fr}}
+
+.ttog{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 9px;
+  border:1px solid var(--bd);border-radius:var(--rs);
+  cursor:pointer;transition:border-color .2s,background .2s;
+  user-select:none;background:var(--inp);
+}
+.ttog:hover{border-color:var(--bd2)}
+.ttog.on{border-color:var(--acc-brd);background:var(--acc-dim)}
+.ttog input{display:none}
+.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ttog:not(.on) .tdot{background:var(--bd2)}
+.tname{font-size:11px;line-height:1.3}
+.ttag{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--tx3);text-transform:uppercase;flex-shrink:0}
+
+/* ── RUN BTN ── */
+.rbtn{
+  width:100%; padding:11px;
+  background:var(--acc-btn); color:var(--acc-btn-tx);
+  border:none; border-radius:var(--rs);
+  font-size:13px; font-weight:500; font-family:var(--sans);
+  cursor:pointer; letter-spacing:.02em;
+  transition:opacity .2s,transform .1s;
+  margin-top:4px;
+}
+.rbtn:hover{opacity:.88}
+.rbtn:active{transform:scale(.98)}
+.rbtn:disabled{opacity:.35;cursor:not-allowed}
+.ptrack{height:2px;background:var(--bd);border-radius:1px;margin-top:9px;overflow:hidden}
+.pfill{height:100%;background:var(--acc-btn);width:0%;transition:width .25s}
+
+/* ── MAIN ── */
+.main{
+  padding:18px 14px;
+  background:var(--bg);
+  min-width:0; /* critical: prevent grid blowout */
+  overflow:hidden;
+}
+@media(min-width:768px){.main{padding:22px 26px}}
+
+.empty{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:40vh;
+  color:var(--tx3);text-align:center;gap:10px;
+}
+.empty-icon{font-family:var(--mono);font-size:26px;color:var(--bd2)}
+.empty-lbl{font-size:13px;font-weight:300}
+
+/* ── RESULTS ── */
+.results{display:none;min-width:0}
+.results.on{display:block}
+
+.rhdr{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.rtitle{font-size:16px;font-weight:300;letter-spacing:-.02em}
+.rbadge{
+  font-family:var(--mono);font-size:10px;padding:2px 7px;
+  background:var(--bg3);border:1px solid var(--bd2);
+  border-radius:20px;color:var(--tx2);
+}
+
+/* Table */
+.twrap{
+  border:1px solid var(--bd);border-radius:var(--r);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  margin-bottom:16px;background:var(--crd);
+  max-width:100%;
+}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:480px}
+thead tr{background:var(--bg3);border-bottom:1px solid var(--bd)}
+th{
+  padding:8px 11px;text-align:left;
+  font-family:var(--mono);font-size:9px;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--tx3);font-weight:400;white-space:nowrap;
+}
+td{padding:9px 11px;border-bottom:1px solid var(--bd);white-space:nowrap;font-size:11px}
+tr:last-child td{border-bottom:none}
+.mn{font-family:var(--mono)}
+.wrow{background:var(--acc-dim)}
+.wrow .tc{color:var(--acc);font-weight:500}
+.bbdg{
+  display:inline-block;font-family:var(--mono);font-size:9px;
+  padding:1px 5px;background:var(--acc-dim);color:var(--acc);
+  border:1px solid var(--acc-brd);
+  border-radius:3px;margin-left:5px;text-transform:uppercase;
+}
+
+/* Rec box */
+.rbox{
+  border:1px solid var(--bd);border-left:3px solid var(--acc);
+  border-radius:var(--r);padding:15px 16px;margin-bottom:20px;
+  background:var(--acc-dim);
+}
+.rtl{
+  font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--acc);margin-bottom:13px;
+}
+.rgrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;margin-bottom:13px;
+}
+@media(max-width:480px){.rgrid{grid-template-columns:1fr 1fr}}
+.rml{font-size:10px;color:var(--tx3);margin-bottom:2px}
+.rmv{font-family:var(--mono);font-size:15px;color:var(--tx);font-weight:300}
+.rmu{font-size:10px;color:var(--tx2);margin-left:2px}
+.rnote{
+  font-size:11px;color:var(--tx2);line-height:1.75;
+  padding-top:11px;border-top:1px solid var(--bd);
+}
+.hy{color:var(--teal)} .hn{color:var(--amber)}
+
+/* Charts */
+.cgrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+@media(max-width:580px){.cgrid{grid-template-columns:1fr}}
+
+.cc{
+  border:1px solid var(--bd);border-radius:var(--r);
+  padding:14px 12px 10px;background:var(--crd);
+  min-width:0;overflow:hidden;
+}
+.cct{
+  font-family:var(--mono);font-size:9px;
+  letter-spacing:.07em;text-transform:uppercase;
+  color:var(--tx3);margin-bottom:10px;
+}
+/* Force canvas to never overflow its container */
+canvas{max-width:100%!important;height:auto!important}
+</style>
+</head>
+<body data-theme="dark">
+
+<div class="overlay" id="ov" onclick="closeDD()"></div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <span class="logo">ehipas</span>
+  <span class="hdr-title" data-i="hdr_title">Auction Mechanism Simulator</span>
+  <div class="hdr-ctrls">
+
+    <!-- Lang -->
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('lang')">
+        <span id="ll">EN</span><span class="ddarrow">▾</span>
+      </button>
+      <div class="ddmenu" id="lang-dd">
+        <div class="ddi on" data-l="en" onclick="setLang('en')">🇬🇧 English<span class="ck" id="lc-en">✓</span></div>
+        <div class="ddi"    data-l="th" onclick="setLang('th')">🇹🇭 ภาษาไทย<span class="ck" id="lc-th"></span></div>
+        <div class="ddi"    data-l="zh" onclick="setLang('zh')">🇨🇳 中文<span class="ck" id="lc-zh"></span></div>
+        <div class="ddi"    data-l="ru" onclick="setLang('ru')">🇷🇺 Русский<span class="ck" id="lc-ru"></span></div>
+      </div>
+    </div>
+
+    <!-- Theme -->
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('theme')">
+        <span id="ticon">☾</span><span class="ddarrow">▾</span>
+      </button>
+      <div class="ddmenu" id="theme-dd">
+        <div class="ddi" onclick="setTheme('system')">⊙ <span data-i="th_sys">System</span><span class="ck" id="tc-sys"></span></div>
+        <div class="ddi" onclick="setTheme('light')">☀ <span data-i="th_light">Light</span><span class="ck" id="tc-light"></span></div>
+        <div class="ddi" onclick="setTheme('dark')">☾ <span data-i="th_dark">Dark</span><span class="ck" id="tc-dark">✓</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sb">
+
+    <div class="ssec">
+      <div class="slbl" data-i="s_prim">Primary market</div>
+      <div class="pgrid">
+        <div class="pr">
+          <div class="ph"><span class="pn" data-i="p_tick">Tickets / exp.</span><span class="pv" id="v-tick">11</span></div>
+          <input type="range" min="8" max="14" value="11" oninput="upd('tick',this.value)">
+        </div>
+        <div class="pr">
+          <div class="ph"><span class="pn" data-i="p_res">Reserve (USDT)</span><span class="pv" id="v-res">10</span></div>
+          <input type="range" min="0" max="20" value="10" oninput="upd('res',this.value)">
+        </div>
+        <div class="pr">
+          <div class="ph"><span class="pn" data-i="p_step">Bid step %</span><span class="pv" id="v-step">5%</span></div>
+          <input type="range" min="1" max="10" value="5" oninput="upd('step',this.value)">
+        </div>
+        <div class="pr">
+          <div class="ph"><span class="pn" data-i="p_mult">Participants ×</span><span class="pv" id="v-mult">2.0×</span></div>
+          <input type="range" min="15" max="30" value="20" oninput="upd('mult',this.value)">
+        </div>
+      </div>
+    </div>
+
+    <div class="ssec">
+      <div class="slbl" data-i="s_agt">Agents</div>
+      <div class="pr">
+        <div class="ph"><span class="pn" data-i="p_spec">Speculators</span><span class="pv" id="v-spec">25%</span></div>
+        <input type="range" min="0" max="60" value="25" oninput="upd('spec',this.value)">
+      </div>
+    </div>
+
+    <div class="ssec">
+      <div class="slbl" data-i="s_rev">Revenue</div>
+      <div class="pgrid">
+        <div class="pr">
+          <div class="ph"><span class="pn" data-i="p_comm">Exchange fee</span><span class="pv" id="v-comm">10%</span></div>
+          <input type="range" min="5" max="20" value="10" oninput="upd('comm',this.value)">
+        </div>
+        <div class="pr">
+          <div class="ph"><span class="pn" data-i="p_roy">Creator royalty</span><span class="pv" id="v-roy">5%</span></div>
+          <input type="range" min="1" max="10" value="5" oninput="upd('roy',this.value)">
+        </div>
+      </div>
+    </div>
+
+    <div class="ssec">
+      <div class="slbl" data-i="s_sec">Secondary market</div>
+      <div class="pr">
+        <div class="ph"><span class="pn" data-i="p_sec">Resale rounds</span><span class="pv" id="v-sec">5</span></div>
+        <input type="range" min="1" max="15" value="5" oninput="upd('sec',this.value)">
+      </div>
+    </div>
+
+    <div class="ssec">
+      <div class="slbl" data-i="s_types">Auction types</div>
+      <div class="tgrid">
+        <label class="ttog on" id="lb-english" onclick="togType('english',this)">
+          <input type="checkbox" id="t-english" checked>
+          <span class="tdot" style="background:var(--c-english)"></span>
+          <span class="tname" data-i="ty_en">English + reserve</span>
+          <span class="ttag" data-i="tg_cl">classic</span>
+        </label>
+        <label class="ttog on" id="lb-english_nr" onclick="togType('english_nr',this)">
+          <input type="checkbox" id="t-english_nr" checked>
+          <span class="tdot" style="background:var(--c-english_nr)"></span>
+          <span class="tname" data-i="ty_enr">English, no reserve</span>
+          <span class="ttag" data-i="tg_op">open</span>
+        </label>
+        <label class="ttog on" id="lb-flash" onclick="togType('flash',this)">
+          <input type="checkbox" id="t-flash" checked>
+          <span class="tdot" style="background:var(--c-flash)"></span>
+          <span class="tname" data-i="ty_fl">Flash simultaneous</span>
+          <span class="ttag" data-i="tg_fl">all at once</span>
+        </label>
+        <label class="ttog on" id="lb-dutch" onclick="togType('dutch',this)">
+          <input type="checkbox" id="t-dutch" checked>
+          <span class="tdot" style="background:var(--c-dutch)"></span>
+          <span class="tname" data-i="ty_du">Dutch descending</span>
+          <span class="ttag" data-i="tg_du">reverse</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="ssec">
+      <div class="slbl" data-i="s_mc">Monte Carlo</div>
+      <div class="pr">
+        <div class="ph"><span class="pn" data-i="p_runs">Simulation runs</span><span class="pv" id="v-runs">300</span></div>
+        <input type="range" min="100" max="1000" step="50" value="300" oninput="upd('runs',this.value)">
+      </div>
+      <button class="rbtn" id="rbtn" onclick="runAll()" data-i="btn_run">Run simulation →</button>
+      <div class="ptrack"><div class="pfill" id="pfill"></div></div>
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" id="main">
+
+    <div class="empty" id="empty">
+      <div class="empty-icon">∿∿∿</div>
+      <div class="empty-lbl" data-i="empty_lbl">Configure parameters and run simulation</div>
+    </div>
+
+    <div class="results" id="res">
+      <div class="rhdr">
+        <span class="rtitle" data-i="res_title">Simulation results</span>
+        <span class="rbadge" id="rbdg"></span>
+      </div>
+
+      <div class="twrap">
+        <table>
+          <thead>
+            <tr>
+              <th data-i="c_type">Auction type</th>
+              <th data-i="c_rev">Mean rev.</th>
+              <th data-i="c_std">±Std</th>
+              <th data-i="c_prim">Primary</th>
+              <th data-i="c_sec">Secondary</th>
+              <th data-i="c_rat">Sec %</th>
+              <th data-i="c_px">Avg px</th>
+              <th data-i="c_rs">Resales</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="rbox">
+        <div class="rtl" data-i="rec_title">Model recommendation</div>
+        <div class="rgrid" id="rmets"></div>
+        <div class="rnote" id="rnote"></div>
+      </div>
+
+      <div class="cgrid">
+        <div class="cc"><div class="cct" data-i="ch_rev">Revenue by type (USDT)</div><canvas id="ch-rev"></canvas></div>
+        <div class="cc"><div class="cct" data-i="ch_spl">Primary vs secondary</div><canvas id="ch-spl"></canvas></div>
+        <div class="cc"><div class="cct" data-i="ch_dst">Revenue distribution — best</div><canvas id="ch-dst"></canvas></div>
+        <div class="cc"><div class="cct" data-i="ch_px">Avg ticket price evolution</div><canvas id="ch-px"></canvas></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ════════════════════════════════
+// I18N
+// ════════════════════════════════
+const L={
+  en:{
+    hdr_title:'Auction Mechanism Simulator',
+    s_prim:'Primary market', s_agt:'Agents', s_rev:'Revenue',
+    s_sec:'Secondary market', s_types:'Auction types', s_mc:'Monte Carlo',
+    p_tick:'Tickets / exp.', p_res:'Reserve (USDT)', p_step:'Bid step %',
+    p_mult:'Participants ×', p_spec:'Speculators', p_comm:'Exchange fee',
+    p_roy:'Creator royalty', p_sec:'Resale rounds', p_runs:'Simulation runs',
+    btn_run:'Run simulation →', btn_wait:'Simulating…',
+    empty_lbl:'Configure parameters and run simulation',
+    res_title:'Simulation results',
+    bdg:(r,t)=>`${r} runs · ${t} types`,
+    c_type:'Auction type', c_rev:'Mean rev.', c_std:'±Std',
+    c_prim:'Primary', c_sec:'Secondary', c_rat:'Sec %', c_px:'Avg px', c_rs:'Resales',
+    rec_title:'Model recommendation',
+    r_best:'Best type', r_rev:'Mean exchange rev.', r_rat:'Secondary / Total',
+    r_px:'Avg ticket price', r_rs:'Resales / exp.', r_tk:'Tickets sold',
+    note:(lt,cl,sp,cv,st)=>`<strong>Long-tail hypothesis:</strong> <span class="${cl}">${lt?'✓ confirmed':'⚠ not confirmed (primary dominates)'}</span> — secondary = ${sp} of revenue.<br><strong>Stability (CV):</strong> ${cv} — ${st?'low variance, predictable':'high variance, depends on audience quality'}.<br><em style="color:var(--tx3)">Model outputs. Real-market validation required.</em>`,
+    ch_rev:'Revenue by type (USDT)', ch_spl:'Primary vs secondary',
+    ch_dst:'Revenue distribution — best', ch_px:'Avg ticket price evolution',
+    ty_en:'English + reserve', ty_enr:'English, no reserve',
+    ty_fl:'Flash simultaneous', ty_du:'Dutch descending',
+    tg_cl:'classic', tg_op:'open', tg_fl:'all at once', tg_du:'reverse',
+    th_sys:'System', th_light:'Light', th_dark:'Dark',
+    lb_prim:'Primary', lb_sec:'Secondary',
+  },
+  th:{
+    hdr_title:'จำลองกลไกการประมูล',
+    s_prim:'ตลาดหลัก', s_agt:'ประเภทผู้เข้าร่วม', s_rev:'โมเดลรายได้',
+    s_sec:'ตลาดรอง', s_types:'ประเภทการประมูล', s_mc:'มอนติคาร์โล',
+    p_tick:'ตั๋ว / ประสบการณ์', p_res:'ราคาสำรอง (USDT)', p_step:'ขั้นเสนอราคา %',
+    p_mult:'ผู้เข้าร่วม ×', p_spec:'นักเก็งกำไร', p_comm:'ค่าธรรมเนียม',
+    p_roy:'ค่าลิขสิทธิ์ผู้สร้าง', p_sec:'รอบขายต่อ', p_runs:'จำนวนรอบ',
+    btn_run:'เริ่มจำลอง →', btn_wait:'กำลังจำลอง…',
+    empty_lbl:'ตั้งค่าพารามิเตอร์แล้วเริ่มจำลอง',
+    res_title:'ผลการจำลอง',
+    bdg:(r,t)=>`${r} รอบ · ${t} ประเภท`,
+    c_type:'ประเภท', c_rev:'รายได้เฉลี่ย', c_std:'±ส.ด.',
+    c_prim:'ตลาดหลัก', c_sec:'ตลาดรอง', c_rat:'รอง %', c_px:'ราคาเฉลี่ย', c_rs:'ขายต่อ',
+    rec_title:'คำแนะนำจากโมเดล',
+    r_best:'ประเภทที่ดีที่สุด', r_rev:'รายได้เฉลี่ย', r_rat:'รอง / รวม',
+    r_px:'ราคาตั๋วเฉลี่ย', r_rs:'ขายต่อ / ครั้ง', r_tk:'ตั๋วที่ขายได้',
+    note:(lt,cl,sp,cv,st)=>`<strong>สมมติฐาน long-tail:</strong> <span class="${cl}">${lt?'✓ ยืนยัน':'⚠ ยังไม่ยืนยัน (ตลาดหลักครอบงำ)'}</span> — รอง = ${sp}<br><strong>ความเสถียร (CV):</strong> ${cv} — ${st?'ความแปรปรวนต่ำ':'ความแปรปรวนสูง'}<br><em style="color:var(--tx3)">ต้องการการตรวจสอบจากตลาดจริง</em>`,
+    ch_rev:'รายได้ตามประเภท (USDT)', ch_spl:'ตลาดหลัก vs ตลาดรอง',
+    ch_dst:'การกระจายรายได้ — ดีที่สุด', ch_px:'วิวัฒนาการราคาตั๋ว',
+    ty_en:'อังกฤษ + ราคาสำรอง', ty_enr:'อังกฤษ ไม่มีราคาสำรอง',
+    ty_fl:'แฟลชพร้อมกัน', ty_du:'ดัตช์ลดราคา',
+    tg_cl:'คลาสสิก', tg_op:'เปิด', tg_fl:'พร้อมกัน', tg_du:'ย้อนกลับ',
+    th_sys:'ระบบ', th_light:'สว่าง', th_dark:'มืด',
+    lb_prim:'ตลาดหลัก', lb_sec:'ตลาดรอง',
+  },
+  zh:{
+    hdr_title:'拍卖机制模拟器',
+    s_prim:'一级市场', s_agt:'代理人构成', s_rev:'收益模型',
+    s_sec:'二级市场', s_types:'拍卖类型', s_mc:'蒙特卡洛',
+    p_tick:'票数 / 体验', p_res:'底价 (USDT)', p_step:'加价幅度 %',
+    p_mult:'参与者 ×', p_spec:'投机者比例', p_comm:'交易所佣金',
+    p_roy:'创作者版税', p_sec:'转售轮次', p_runs:'模拟次数',
+    btn_run:'开始模拟 →', btn_wait:'模拟中…',
+    empty_lbl:'设置参数并运行模拟',
+    res_title:'模拟结果',
+    bdg:(r,t)=>`${r} 次 · ${t} 类型`,
+    c_type:'类型', c_rev:'平均收益', c_std:'±标准差',
+    c_prim:'一级', c_sec:'二级', c_rat:'二级 %', c_px:'平均票价', c_rs:'转售',
+    rec_title:'模型推荐',
+    r_best:'最佳拍卖类型', r_rev:'平均交易所收益', r_rat:'二级 / 总计',
+    r_px:'平均票价', r_rs:'转售 / 体验', r_tk:'售出票数',
+    note:(lt,cl,sp,cv,st)=>`<strong>长尾假设：</strong><span class="${cl}">${lt?'✓ 已确认':'⚠ 未确认（一级主导）'}</span> — 二级 = ${sp}<br><strong>稳定性 (CV)：</strong>${cv} — ${st?'低波动':'高波动'}<br><em style="color:var(--tx3)">需真实市场验证</em>`,
+    ch_rev:'各类型收益 (USDT)', ch_spl:'一级 vs 二级市场',
+    ch_dst:'收益分布 — 最佳类型', ch_px:'平均票价演变',
+    ty_en:'英式 + 底价', ty_enr:'英式，无底价',
+    ty_fl:'闪拍（同时）', ty_du:'荷兰式降价',
+    tg_cl:'经典', tg_op:'开放', tg_fl:'同时', tg_du:'反向',
+    th_sys:'跟随系统', th_light:'浅色', th_dark:'深色',
+    lb_prim:'一级市场', lb_sec:'二级市场',
+  },
+  ru:{
+    hdr_title:'Симулятор механик аукциона',
+    s_prim:'Первичный рынок', s_agt:'Состав агентов', s_rev:'Модель доходов',
+    s_sec:'Вторичный рынок', s_types:'Типы аукционов', s_mc:'Монте-Карло',
+    p_tick:'Билетов / впечатление', p_res:'Старт. цена (USDT)', p_step:'Шаг ставки %',
+    p_mult:'Участников ×', p_spec:'Доля спекулянтов', p_comm:'Комиссия биржи',
+    p_roy:'Роялти создателя', p_sec:'Раундов перепродаж', p_runs:'Прогонов',
+    btn_run:'Запустить симуляцию →', btn_wait:'Симуляция…',
+    empty_lbl:'Настройте параметры и запустите симуляцию',
+    res_title:'Результаты симуляции',
+    bdg:(r,t)=>`${r} прогонов · ${t} типа`,
+    c_type:'Тип аукциона', c_rev:'Ср. выручка', c_std:'±Откл.',
+    c_prim:'Первичный', c_sec:'Вторичный', c_rat:'Вторич. %', c_px:'Ср. цена', c_rs:'Перепродаж',
+    rec_title:'Рекомендация модели',
+    r_best:'Лучший тип', r_rev:'Ср. выручка биржи', r_rat:'Вторичный / Итого',
+    r_px:'Ср. цена билета', r_rs:'Перепродаж / опыт', r_tk:'Продано билетов',
+    note:(lt,cl,sp,cv,st)=>`<strong>Гипотеза длинного хвоста:</strong> <span class="${cl}">${lt?'✓ подтверждена':'⚠ не подтверждена (первичный доминирует)'}</span> — вторичный = ${sp}<br><strong>Стабильность (CV):</strong> ${cv} — ${st?'низкая дисперсия':'высокая дисперсия'}<br><em style="color:var(--tx3)">Данные модели. Необходима рыночная проверка.</em>`,
+    ch_rev:'Выручка по типам (USDT)', ch_spl:'Первичный vs вторичный',
+    ch_dst:'Распределение выручки — лучший', ch_px:'Динамика ср. цены билета',
+    ty_en:'Английский + резерв', ty_enr:'Английский, без резерва',
+    ty_fl:'Флэш-аукцион (одновременно)', ty_du:'Голландский (на понижение)',
+    tg_cl:'классика', tg_op:'открытый', tg_fl:'одновременно', tg_du:'реверс',
+    th_sys:'Системная', th_light:'Светлая', th_dark:'Тёмная',
+    lb_prim:'Первичный', lb_sec:'Вторичный',
+  }
+};
+
+let lang='en';
+const tx=(k,...a)=>{const v=L[lang][k]??L.en[k]??k;return typeof v==='function'?v(...a):v};
+
+function applyLang(){
+  document.querySelectorAll('[data-i]').forEach(el=>{
+    const k=el.getAttribute('data-i');
+    if(el.tagName==='INPUT')el.placeholder=tx(k);
+    else el.textContent=tx(k);
+  });
+  document.getElementById('ll').textContent={en:'EN',th:'TH',zh:'中',ru:'RU'}[lang];
+  document.documentElement.lang=lang;
+  ['en','th','zh','ru'].forEach(l=>{
+    const el=document.getElementById('lc-'+l);
+    if(el) el.textContent=l===lang?'✓':'';
+    const di=document.querySelector(`[data-l="${l}"]`);
+    if(di) di.classList.toggle('on',l===lang);
+  });
+  if(lastRes.length) renderRes(lastRes);
+}
+
+function setLang(l){
+  lang=l;
+  localStorage.setItem('ehipas-lang',l);
+  closeDD();
+  applyLang();
+}
+
+// ════════════════════════════════
+// THEME
+// ════════════════════════════════
+let theme='dark';
+const TICONS={system:'⊙',light:'☀',dark:'☾'};
+
+function resolveTheme(t){
+  if(t==='system') return window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+  return t;
+}
+function applyTheme(t){
+  theme=t;
+  document.body.setAttribute('data-theme',resolveTheme(t));
+  document.getElementById('ticon').textContent=TICONS[t];
+  ['sys','light','dark'].forEach(k=>{
+    const el=document.getElementById('tc-'+k);
+    if(el) el.textContent=(k===t||(k==='sys'&&t==='system'))?'✓':'';
+  });
+  const dark=resolveTheme(t)==='dark';
+  Chart.defaults.color=dark?'#88887e':'#7a7a70';
+  if(lastRes.length) renderRes(lastRes);
+}
+function setTheme(t){
+  localStorage.setItem('ehipas-theme',t);
+  closeDD();
+  applyTheme(t);
+}
+
+// ════════════════════════════════
+// DROPDOWN
+// ════════════════════════════════
+let openDD=null;
+function togDD(id){
+  const m=document.getElementById(id+'-dd');
+  const ov=document.getElementById('ov');
+  if(openDD===id){closeDD();return}
+  closeDD();
+  m.classList.add('open');
+  ov.classList.add('on');
+  openDD=id;
+}
+function closeDD(){
+  document.querySelectorAll('.ddmenu').forEach(m=>m.classList.remove('open'));
+  document.getElementById('ov').classList.remove('on');
+  openDD=null;
+}
+
+// ════════════════════════════════
+// PARAMS
+// ════════════════════════════════
+const P={tick:11,res:10,step:5,mult:2.0,spec:.25,comm:10,roy:5,sec:5};
+let simRuns=300;
+
+function upd(k,raw){
+  const v=parseFloat(raw);
+  const disp={tick:v,res:v,step:v+'%',mult:(v/10).toFixed(1)+'×',spec:v+'%',comm:v+'%',roy:v+'%',sec:v,runs:v};
+  document.getElementById('v-'+k).textContent=disp[k];
+  if(k==='tick')P.tick=v; else if(k==='res')P.res=v;
+  else if(k==='step')P.step=v; else if(k==='mult')P.mult=v/10;
+  else if(k==='spec')P.spec=v/100; else if(k==='comm')P.comm=v;
+  else if(k==='roy')P.roy=v; else if(k==='sec')P.sec=v;
+  else if(k==='runs')simRuns=v;
+}
+
+function togType(id,lbl){
+  const cb=document.getElementById('t-'+id);
+  const checked=['english','english_nr','flash','dutch'].filter(t=>document.getElementById('t-'+t).checked);
+  if(checked.length===1&&checked[0]===id)return;
+  cb.checked=!cb.checked;
+  lbl.classList.toggle('on',cb.checked);
+}
+
+// ════════════════════════════════
+// SIMULATION ENGINE
+// ════════════════════════════════
+const rLN=(mu,s)=>Math.exp(mu+s*(Math.sqrt(-2*Math.log(Math.max(1e-10,Math.random())))*Math.cos(2*Math.PI*Math.random())));
+const rBet=(a,b)=>a+Math.random()*(b-a);
+const shuf=arr=>{const a=[...arr];for(let i=a.length-1;i>0;i--){const j=0|Math.random()*(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+
+function mkAgents(n,sf,bp){
+  return Array.from({length:n},(_,id)=>{
+    const r=Math.random();
+    let k,w;
+    if(r<.07){k='whale';w=rLN(Math.log(bp*6),.45)}
+    else if(r<.07+sf){k='spec';w=rLN(Math.log(bp*2.4),.60)}
+    else{k='fan';w=rLN(Math.log(bp*2.8),.90)}
+    return{id,k,wtp:Math.max(w,.5),taken:false};
+  });
+}
+
+function engOne(bidders,start,step){
+  let p=Math.max(start,.01),act=bidders.filter(b=>b.wtp>=p);
+  if(!act.length)return null;
+  for(let i=0;i<2000&&act.length>1;i++){
+    const np=p*(1+step/100),nx=act.filter(b=>b.wtp>=np);
+    if(!nx.length)break;
+    p=np;act=nx;
+  }
+  return{winner:act[0],price:p};
+}
+
+function primEng(ag,nr){
+  const pool=shuf(ag.map(a=>({...a})));const s=[];
+  for(let i=0;i<P.tick;i++){
+    const av=pool.filter(a=>!a.taken);
+    const r=engOne(av,nr?.01:P.res,P.step);
+    if(!r)break;
+    pool.find(a=>a.id===r.winner.id).taken=true;
+    s.push({idx:i,price:r.price,k:r.winner.k});
+  }
+  return s;
+}
+
+function primFlash(ag){
+  const bids=ag.map(a=>({...a,eb:a.wtp*(1+rBet(0,.18))})).sort((a,b)=>b.eb-a.eb);
+  const n=Math.min(P.tick,bids.length),cut=bids[n]?bids[n].eb:0;
+  return bids.slice(0,n).map((b,i)=>({idx:i,price:Math.max(b.eb*.88+cut*.12,P.res),k:b.k}));
+}
+
+function primDutch(ag){
+  const pool=shuf(ag.map(a=>({...a})));const ceil=Math.max(P.res*7,1);const s=[];
+  for(let i=0;i<P.tick;i++){
+    let p=ceil,av=pool.filter(a=>!a.taken),sold=false;
+    for(let j=0;j<2000;j++){
+      const by=av.filter(b=>b.wtp>=p);
+      if(by.length){const w=by[0|Math.random()*by.length];pool.find(a=>a.id===w.id).taken=true;s.push({idx:i,price:p,k:w.k});sold=true;break}
+      p*=(1-P.step/100);if(p<Math.max(P.res,.1))break;
+    }
+    if(!sold)break;
+  }
+  return s;
+}
+
+function secondary(sales,ag){
+  let rev=0,tot=0;const h=sales.map(s=>({...s}));
+  for(let rnd=0;rnd<P.sec;rnd++){
+    const d=.76**rnd;
+    const lst=h.filter(x=>{const pr=x.k==='spec'?.65:x.k==='whale'?.38:.13;return Math.random()<pr*d});
+    if(!lst.length)break;
+    for(const l of lst){
+      const mn=l.k==='spec'?1.12:1.05,mx=l.k==='spec'?1.80:1.40;
+      const ask=l.price*rBet(mn,mx),cool=.84**rnd;
+      if(ag.filter(b=>b.wtp*cool>=ask&&Math.random()<.55).length){
+        rev+=ask*P.comm/100;tot++;l.price=ask;l.k=Math.random()<.38?'spec':'fan';
+      }
+    }
+  }
+  return{rev,tot};
+}
+
+function once(type){
+  const n=Math.round(P.tick*P.mult),bp=Math.max(P.res,5);
+  const ag=mkAgents(n,P.spec,bp);
+  let s;
+  if(type==='english')s=primEng(ag,false);
+  else if(type==='english_nr')s=primEng(ag,true);
+  else if(type==='flash')s=primFlash(ag);
+  else s=primDutch(ag);
+  const pr=s.reduce((a,x)=>a+x.price*P.comm/100,0);
+  const sec=secondary(s,ag);
+  const tot=pr+sec.rev;
+  return{tot,pr,sec:sec.rev,tk:s.length,px:s.length?s.reduce((a,x)=>a+x.price,0)/s.length:0,rs:sec.tot,sr:tot>0?sec.rev/tot:0,pi:s.map(x=>x.price)};
+}
+
+function mc(type,runs){
+  const R=Array.from({length:runs},()=>once(type));
+  const mn=f=>R.reduce((s,r)=>s+r[f],0)/runs;
+  const sd=f=>{const m=mn(f);return Math.sqrt(R.reduce((s,r)=>s+(r[f]-m)**2,0)/runs)};
+  const ml=Math.max(...R.map(r=>r.pi.length));
+  const pi=Array.from({length:ml},(_,i)=>{
+    const v=R.map(r=>r.pi[i]).filter(x=>x!==undefined);
+    return v.length?v.reduce((s,x)=>s+x,0)/v.length:null;
+  });
+  return{type,mT:mn('tot'),sT:sd('tot'),cv:sd('tot')/(mn('tot')||1),mP:mn('pr'),mS:mn('sec'),mTk:mn('tk'),mPx:mn('px'),mRs:mn('rs'),mSr:mn('sr'),pi,raw:R.map(r=>r.tot)};
+}
+
+// ════════════════════════════════
+// RUN
+// ════════════════════════════════
+let lastRes=[];
+const TCOL={english:'#b8f73a',english_nr:'#4af7c9',flash:'#f74a4a',dutch:'#9b7ef7'};
+
+async function runAll(){
+  const types=['english','english_nr','flash','dutch'].filter(t=>document.getElementById('t-'+t).checked);
+  if(!types.length)return;
+  const btn=document.getElementById('rbtn'),pf=document.getElementById('pfill');
+  btn.disabled=true;btn.textContent=tx('btn_wait');
+  const all=[];
+  for(let i=0;i<types.length;i++){
+    pf.style.width=(i/types.length*100)+'%';
+    await new Promise(r=>setTimeout(r,0));
+    all.push(mc(types[i],simRuns));
+  }
+  pf.style.width='100%';
+  lastRes=all;
+
+  // Show results section FIRST, then render charts on next frame
+  document.getElementById('empty').style.display='none';
+  const resEl=document.getElementById('res');
+  resEl.classList.add('on');
+
+  // Wait for layout to settle before rendering charts
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    renderRes(all);
+    btn.disabled=false;
+    btn.textContent=tx('btn_run');
+    setTimeout(()=>{pf.style.width='0%'},600);
+  }));
+}
+
+// ════════════════════════════════
+// RENDER
+// ════════════════════════════════
+const charts={};
+function destroyCh(id){if(charts[id]){charts[id].destroy();delete charts[id]}}
+const f2=n=>(+n).toFixed(2);
+const f1=n=>(+n).toFixed(1);
+const pct=n=>((+n)*100).toFixed(1)+'%';
+const tln=t=>({english:tx('ty_en'),english_nr:tx('ty_enr'),flash:tx('ty_fl'),dutch:tx('ty_du')}[t]||t);
+
+function cdefs(){
+  const dk=resolveTheme(theme)==='dark';
+  return{grid:dk?'rgba(58,58,54,.6)':'rgba(200,198,190,.5)',tick:dk?'#555550':'#99998f'};
+}
+
+function renderRes(R){
+  const sorted=[...R].sort((a,b)=>b.mT-a.mT);
+  const w=sorted[0];
+
+  // Badge
+  document.getElementById('rbdg').textContent=tx('bdg',simRuns,R.length);
+
+  // Table
+  const tb=document.getElementById('tbody');tb.innerHTML='';
+  sorted.forEach(r=>{
+    const iw=r.type===w.type;
+    const tr=document.createElement('tr');
+    if(iw)tr.className='wrow';
+    tr.innerHTML=`<td class="tc mn">${tln(r.type)}${iw?`<span class="bbdg">best</span>`:''}</td>
+      <td class="mn">${f2(r.mT)}</td><td class="mn" style="color:var(--tx3)">±${f2(r.sT)}</td>
+      <td class="mn">${f2(r.mP)}</td><td class="mn">${f2(r.mS)}</td>
+      <td class="mn">${pct(r.mSr)}</td><td class="mn">${f2(r.mPx)}</td><td class="mn">${f1(r.mRs)}</td>`;
+    tb.appendChild(tr);
+  });
+
+  // Rec metrics
+  document.getElementById('rmets').innerHTML=`
+    <div><div class="rml">${tx('r_best')}</div><div class="rmv" style="font-size:12px;color:var(--acc)">${tln(w.type)}</div></div>
+    <div><div class="rml">${tx('r_rev')}</div><div class="rmv">${f2(w.mT)}<span class="rmu">USDT</span></div></div>
+    <div><div class="rml">${tx('r_rat')}</div><div class="rmv">${pct(w.mSr)}</div></div>
+    <div><div class="rml">${tx('r_px')}</div><div class="rmv">${f2(w.mPx)}<span class="rmu">USDT</span></div></div>
+    <div><div class="rml">${tx('r_rs')}</div><div class="rmv">${f1(w.mRs)}</div></div>
+    <div><div class="rml">${tx('r_tk')}</div><div class="rmv">${f1(w.mTk)}<span class="rmu">/ ${P.tick}</span></div></div>`;
+
+  const lt=w.mSr>.40,st=w.cv<.3;
+  document.getElementById('rnote').innerHTML=tx('note',lt,lt?'hy':'hn',pct(w.mSr),pct(w.cv),st);
+
+  // Charts
+  const cd=cdefs();
+  const sl=sorted.map(r=>tln(r.type));
+  const sc=sorted.map(r=>TCOL[r.type]);
+  const chartOpts=(stacked)=>({
+    plugins:{legend:{display:stacked,position:'bottom',labels:{boxWidth:10,font:{size:10},color:cd.tick}}},
+    scales:{
+      x:{stacked:!!stacked,grid:{color:cd.grid},ticks:{color:cd.tick,maxRotation:20,font:{size:10}}},
+      y:{stacked:!!stacked,grid:{color:cd.grid},ticks:{color:cd.tick,font:{size:10}},beginAtZero:true}
+    },
+    animation:{duration:300},
+    responsive:true,maintainAspectRatio:true
+  });
+
+  destroyCh('rev');
+  charts['rev']=new Chart(document.getElementById('ch-rev'),{
+    type:'bar',
+    data:{labels:sl,datasets:[{data:sorted.map(r=>+f2(r.mT)),backgroundColor:sc.map(c=>c+'66'),borderColor:sc,borderWidth:1,borderRadius:4}]},
+    options:chartOpts(false)
+  });
+
+  destroyCh('spl');
+  charts['spl']=new Chart(document.getElementById('ch-spl'),{
+    type:'bar',
+    data:{labels:sl,datasets:[
+      {label:tx('lb_prim'),data:sorted.map(r=>+f2(r.mP)),backgroundColor:sc.map(c=>c+'99'),borderColor:sc,borderWidth:1,stack:'r'},
+      {label:tx('lb_sec'), data:sorted.map(r=>+f2(r.mS)),backgroundColor:sc.map(c=>c+'33'),borderColor:sc.map(c=>c+'88'),borderWidth:1,stack:'r'}
+    ]},
+    options:chartOpts(true)
+  });
+
+  // Histogram of winner
+  const vals=w.raw.map(v=>+f2(v)).sort((a,b)=>a-b);
+  const mn=vals[0],mx2=vals[vals.length-1],bins=14,bz=(mx2-mn)/bins||1;
+  const hist=Array(bins).fill(0);
+  vals.forEach(v=>hist[Math.min(0|((v-mn)/bz),bins-1)]++);
+  destroyCh('dst');
+  charts['dst']=new Chart(document.getElementById('ch-dst'),{
+    type:'bar',
+    data:{labels:Array.from({length:bins},(_,i)=>(+(mn+(i+.5)*bz)).toFixed(1)),datasets:[{data:hist,backgroundColor:TCOL[w.type]+'55',borderColor:TCOL[w.type],borderWidth:.5,borderRadius:2}]},
+    options:{...chartOpts(false),plugins:{legend:{display:false}},scales:{x:{grid:{color:cd.grid},ticks:{color:cd.tick,maxTicksLimit:5,font:{size:9}}},y:{grid:{color:cd.grid},ticks:{color:cd.tick,font:{size:10}}}}}
+  });
+
+  // Price evolution
+  const seq=sorted.filter(r=>r.type!=='flash');
+  destroyCh('px');
+  charts['px']=new Chart(document.getElementById('ch-px'),{
+    type:'line',
+    data:{
+      labels:Array.from({length:P.tick},(_,i)=>'#'+(i+1)),
+      datasets:seq.map(r=>({
+        label:tln(r.type),
+        data:r.pi.slice(0,P.tick).map(v=>v!==null?+f2(v):null),
+        borderColor:TCOL[r.type],backgroundColor:'transparent',
+        borderWidth:1.5,pointRadius:3,pointBackgroundColor:TCOL[r.type],
+        tension:.35,spanGaps:true
+      }))
+    },
+    options:{...chartOpts(false),plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:10},color:cd.tick}}},scales:{x:{grid:{color:cd.grid},ticks:{color:cd.tick,font:{size:10}}},y:{grid:{color:cd.grid},ticks:{color:cd.tick,font:{size:10}},beginAtZero:false}}}
+  });
+
+  // Force resize all charts after render
+  setTimeout(()=>Object.values(charts).forEach(c=>c.resize()),100);
+}
+
+// ════════════════════════════════
+// INIT
+// ════════════════════════════════
+Chart.defaults.font.family="'DM Mono',monospace";
+Chart.defaults.font.size=10;
+
+// System theme change listener
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{
+  if(theme==='system') applyTheme('system');
+});
+
+// Restore saved prefs
+const savedTheme=localStorage.getItem('ehipas-theme')||'dark';
+const savedLang=localStorage.getItem('ehipas-lang')||'en';
+lang=savedLang;
+applyTheme(savedTheme);
+applyLang();
+</script>
+</body>
+</html>

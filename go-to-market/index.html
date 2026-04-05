@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ehipas — GTM Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Thai:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── TOKENS — exact copy from AuctionMechanismSimulator ── */
+:root{
+  --mono:'DM Mono',monospace;
+  --sans:'DM Sans','Noto Sans Thai','Noto Sans SC',sans-serif;
+  --r:10px; --rs:6px;
+  --c-p1:#b8f73a; --c-p2:#4af7c9;
+  --c-p3:#f7b74a; --c-p4:#9b7ef7;
+}
+
+[data-theme="dark"]{
+  --bg:#0d0d0b; --bg2:#141412; --bg3:#1c1c19;
+  --bd:#2a2a26; --bd2:#3a3a36;
+  --tx:#e8e6dc; --tx2:#88887e; --tx3:#555550;
+  --crd:#141412; --inp:#1c1c19;
+  --acc:#b8f73a;
+  --acc-btn:#b8f73a;
+  --acc-btn-tx:#0d0d0b;
+  --acc-dim:rgba(184,247,58,.09);
+  --acc-brd:rgba(184,247,58,.35);
+  --shd:0 2px 16px rgba(0,0,0,.55);
+}
+
+[data-theme="light"]{
+  --bg:#f4f3ee; --bg2:#ffffff; --bg3:#eceae2;
+  --bd:#dbd9d0; --bd2:#c8c5bc;
+  --tx:#1a1a17; --tx2:#5c5c58; --tx3:#99998f;
+  --crd:#ffffff; --inp:#eceae2;
+  --acc:#2e7d0e;
+  --acc-btn:#5cb82a;
+  --acc-btn-tx:#ffffff;
+  --acc-dim:rgba(46,125,14,.07);
+  --acc-brd:rgba(46,125,14,.30);
+  --shd:0 2px 16px rgba(0,0,0,.09);
+}
+
+html,body{width:100%;overflow-x:hidden}
+
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--tx);
+  min-height:100vh;
+  font-size:14px;
+  line-height:1.5;
+  transition:background .2s,color .2s;
+}
+
+/* ── HEADER ── */
+.hdr{
+  border-bottom:1px solid var(--bd);
+  padding:11px 14px;
+  display:flex; align-items:center; gap:8px;
+  position:sticky; top:0; z-index:100;
+  background:var(--bg);
+}
+.logo{
+  font-family:var(--mono); font-size:13px; font-weight:500;
+  letter-spacing:.1em; color:var(--acc); text-transform:uppercase;
+  flex-shrink:0;
+}
+.hdr-title{
+  font-size:11px; color:var(--tx3);
+  flex:1; min-width:0; overflow:hidden;
+  text-overflow:ellipsis; white-space:nowrap;
+}
+.hdr-ctrls{display:flex;gap:5px;align-items:center;flex-shrink:0}
+
+/* ── DROPDOWN SYSTEM ── */
+.ddwrap{position:relative;display:inline-block}
+.ddtrig{
+  background:var(--bg3); border:1px solid var(--bd);
+  border-radius:var(--rs); color:var(--tx2);
+  font-family:var(--mono); font-size:11px;
+  padding:5px 8px; cursor:pointer;
+  display:flex; align-items:center; gap:4px;
+  white-space:nowrap; transition:border-color .15s,color .15s;
+}
+.ddtrig:hover{border-color:var(--bd2);color:var(--tx)}
+.ddarrow{font-size:9px;opacity:.5}
+.ddmenu{
+  display:none; position:absolute; right:0; top:calc(100% + 4px);
+  background:var(--bg2); border:1px solid var(--bd2);
+  border-radius:var(--rs); min-width:140px;
+  box-shadow:var(--shd); z-index:300; overflow:hidden;
+}
+.ddmenu.open{display:block}
+.ddi{
+  display:flex; align-items:center; gap:8px;
+  padding:9px 12px; font-size:12px; color:var(--tx2);
+  cursor:pointer; transition:background .1s;
+  border-bottom:1px solid var(--bd);
+}
+.ddi:last-child{border-bottom:none}
+.ddi:hover{background:var(--bg3);color:var(--tx)}
+.ddi.on{color:var(--acc)}
+.ddi .ck{font-size:10px;margin-left:auto;color:var(--acc)}
+.overlay{display:none;position:fixed;inset:0;z-index:99}
+.overlay.on{display:block}
+
+/* ── LAYOUT ── */
+.wrap{
+  display:grid;
+  grid-template-columns:270px 1fr;
+  min-height:calc(100vh - 45px);
+  align-items:start;
+}
+@media(max-width:767px){
+  .wrap{grid-template-columns:1fr}
+}
+
+/* ── SIDEBAR ── */
+.sb{
+  border-right:1px solid var(--bd);
+  padding:16px 13px;
+  background:var(--bg);
+  overflow:hidden;
+}
+@media(min-width:768px){
+  .sb{position:sticky;top:45px;height:calc(100vh - 45px);overflow-y:auto}
+  .sb::-webkit-scrollbar{width:3px}
+  .sb::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+}
+@media(max-width:767px){
+  .sb{border-right:none;border-bottom:1px solid var(--bd)}
+}
+
+.slbl{
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--tx3); margin-bottom:11px; margin-top:3px;
+}
+.ssec{margin-bottom:20px}
+
+/* ── TYPE TOGGLES ── */
+.tgrid{display:grid;grid-template-columns:1fr;gap:5px}
+@media(max-width:767px){.tgrid{grid-template-columns:1fr 1fr}}
+
+.ttog{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 9px;
+  border:1px solid var(--bd);border-radius:var(--rs);
+  cursor:pointer;transition:border-color .2s,background .2s;
+  user-select:none;background:var(--inp);
+}
+.ttog:hover{border-color:var(--bd2)}
+.ttog.on{border-color:var(--acc-brd);background:var(--acc-dim)}
+.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ttog:not(.on) .tdot{background:var(--bd2)}
+.tname{font-size:11px;line-height:1.3}
+.ttag{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--tx3);text-transform:uppercase;flex-shrink:0}
+
+/* ── DESC ── */
+.desc-txt{font-size:11px;color:var(--tx2);line-height:1.75}
+
+/* ── MAIN ── */
+.main{
+  padding:18px 14px;
+  background:var(--bg);
+  min-width:0;
+  overflow:hidden;
+}
+@media(min-width:768px){.main{padding:22px 26px}}
+
+/* ── RESULTS ── */
+.rhdr{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.rtitle{font-size:16px;font-weight:300;letter-spacing:-.02em}
+.rbadge{
+  font-family:var(--mono);font-size:10px;padding:2px 7px;
+  background:var(--bg3);border:1px solid var(--bd2);
+  border-radius:20px;color:var(--tx2);
+}
+
+/* ── TABLE ── */
+.twrap{
+  border:1px solid var(--bd);border-radius:var(--r);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  margin-bottom:16px;background:var(--crd);
+  max-width:100%;
+}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:540px}
+thead tr{background:var(--bg3);border-bottom:1px solid var(--bd)}
+th{
+  padding:8px 11px;text-align:left;
+  font-family:var(--mono);font-size:9px;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--tx3);font-weight:400;white-space:nowrap;
+}
+td{padding:9px 11px;border-bottom:1px solid var(--bd);white-space:nowrap;font-size:11px}
+tr:last-child td{border-bottom:none}
+.mn{font-family:var(--mono)}
+
+/* Selected column — mirrors .wrow / .wrow .tc from simulator */
+td.sel{background:var(--acc-dim)}
+td.sel.sv{color:var(--acc);font-weight:500}
+
+.ph-th{
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:9px;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--tx3);font-weight:400;white-space:nowrap;
+}
+.ph-th .tdot{width:7px;height:7px}
+
+.bbdg{
+  display:inline-block;font-family:var(--mono);font-size:9px;
+  padding:1px 5px;background:var(--acc-dim);color:var(--acc);
+  border:1px solid var(--acc-brd);
+  border-radius:3px;margin-left:5px;text-transform:uppercase;
+}
+.val-yes{color:var(--acc);font-weight:500}
+.val-pos{color:var(--tx2)}
+.val-no{color:var(--tx3)}
+
+/* ── REC BOX ── */
+.rbox{
+  border:1px solid var(--bd);border-left:3px solid var(--acc);
+  border-radius:var(--r);padding:15px 16px;margin-bottom:0;
+  background:var(--acc-dim);
+}
+.rtl{
+  font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--acc);margin-bottom:13px;
+}
+.rgrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;margin-bottom:13px;
+}
+@media(max-width:480px){.rgrid{grid-template-columns:1fr 1fr}}
+.rml{font-size:10px;color:var(--tx3);margin-bottom:2px}
+.rmv{font-family:var(--mono);font-size:15px;color:var(--tx);font-weight:300}
+.rmu{font-size:10px;color:var(--tx2);margin-left:2px}
+.rnote{
+  font-size:11px;color:var(--tx2);line-height:1.75;
+  padding-top:11px;border-top:1px solid var(--bd);
+}
+.rnote strong{color:var(--tx)}
+</style>
+</head>
+<body data-theme="dark">
+
+<div class="overlay" id="ov" onclick="closeDD()"></div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <span class="logo">ehipas</span>
+  <span class="hdr-title" data-i="hdr_title">GTM Roadmap</span>
+  <div class="hdr-ctrls">
+
+    <!-- Lang -->
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('lang')">
+        <span id="ll">EN</span><span class="ddarrow">▾</span>
+      </button>
+      <div class="ddmenu" id="lang-dd">
+        <div class="ddi on" data-l="en" onclick="setLang('en')">🇬🇧 English<span class="ck" id="lc-en">✓</span></div>
+        <div class="ddi"    data-l="th" onclick="setLang('th')">🇹🇭 ภาษาไทย<span class="ck" id="lc-th"></span></div>
+        <div class="ddi"    data-l="zh" onclick="setLang('zh')">🇨🇳 中文<span class="ck" id="lc-zh"></span></div>
+        <div class="ddi"    data-l="ru" onclick="setLang('ru')">🇷🇺 Русский<span class="ck" id="lc-ru"></span></div>
+      </div>
+    </div>
+
+    <!-- Theme -->
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('theme')">
+        <span id="ticon">☾</span><span class="ddarrow">▾</span>
+      </button>
+      <div class="ddmenu" id="theme-dd">
+        <div class="ddi" onclick="setTheme('system')">⊙ <span data-i="th_sys">System</span><span class="ck" id="tc-sys"></span></div>
+        <div class="ddi" onclick="setTheme('light')">☀ <span data-i="th_light">Light</span><span class="ck" id="tc-light"></span></div>
+        <div class="ddi" onclick="setTheme('dark')">☾ <span data-i="th_dark">Dark</span><span class="ck" id="tc-dark">✓</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sb">
+
+    <div class="ssec">
+      <div class="slbl" data-i="s_phases">Phases</div>
+      <div class="tgrid" id="phase-toggles"></div>
+    </div>
+
+    <div class="ssec">
+      <div class="slbl" data-i="s_desc">Description</div>
+      <div class="desc-txt" id="desc-txt"></div>
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="rhdr">
+      <span class="rtitle" data-i="res_title">GTM Roadmap</span>
+      <span class="rbadge" id="rbdg"></span>
+    </div>
+
+    <div class="twrap">
+      <table>
+        <thead id="tbl-head"></thead>
+        <tbody id="tbl-body"></tbody>
+      </table>
+    </div>
+
+    <div class="rbox">
+      <div class="rtl" id="rbox-title"></div>
+      <div class="rgrid" id="rbox-metrics"></div>
+      <div class="rnote" id="rbox-note"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ════════════════════════════════
+// DATA
+// ════════════════════════════════
+const PHASES = [
+  {
+    phase: 1,
+    creators:         ['kol'],
+    buyers:           ['thais', 'kol', 'farangs'],
+    experience_types: ['for_thais'],
+    payments:         ['crypto'],
+    creator_school:   false,
+    nft_artifacts:    false,
+  },
+  {
+    phase: 2,
+    creators:         ['kol'],
+    buyers:           ['thais', 'kol', 'farangs'],
+    experience_types: ['for_thais'],
+    payments:         ['crypto', 'fiat'],
+    creator_school:   false,
+    nft_artifacts:    'possible',
+  },
+  {
+    phase: 3,
+    creators:         ['kol', 'thais'],
+    buyers:           ['thais', 'kol', 'farangs'],
+    experience_types: ['for_thais', 'for_farangs'],
+    payments:         ['crypto', 'fiat'],
+    creator_school:   true,
+    nft_artifacts:    'possible',
+  },
+  {
+    phase: 4,
+    creators:         ['kol', 'thais', 'farangs'],
+    buyers:           ['thais', 'kol', 'farangs'],
+    experience_types: ['for_thais', 'for_farangs'],
+    payments:         ['crypto', 'fiat'],
+    creator_school:   true,
+    nft_artifacts:    'possible',
+  },
+];
+
+// Neon colors — used ONLY as dot backgrounds (never as text)
+const PCOL = ['#b8f73a', '#4af7c9', '#f7b74a', '#9b7ef7'];
+
+// ════════════════════════════════
+// I18N
+// ════════════════════════════════
+const L = {
+  en: {
+    hdr_title: 'GTM Roadmap',
+    s_phases: 'Phases', s_desc: 'Description',
+    res_title: 'GTM Roadmap',
+    th_sys: 'System', th_light: 'Light', th_dark: 'Dark',
+    country: 'Thailand',
+    pname: ['Crypto Launch', 'Fiat + NFT Option', 'Open Creators + School', 'Full Ecosystem'],
+    ptag:  ['baseline', '+fiat', '+school', '+farangs'],
+    pdesc: [
+      'Minimum viable launch. KOL creators only, crypto payments only. Controlled quality, minimal regulatory exposure.',
+      'Fiat payments open the platform to buyers without crypto wallets. NFT artifacts become optional collectibles.',
+      'Regular Thais become creators via the Creator School. Experience catalog expands to the tourist segment.',
+      'Farangs join as creators. Full two-sided marketplace — anyone in Thailand can create and buy.',
+    ],
+    badge: n => `Thailand · Phase ${n}`,
+    c_attr: 'Attribute',
+    c_p: n => `Phase ${n}`,
+    a_creators: 'Creators',
+    a_buyers:   'Buyers',
+    a_exp:      'Exp. types',
+    a_pay:      'Payments',
+    a_school:   'Creator school',
+    a_nft:      'NFT artifacts',
+    kol: 'KOL', thais: 'Thais', farangs: 'Farangs',
+    for_thais: 'For Thais', for_farangs: 'For Farangs',
+    crypto: 'Crypto', fiat: 'Fiat',
+    yes: '✓ Yes', no: '— No', possible: '◇ Possible',
+    rbox_title: n => `Phase ${n} summary`,
+    m_country: 'Country', m_creators: 'Creator types',
+    m_pay: 'Payment types', m_school: 'Creator school',
+    m_nft: 'NFT artifacts', m_exp: 'Exp. types',
+    note_lbl: 'What changes in this phase',
+    notes: [
+      'Baseline: KOL-only supply, crypto-only payments, experiences for local Thais. Tightly controlled quality and regulatory exposure.',
+      '<strong>+Fiat payments</strong> — reaches buyers without crypto wallets, expands addressable audience.<br><strong>+NFT artifacts</strong> — optional collectible after attending, no mandatory on-chain step.',
+      '<strong>+Thais as creators</strong> — regular people can host experiences, not just KOL.<br><strong>+Creator School</strong> — onboarding program to maintain quality at scale.<br><strong>+Experiences for farangs</strong> — tourist-facing catalog opens a new demand segment.',
+      '<strong>+Farangs as creators</strong> — foreigners can now list experiences. Full two-sided marketplace reached.',
+    ],
+  },
+  th: {
+    hdr_title: 'แผนเส้นทาง GTM',
+    s_phases: 'ระยะ', s_desc: 'คำอธิบาย',
+    res_title: 'แผนเส้นทาง GTM',
+    th_sys: 'ระบบ', th_light: 'สว่าง', th_dark: 'มืด',
+    country: 'ประเทศไทย',
+    pname: ['เปิดตัวคริปโต', 'เงินสด + NFT', 'เปิดสร้างสรรค์ + โรงเรียน', 'ระบบนิเวศเต็มรูปแบบ'],
+    ptag:  ['เริ่มต้น', '+เงินสด', '+โรงเรียน', '+ฝรั่ง'],
+    pdesc: [
+      'เปิดตัวขั้นต่ำ KOL เท่านั้น คริปโตเท่านั้น คุณภาพควบคุมได้ ความเสี่ยงด้านกฎระเบียบต่ำ',
+      'การชำระเงินสดเปิดแพลตฟอร์มสู่ผู้ซื้อที่ไม่มีคริปโต NFT artifacts เป็นตัวเลือกเสริม',
+      'ชาวไทยทั่วไปเป็นผู้สร้างผ่านโรงเรียน แคตาล็อกขยายสู่กลุ่มนักท่องเที่ยว',
+      'ฝรั่งเข้าร่วมเป็นผู้สร้าง ตลาดสองด้านเต็มรูปแบบ',
+    ],
+    badge: n => `ประเทศไทย · ระยะ ${n}`,
+    c_attr: 'คุณสมบัติ',
+    c_p: n => `ระยะ ${n}`,
+    a_creators: 'ผู้สร้าง', a_buyers: 'ผู้ซื้อ', a_exp: 'ประเภท',
+    a_pay: 'การชำระ', a_school: 'โรงเรียน', a_nft: 'NFT',
+    kol: 'KOL', thais: 'ชาวไทย', farangs: 'ฝรั่ง',
+    for_thais: 'สำหรับไทย', for_farangs: 'สำหรับฝรั่ง',
+    crypto: 'คริปโต', fiat: 'เงินสด',
+    yes: '✓ ใช่', no: '— ไม่', possible: '◇ เป็นไปได้',
+    rbox_title: n => `สรุประยะ ${n}`,
+    m_country: 'ประเทศ', m_creators: 'ประเภทผู้สร้าง',
+    m_pay: 'ประเภทการชำระ', m_school: 'โรงเรียน',
+    m_nft: 'NFT', m_exp: 'ประเภท',
+    note_lbl: 'สิ่งที่เปลี่ยนแปลงในระยะนี้',
+    notes: [
+      'จุดเริ่มต้น: KOL เท่านั้น คริปโตเท่านั้น สำหรับชาวไทยเท่านั้น',
+      '<strong>+การชำระเงินสด</strong> — ขยายผู้ซื้อ<br><strong>+NFT artifacts</strong> — ตัวเลือกเสริม',
+      '<strong>+ชาวไทยเป็นผู้สร้าง</strong><br><strong>+โรงเรียนผู้สร้าง</strong><br><strong>+ประสบการณ์สำหรับฝรั่ง</strong>',
+      '<strong>+ฝรั่งเป็นผู้สร้าง</strong> — ตลาดสองด้านเต็มรูปแบบ',
+    ],
+  },
+  zh: {
+    hdr_title: 'GTM路线图',
+    s_phases: '阶段', s_desc: '描述',
+    res_title: 'GTM路线图',
+    th_sys: '跟随系统', th_light: '浅色', th_dark: '深色',
+    country: '泰国',
+    pname: ['加密启动', '法币 + NFT选项', '开放创作者 + 学校', '完整生态系统'],
+    ptag:  ['基准', '+法币', '+学校', '+外国人'],
+    pdesc: [
+      '最小化启动。仅KOL，仅加密。质量可控，监管风险低。',
+      '法币支付向非加密用户开放平台。NFT纪念品为可选。',
+      '普通泰国人通过创作者学校成为创作者。旅游体验目录开放。',
+      '外国人成为创作者。完整双边市场。',
+    ],
+    badge: n => `泰国 · 第${n}阶段`,
+    c_attr: '属性',
+    c_p: n => `第${n}阶段`,
+    a_creators: '创作者', a_buyers: '买家', a_exp: '体验类型',
+    a_pay: '支付方式', a_school: '创作者学校', a_nft: 'NFT纪念品',
+    kol: 'KOL', thais: '泰国人', farangs: '外国人',
+    for_thais: '适合泰国人', for_farangs: '适合外国人',
+    crypto: '加密货币', fiat: '法币',
+    yes: '✓ 是', no: '— 否', possible: '◇ 可能',
+    rbox_title: n => `第${n}阶段总结`,
+    m_country: '国家', m_creators: '创作者类型',
+    m_pay: '支付类型', m_school: '创作者学校',
+    m_nft: 'NFT纪念品', m_exp: '体验类型',
+    note_lbl: '本阶段新增内容',
+    notes: [
+      '基准：仅KOL，仅加密，仅面向本地泰国人。',
+      '<strong>+法币支付</strong> — 触达非加密用户<br><strong>+NFT纪念品</strong> — 可选收藏品',
+      '<strong>+泰国人成为创作者</strong><br><strong>+创作者学校</strong><br><strong>+面向外国人的体验</strong>',
+      '<strong>+外国人成为创作者</strong> — 完整双边市场',
+    ],
+  },
+  ru: {
+    hdr_title: 'GTM-дорожная карта',
+    s_phases: 'Фазы', s_desc: 'Описание',
+    res_title: 'GTM-дорожная карта',
+    th_sys: 'Системная', th_light: 'Светлая', th_dark: 'Тёмная',
+    country: 'Таиланд',
+    pname: ['Крипто-старт', 'Фиат + NFT', 'Открытые создатели + Школа', 'Полная экосистема'],
+    ptag:  ['база', '+фиат', '+школа', '+фаранги'],
+    pdesc: [
+      'Минимальный запуск. Только KOL-создатели, только крипта. Контролируемое качество, минимальный регуляторный риск.',
+      'Фиатная оплата открывает платформу для покупателей без крипто-кошелька. NFT-артефакты — опциональный коллектибл.',
+      'Обычные тайцы становятся создателями через Школу. Каталог расширяется на туристический сегмент.',
+      'Фаранги становятся создателями. Полная двусторонняя биржа — любой может создавать и покупать.',
+    ],
+    badge: n => `Таиланд · Фаза ${n}`,
+    c_attr: 'Параметр',
+    c_p: n => `Фаза ${n}`,
+    a_creators: 'Создатели', a_buyers: 'Покупатели', a_exp: 'Типы впечатл.',
+    a_pay: 'Оплата', a_school: 'Школа создателей', a_nft: 'NFT-артефакты',
+    kol: 'KOL', thais: 'Тайцы', farangs: 'Фаранги',
+    for_thais: 'Для тайцев', for_farangs: 'Для фарангов',
+    crypto: 'Крипта', fiat: 'Фиат',
+    yes: '✓ Да', no: '— Нет', possible: '◇ Возможно',
+    rbox_title: n => `Сводка по фазе ${n}`,
+    m_country: 'Страна', m_creators: 'Типов создателей',
+    m_pay: 'Типов оплаты', m_school: 'Школа создателей',
+    m_nft: 'NFT-артефакты', m_exp: 'Типов впечатлений',
+    note_lbl: 'Что меняется в этой фазе',
+    notes: [
+      'База: только KOL-создатели, только крипта, только для местных тайцев. Жёсткий контроль качества и регуляторных рисков.',
+      '<strong>+Фиатная оплата</strong> — охватываем покупателей без крипто-кошелька.<br><strong>+NFT-артефакты</strong> — опциональный коллектибл, без обязательного on-chain шага.',
+      '<strong>+Тайцы-создатели</strong> — обычные люди могут принимать гостей, не только KOL.<br><strong>+Школа создателей</strong> — онбординг-программа для поддержания качества.<br><strong>+Впечатления для фарангов</strong> — открывается туристический сегмент спроса.',
+      '<strong>+Фаранги-создатели</strong> — иностранцы теперь могут выставлять впечатления. Полная двусторонняя биржа.',
+    ],
+  },
+};
+
+let lang = 'en';
+let curPhase = 0; // 0-indexed
+
+const tx  = (k, ...a) => { const v = L[lang][k] ?? L.en[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
+const txa = k => L[lang][k] ?? L.en[k] ?? [];
+
+// ════════════════════════════════
+// THEME
+// ════════════════════════════════
+let theme = 'dark';
+const TICONS = { system: '⊙', light: '☀', dark: '☾' };
+
+function resolveTheme(t) {
+  if (t === 'system') return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return t;
+}
+function applyTheme(t) {
+  theme = t;
+  document.body.setAttribute('data-theme', resolveTheme(t));
+  document.getElementById('ticon').textContent = TICONS[t];
+  ['sys', 'light', 'dark'].forEach(k => {
+    const el = document.getElementById('tc-' + k);
+    if (el) el.textContent = (k === t || (k === 'sys' && t === 'system')) ? '✓' : '';
+  });
+}
+function setTheme(t) {
+  localStorage.setItem('ehipas-theme', t);
+  closeDD();
+  applyTheme(t);
+}
+
+// ════════════════════════════════
+// DROPDOWN
+// ════════════════════════════════
+let openDD = null;
+function togDD(id) {
+  const m = document.getElementById(id + '-dd');
+  const ov = document.getElementById('ov');
+  if (openDD === id) { closeDD(); return; }
+  closeDD();
+  m.classList.add('open');
+  ov.classList.add('on');
+  openDD = id;
+}
+function closeDD() {
+  document.querySelectorAll('.ddmenu').forEach(m => m.classList.remove('open'));
+  document.getElementById('ov').classList.remove('on');
+  openDD = null;
+}
+
+// ════════════════════════════════
+// SELECT PHASE
+// ════════════════════════════════
+function selectPhase(i) {
+  curPhase = i;
+  renderAll();
+}
+
+// ════════════════════════════════
+// RENDER
+// ════════════════════════════════
+function renderAll() {
+  renderToggles();
+  renderBadge();
+  renderTable();
+  renderBox();
+  renderDesc();
+  applyLangStatic();
+}
+
+function renderToggles() {
+  const names = txa('pname');
+  const tags  = txa('ptag');
+  document.getElementById('phase-toggles').innerHTML = PHASES.map((_, i) => {
+    const on = i === curPhase ? 'on' : '';
+    // Dot uses neon color as background only — safe on both themes
+    const dotStyle = `background:${PCOL[i]}`;
+    return `<label class="ttog ${on}" onclick="selectPhase(${i})">
+      <span class="tdot" style="${dotStyle}"></span>
+      <span class="tname">${names[i] || ''}</span>
+      <span class="ttag">${tags[i] || ''}</span>
+    </label>`;
+  }).join('');
+}
+
+function renderBadge() {
+  document.getElementById('rbdg').textContent = tx('badge', curPhase + 1);
+}
+
+function renderDesc() {
+  const descs = txa('pdesc');
+  document.getElementById('desc-txt').textContent = descs[curPhase] || '';
+}
+
+// Table rows definition
+function getRows() {
+  return [
+    { key: 'a_creators', render: p => listOf(p.creators) },
+    { key: 'a_buyers',   render: p => listOf(p.buyers)   },
+    { key: 'a_exp',      render: p => listOf(p.experience_types) },
+    { key: 'a_pay',      render: p => listOf(p.payments) },
+    { key: 'a_school',   render: p => boolStr(p.creator_school) },
+    { key: 'a_nft',      render: p => boolStr(p.nft_artifacts)  },
+  ];
+}
+
+function listOf(arr) {
+  return arr.map(k => tx(k)).join(', ');
+}
+
+function boolStr(val) {
+  if (val === true)       return tx('yes');
+  if (val === false)      return tx('no');
+  return tx('possible');
+}
+
+function boolCls(val) {
+  if (val === true)  return 'val-yes';
+  if (val === false) return 'val-no';
+  return 'val-pos';
+}
+
+function listCls(arr, i) {
+  // For selected column: use sv class; otherwise plain
+  return i === curPhase ? 'sel sv' : '';
+}
+
+function renderTable() {
+  // Head
+  let headHtml = '<tr><th>' + tx('c_attr') + '</th>';
+  PHASES.forEach((_, i) => {
+    const sel = i === curPhase ? 'sel' : '';
+    const dotStyle = `background:${PCOL[i]}`;
+    headHtml += `<th class="${sel}"><span class="ph-th"><span class="tdot" style="${dotStyle}"></span>${tx('c_p', i + 1)}</span></th>`;
+  });
+  headHtml += '</tr>';
+  document.getElementById('tbl-head').innerHTML = headHtml;
+
+  // Body
+  const rows = getRows();
+  let bodyHtml = '';
+  rows.forEach(row => {
+    bodyHtml += '<tr>';
+    bodyHtml += `<td class="mn">${tx(row.key)}</td>`;
+    PHASES.forEach((p, i) => {
+      const val = row.render(p);
+      let cls = i === curPhase ? 'sel sv' : '';
+      // For boolean rows, also apply val-yes/no/pos classes when not selected
+      if (i !== curPhase) {
+        if (row.key === 'a_school' || row.key === 'a_nft') {
+          cls = boolCls(p[row.key === 'a_school' ? 'creator_school' : 'nft_artifacts']);
+        }
+      }
+      bodyHtml += `<td class="${cls}">${val}</td>`;
+    });
+    bodyHtml += '</tr>';
+  });
+  document.getElementById('tbl-body').innerHTML = bodyHtml;
+}
+
+function renderBox() {
+  const p = PHASES[curPhase];
+  const i = curPhase;
+  const names = txa('pname');
+  const notes = txa('notes');
+
+  document.getElementById('rbox-title').textContent = tx('rbox_title', i + 1);
+
+  document.getElementById('rbox-metrics').innerHTML = `
+    <div>
+      <div class="rml">${tx('m_country')}</div>
+      <div class="rmv" style="font-size:12px">${tx('country')}</div>
+    </div>
+    <div>
+      <div class="rml">${tx('m_creators')}</div>
+      <div class="rmv">${p.creators.length}<span class="rmu">/ 3</span></div>
+    </div>
+    <div>
+      <div class="rml">${tx('m_exp')}</div>
+      <div class="rmv">${p.experience_types.length}<span class="rmu">/ 2</span></div>
+    </div>
+    <div>
+      <div class="rml">${tx('m_pay')}</div>
+      <div class="rmv">${p.payments.length}<span class="rmu">/ 2</span></div>
+    </div>
+    <div>
+      <div class="rml">${tx('m_school')}</div>
+      <div class="rmv ${boolCls(p.creator_school)}" style="font-size:12px">${boolStr(p.creator_school)}</div>
+    </div>
+    <div>
+      <div class="rml">${tx('m_nft')}</div>
+      <div class="rmv ${boolCls(p.nft_artifacts)}" style="font-size:12px">${boolStr(p.nft_artifacts)}</div>
+    </div>`;
+
+  document.getElementById('rbox-note').innerHTML =
+    `<strong>${tx('note_lbl')}:</strong><br>${notes[i] || ''}`;
+}
+
+// ════════════════════════════════
+// LANG
+// ════════════════════════════════
+function applyLangStatic() {
+  document.querySelectorAll('[data-i]').forEach(el => {
+    const k = el.getAttribute('data-i');
+    if (el.tagName === 'INPUT') el.placeholder = tx(k);
+    else el.textContent = tx(k);
+  });
+  document.getElementById('ll').textContent = { en: 'EN', th: 'TH', zh: '中', ru: 'RU' }[lang];
+  document.documentElement.lang = lang;
+  ['en', 'th', 'zh', 'ru'].forEach(l => {
+    const el = document.getElementById('lc-' + l);
+    if (el) el.textContent = l === lang ? '✓' : '';
+    const di = document.querySelector(`[data-l="${l}"]`);
+    if (di) di.classList.toggle('on', l === lang);
+  });
+  document.getElementById('res-title-static') && (
+    document.getElementById('res-title-static').textContent = tx('res_title')
+  );
+}
+
+function applyLang() {
+  applyLangStatic();
+  renderAll();
+}
+
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('ehipas-lang', l);
+  closeDD();
+  applyLang();
+}
+
+// ════════════════════════════════
+// INIT
+// ════════════════════════════════
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (theme === 'system') applyTheme('system');
+});
+
+const savedTheme = localStorage.getItem('ehipas-theme') || 'dark';
+const savedLang  = localStorage.getItem('ehipas-lang')  || 'en';
+lang = savedLang;
+applyTheme(savedTheme);
+applyLang();
+</script>
+</body>
+</html>

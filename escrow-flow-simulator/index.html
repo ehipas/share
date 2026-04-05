@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ehipas — Escrow Flow Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Thai:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --mono:'DM Mono',monospace;
+  --sans:'DM Sans','Noto Sans Thai','Noto Sans SC',sans-serif;
+  --r:10px;--rs:6px;
+  --teal:#4af7c9;--amber:#f7b74a;--red:#f74a4a;--purple:#9b7ef7;
+}
+[data-theme="dark"]{
+  --bg:#0d0d0b;--bg2:#141412;--bg3:#1c1c19;
+  --bd:#2a2a26;--bd2:#3a3a36;
+  --tx:#e8e6dc;--tx2:#88887e;--tx3:#555550;
+  --crd:#141412;--inp:#1c1c19;
+  --acc:#b8f73a;--acc-btn:#b8f73a;--acc-btn-tx:#0d0d0b;
+  --acc-dim:rgba(184,247,58,.09);--acc-brd:rgba(184,247,58,.35);
+  --shd:0 2px 16px rgba(0,0,0,.55);
+  --ok-dim:rgba(74,247,201,.08);--ok-brd:rgba(74,247,201,.3);
+  --warn-dim:rgba(247,183,74,.08);--warn-brd:rgba(247,183,74,.3);
+  --err-dim:rgba(247,74,74,.08);--err-brd:rgba(247,74,74,.3);
+  --pur-dim:rgba(155,126,247,.08);
+}
+[data-theme="light"]{
+  --bg:#f4f3ee;--bg2:#ffffff;--bg3:#eceae2;
+  --bd:#dbd9d0;--bd2:#c8c5bc;
+  --tx:#1a1a17;--tx2:#5c5c58;--tx3:#99998f;
+  --crd:#ffffff;--inp:#eceae2;
+  --acc:#2e7d0e;--acc-btn:#5cb82a;--acc-btn-tx:#ffffff;
+  --acc-dim:rgba(46,125,14,.07);--acc-brd:rgba(46,125,14,.30);
+  --shd:0 2px 16px rgba(0,0,0,.09);
+  --ok-dim:rgba(0,130,80,.07);--ok-brd:rgba(0,130,80,.3);
+  --warn-dim:rgba(160,100,0,.07);--warn-brd:rgba(160,100,0,.3);
+  --err-dim:rgba(180,0,0,.06);--err-brd:rgba(180,0,0,.25);
+  --pur-dim:rgba(100,60,200,.07);
+}
+html,body{width:100%;overflow-x:hidden}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px;line-height:1.5;transition:background .2s,color .2s}
+
+.hdr{border-bottom:1px solid var(--bd);padding:11px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:100;background:var(--bg)}
+.logo{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.1em;color:var(--acc);text-transform:uppercase;flex-shrink:0}
+.hdr-title{font-size:11px;color:var(--tx3);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hdr-ctrls{display:flex;gap:5px;align-items:center;flex-shrink:0}
+
+.ddwrap{position:relative;display:inline-block}
+.ddtrig{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx2);font-family:var(--mono);font-size:11px;padding:5px 8px;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;transition:border-color .15s,color .15s}
+.ddtrig:hover{border-color:var(--bd2);color:var(--tx)}
+.ddarrow{font-size:9px;opacity:.5}
+.ddmenu{display:none;position:absolute;right:0;top:calc(100% + 4px);background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rs);min-width:140px;box-shadow:var(--shd);z-index:300;overflow:hidden}
+.ddmenu.open{display:block}
+.ddi{display:flex;align-items:center;gap:8px;padding:9px 12px;font-size:12px;color:var(--tx2);cursor:pointer;transition:background .1s;border-bottom:1px solid var(--bd)}
+.ddi:last-child{border-bottom:none}
+.ddi:hover{background:var(--bg3);color:var(--tx)}
+.ddi.on{color:var(--acc)}
+.ddi .ck{font-size:10px;margin-left:auto;color:var(--acc)}
+.overlay{display:none;position:fixed;inset:0;z-index:99}
+.overlay.on{display:block}
+
+.wrap{display:grid;grid-template-columns:270px 1fr;min-height:calc(100vh - 45px);align-items:start}
+@media(max-width:767px){.wrap{grid-template-columns:1fr}}
+
+.sb{border-right:1px solid var(--bd);padding:16px 13px;background:var(--bg);overflow:hidden}
+@media(min-width:768px){.sb{position:sticky;top:45px;height:calc(100vh - 45px);overflow-y:auto}.sb::-webkit-scrollbar{width:3px}.sb::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}}
+@media(max-width:767px){.sb{border-right:none;border-bottom:1px solid var(--bd)}}
+
+.slbl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:11px;margin-top:3px}
+.ssec{margin-bottom:20px}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+@media(min-width:768px){.pgrid{grid-template-columns:1fr}}
+.pr{margin-bottom:13px}
+.ph{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.pn{font-size:11px;color:var(--tx2);font-weight:300}
+.pv{font-family:var(--mono);font-size:11px;color:var(--acc);font-weight:500}
+
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:var(--bd2);border-radius:1px;outline:none;cursor:pointer;display:block}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--acc-btn);border-radius:50%;cursor:pointer;transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;background:var(--acc-btn);border-radius:50%;cursor:pointer}
+
+.tgrid{display:grid;grid-template-columns:1fr;gap:5px}
+@media(max-width:767px){.tgrid{grid-template-columns:1fr 1fr}}
+.ttog{display:flex;align-items:center;gap:8px;padding:8px 9px;border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;transition:border-color .2s,background .2s;user-select:none;background:var(--inp)}
+.ttog:hover{border-color:var(--bd2)}
+.ttog.on-ok{border-color:var(--ok-brd);background:var(--ok-dim)}
+.ttog.on-warn{border-color:var(--warn-brd);background:var(--warn-dim)}
+.ttog.on-err{border-color:var(--err-brd);background:var(--err-dim)}
+.ttog input{display:none}
+.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.tname{font-size:11px;line-height:1.3}
+
+.rbtn{width:100%;padding:11px;background:var(--acc-btn);color:var(--acc-btn-tx);border:none;border-radius:var(--rs);font-size:13px;font-weight:500;font-family:var(--sans);cursor:pointer;letter-spacing:.02em;transition:opacity .2s,transform .1s;margin-top:4px}
+.rbtn:hover{opacity:.88}
+.rbtn:active{transform:scale(.98)}
+
+.main{padding:18px 14px;background:var(--bg);min-width:0;overflow:hidden}
+@media(min-width:768px){.main{padding:22px 26px}}
+
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:40vh;color:var(--tx3);text-align:center;gap:10px}
+.empty-icon{font-family:var(--mono);font-size:26px;color:var(--bd2)}
+
+.results{display:none;min-width:0}
+.results.on{display:block}
+
+/* INSIGHT */
+.insight{border:1px solid var(--bd);border-left:3px solid var(--purple);border-radius:var(--r);padding:14px 16px;margin-bottom:20px;background:var(--pur-dim)}
+.insight-title{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:8px}
+.insight-body{font-size:11px;color:var(--tx2);line-height:1.75}
+.insight-body strong{color:var(--tx)}
+
+/* WARNING BOX */
+.warn-box{border:1px solid var(--warn-brd);border-left:3px solid var(--amber);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;background:var(--warn-dim);font-size:11px;color:var(--tx2);line-height:1.7}
+.warn-box strong{color:var(--tx)}
+.warn-icon{color:var(--amber);font-weight:500;margin-right:4px}
+
+/* FLOW */
+.sec-sub{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;margin-top:20px}
+.flow{display:flex;flex-direction:column;gap:0;margin-bottom:20px}
+.fstep{display:grid;grid-template-columns:90px 1fr;border-left:2px solid var(--bd)}
+.fstep.hl-ok{border-left-color:var(--teal)}
+.fstep.hl-err{border-left-color:var(--red)}
+.fstep.hl-warn{border-left-color:var(--amber)}
+.fstep.hl-acc{border-left-color:var(--acc)}
+.fstep.hl-pur{border-left-color:var(--purple)}
+@media(max-width:500px){.fstep{grid-template-columns:1fr}.ftime{border-right:none;border-bottom:1px solid var(--bd)}}
+.ftime{padding:10px 8px 10px 12px;font-family:var(--mono);font-size:10px;color:var(--tx3);border-right:1px solid var(--bd);line-height:1.4}
+.fcontent{padding:10px 14px}
+.fstep-title{font-size:12px;font-weight:500;margin-bottom:4px}
+.fstep-desc{font-size:11px;color:var(--tx2);line-height:1.6}
+.ftags{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.ftag{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:3px;border:1px solid;white-space:nowrap}
+.ftag-ok{color:var(--teal);background:var(--ok-dim);border-color:var(--ok-brd)}
+.ftag-acc{color:var(--acc);background:var(--acc-dim);border-color:var(--acc-brd)}
+.ftag-amber{color:var(--amber);background:var(--warn-dim);border-color:var(--warn-brd)}
+.ftag-red{color:var(--red);background:var(--err-dim);border-color:var(--err-brd)}
+.ftag-gray{color:var(--tx2);background:var(--bg3);border-color:var(--bd2)}
+.ftag-pur{color:var(--purple);background:var(--pur-dim);border-color:rgba(155,126,247,.3)}
+
+/* BALANCES */
+.bal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:20px}
+.bal-card{border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;background:var(--crd)}
+.bal-card.pos-card{border-color:var(--acc-brd);background:var(--acc-dim)}
+.bal-card.neg-card{border-color:var(--err-brd);background:var(--err-dim)}
+.bal-card.zero-card{opacity:.6}
+.bal-label{font-size:9px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);margin-bottom:4px}
+.bal-name{font-size:12px;font-weight:500;margin-bottom:8px;color:var(--tx)}
+.bal-amount{font-family:var(--mono);font-size:18px;font-weight:300}
+.bal-amount.pos{color:var(--acc)}
+.bal-amount.neg{color:var(--red)}
+.bal-amount.zero{color:var(--tx3)}
+
+/* CONCLUSION */
+.concl{border:1px solid var(--bd);border-radius:var(--r);padding:15px 16px;margin-bottom:20px}
+.concl.ok{border-left:3px solid var(--teal);background:var(--ok-dim)}
+.concl.err{border-left:3px solid var(--red);background:var(--err-dim)}
+.concl.warn{border-left:3px solid var(--amber);background:var(--warn-dim)}
+.concl-title{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.concl-title.ok{color:var(--teal)}
+.concl-title.err{color:var(--red)}
+.concl-title.warn{color:var(--amber)}
+.concl-body{font-size:11px;color:var(--tx2);line-height:1.75}
+.concl-body strong{color:var(--tx)}
+</style>
+</head>
+<body data-theme="system-placeholder">
+
+<div class="overlay" id="ov" onclick="closeDD()"></div>
+
+<div class="hdr">
+  <span class="logo">ehipas</span>
+  <span class="hdr-title" data-i="hdr_title">Escrow Flow Simulator</span>
+  <div class="hdr-ctrls">
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('lang')"><span id="ll">EN</span><span class="ddarrow">▾</span></button>
+      <div class="ddmenu" id="lang-dd">
+        <div class="ddi on" data-l="en" onclick="setLang('en')">🇬🇧 English<span class="ck" id="lc-en">✓</span></div>
+        <div class="ddi" data-l="th" onclick="setLang('th')">🇹🇭 ภาษาไทย<span class="ck" id="lc-th"></span></div>
+        <div class="ddi" data-l="zh" onclick="setLang('zh')">🇨🇳 中文<span class="ck" id="lc-zh"></span></div>
+        <div class="ddi" data-l="ru" onclick="setLang('ru')">🇷🇺 Русский<span class="ck" id="lc-ru"></span></div>
+      </div>
+    </div>
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('theme')"><span id="ticon">⊙</span><span class="ddarrow">▾</span></button>
+      <div class="ddmenu" id="theme-dd">
+        <div class="ddi on" onclick="setTheme('system')">⊙ <span data-i="th_sys">System</span><span class="ck" id="tc-sys">✓</span></div>
+        <div class="ddi" onclick="setTheme('light')">☀ <span data-i="th_light">Light</span><span class="ck" id="tc-light"></span></div>
+        <div class="ddi" onclick="setTheme('dark')">☾ <span data-i="th_dark">Dark</span><span class="ck" id="tc-dark"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <aside class="sb">
+    <div class="ssec">
+      <div class="slbl" data-i="s_ticket">Ticket params</div>
+      <div class="pgrid">
+        <div class="pr">
+          <div class="ph"><span class="pn" data-i="p_start">Start price (USDT)</span><span class="pv" id="v-start">10</span></div>
+          <input type="range" min="0" max="20" value="10" oninput="upd('start',this.value)">
+        </div>
+        <div class="pr">
+          <div class="ph"><span class="pn" data-i="p_markup">Resale markup %</span><span class="pv" id="v-markup">20%</span></div>
+          <input type="range" min="1" max="100" value="20" oninput="upd('markup',this.value)">
+        </div>
+        <div class="pr">
+          <div class="ph"><span class="pn" data-i="p_resales">Resale rounds</span><span class="pv" id="v-resales">3</span></div>
+          <input type="range" min="1" max="10" value="3" oninput="upd('resales',this.value)">
+        </div>
+      </div>
+    </div>
+    <div class="ssec">
+      <div class="slbl" data-i="s_fees">Fees</div>
+      <div class="pgrid">
+        <div class="pr">
+          <div class="ph"><span class="pn" data-i="p_comm">Exchange fee %</span><span class="pv" id="v-comm">10%</span></div>
+          <input type="range" min="5" max="20" value="10" oninput="upd('comm',this.value)">
+        </div>
+        <div class="pr">
+          <div class="ph"><span class="pn" data-i="p_roy">Creator royalty %</span><span class="pv" id="v-roy">5%</span></div>
+          <input type="range" min="0" max="10" value="5" oninput="upd('roy',this.value)">
+        </div>
+        <div class="pr">
+          <div class="ph"><span class="pn" data-i="p_gas">Gas (USDT)</span><span class="pv" id="v-gas">0.01</span></div>
+          <input type="range" min="1" max="100" value="1" oninput="upd('gas',this.value)">
+        </div>
+      </div>
+    </div>
+    <div class="ssec">
+      <div class="slbl" data-i="s_scenario">Scenario</div>
+      <div class="tgrid">
+        <label class="ttog on-ok" id="lbl-ok" onclick="setScenario('ok',this)">
+          <input type="radio" name="sc" checked>
+          <span class="tdot" style="background:var(--teal)"></span>
+          <span class="tname" data-i="sc_ok">Success</span>
+        </label>
+        <label class="ttog" id="lbl-cancel" onclick="setScenario('cancel',this)">
+          <input type="radio" name="sc">
+          <span class="tdot" style="background:var(--red)"></span>
+          <span class="tname" data-i="sc_cancel">Creator cancelled</span>
+        </label>
+        <label class="ttog" id="lbl-complaint" onclick="setScenario('complaint',this)">
+          <input type="radio" name="sc">
+          <span class="tdot" style="background:var(--amber)"></span>
+          <span class="tname" data-i="sc_complaint">Valid complaint</span>
+        </label>
+      </div>
+    </div>
+    <button class="rbtn" onclick="run()" data-i="btn_run">Calculate →</button>
+  </aside>
+
+  <main class="main">
+    <div class="empty" id="empty">
+      <div class="empty-icon">⇄</div>
+      <div style="font-size:13px;font-weight:300" data-i="empty_lbl">Configure parameters and calculate</div>
+    </div>
+    <div class="results" id="res"></div>
+  </main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// I18N
+// ═══════════════════════════════════════════════
+const L = {
+  en: {
+    hdr_title: 'Escrow Flow Simulator',
+    s_ticket: 'Ticket params', s_fees: 'Fees', s_scenario: 'Scenario',
+    p_start: 'Start price (USDT)', p_markup: 'Resale markup %', p_resales: 'Resale rounds',
+    p_comm: 'Exchange fee %', p_roy: 'Creator royalty %', p_gas: 'Gas (USDT)',
+    sc_ok: 'Success', sc_cancel: 'Creator cancelled', sc_complaint: 'Valid complaint',
+    btn_run: 'Calculate →', empty_lbl: 'Configure parameters and calculate',
+    th_sys: 'System', th_light: 'Light', th_dark: 'Dark',
+    insight_title: 'Key architecture decision',
+    insight_body: '<strong>Off-chain escrow + one on-chain transaction at the end.</strong><br>All resales happen as database records only — no blockchain. Gas is paid <strong>exactly once</strong> at final settlement.<br><br>On cancellation or complaint — on-chain was never called. Refund = database record reversal. <strong>Gas loss risk = 0 USDT.</strong>',
+    flow_title: 'Money flow',
+    bal_title: 'Final balances',
+    bal_result: 'Result',
+    concl_ok_title: '✓ Successful settlement',
+    concl_cancel_title: '⚠ Cancellation — full refund',
+    concl_complaint_title: '⚠ Complaint accepted — refund to winner',
+    lbl_creator: 'Creator',
+    lbl_spec: (n) => `Speculator #${n}`,
+    lbl_winner: 'Winner (final)',
+    lbl_exchange: 'Exchange',
+    lbl_blockchain: 'Blockchain (gas)',
+    step_t0_title: (buyer) => `Creator → ${buyer}`,
+    step_t0_desc: (p) => `Buyer pays ${p} USDT → off-chain escrow. Exchange takes fee from primary price. Creator receives remainder. Ownership = DB record.`,
+    step_resale_title: (n, s, b) => `Resale #${n}: ${s} → ${b}`,
+    step_resale_desc: (p) => `Price: ${p} USDT. Stays in escrow. DB ownership change only. Gas: 0.`,
+    step_settle_title: 'On-chain settlement (single transaction)',
+    step_settle_desc: (g) => `Experience completed. No complaints for 48h. One smart contract call. Gas: ${g} USDT. All payouts from escrow.`,
+    step_cancel_title: '⚠ Creator cancelled',
+    step_cancel_desc: 'Ehipas team initiates cancellation. All transactions were off-chain — DB reversal, zero gas. Everyone gets back exactly what they paid.',
+    step_complaint_title: '⚠ Complaint accepted',
+    step_complaint_desc: 'Ehipas team investigates and confirms complaint. Winner gets full refund. Speculators return profits.',
+    tag_escrow: '→ Escrow', tag_gas_zero: 'Gas: 0 (off-chain)', tag_on_chain: 'On-chain tx',
+    tag_creator: 'Creator', tag_exchange: 'Exchange', tag_gas: 'Gas',
+    tag_refund: 'Refund', tag_no_gain: 'No profit',
+    warn_spec_loss_title: '⚠ Economic note',
+    warn_spec_loss: (markup, fees) => `With markup ${markup}% and total fees ${fees}% (exchange + royalty), speculators operate at a loss on every resale. For speculators to profit: markup must exceed total fees. Raise the markup above ${fees}% to see positive speculator balances.`,
+    concl_ok: (exch, creator, gas) => `Exchange earned <strong>${f2(exch)} USDT</strong>. Creator received <strong>${f2(creator)} USDT</strong> (primary + royalties). Gas paid once: <strong>${f2(gas)} USDT</strong>. Winner got the experience.`,
+    concl_cancel: 'Everyone gets back <strong>exactly what they paid</strong>. Gas was not spent. <strong>Exchange losses: 0 USDT.</strong><br><br>Possible only with off-chain escrow. On-chain model would lose gas on every resale upon cancellation.',
+    concl_complaint: (final) => `Winner gets full refund of <strong>${f2(final)} USDT</strong>. Speculators return profits — get back purchase price only. Creator gets nothing. Gas: <strong>0 USDT</strong>.<br><br><strong>Reverse chain works</strong> because all funds were in off-chain escrow the whole time.`,
+  },
+  th: {
+    hdr_title: 'จำลองการไหลของเอสโครว์',
+    s_ticket: 'พารามิเตอร์ตั๋ว', s_fees: 'ค่าธรรมเนียม', s_scenario: 'สถานการณ์',
+    p_start: 'ราคาเริ่มต้น (USDT)', p_markup: 'ค่านายหน้าขายต่อ %', p_resales: 'รอบขายต่อ',
+    p_comm: 'ค่าธรรมเนียมแลกเปลี่ยน %', p_roy: 'ค่าลิขสิทธิ์ผู้สร้าง %', p_gas: 'Gas (USDT)',
+    sc_ok: 'สำเร็จ', sc_cancel: 'ผู้สร้างยกเลิก', sc_complaint: 'ร้องเรียนสำเร็จ',
+    btn_run: 'คำนวณ →', empty_lbl: 'ตั้งค่าพารามิเตอร์และคำนวณ',
+    th_sys: 'ระบบ', th_light: 'สว่าง', th_dark: 'มืด',
+    insight_title: 'การตัดสินใจทางสถาปัตยกรรมหลัก',
+    insight_body: '<strong>Escrow นอกเครือข่าย + ธุรกรรม on-chain เดียวในตอนท้าย</strong><br>การขายต่อทั้งหมดเป็นเพียงระเบียนในฐานข้อมูล Gas จ่าย<strong>ครั้งเดียว</strong>ตอนชำระสุดท้าย<br><br>ยกเลิกหรือร้องเรียน — on-chain ไม่ถูกเรียก คืนเงิน = พลิกระเบียน DB <strong>ความเสี่ยง Gas = 0 USDT</strong>',
+    flow_title: 'การไหลของเงิน', bal_title: 'ยอดคงเหลือสุดท้าย', bal_result: 'ผลลัพธ์',
+    concl_ok_title: '✓ ชำระเสร็จสิ้น', concl_cancel_title: '⚠ ยกเลิก — คืนเงินทั้งหมด', concl_complaint_title: '⚠ ยอมรับคำร้องเรียน — คืนเงินให้ผู้ชนะ',
+    lbl_creator: 'ผู้สร้าง', lbl_spec: (n) => `นักเก็งกำไร #${n}`, lbl_winner: 'ผู้ชนะ (สุดท้าย)', lbl_exchange: 'ตลาดแลกเปลี่ยน', lbl_blockchain: 'Blockchain (gas)',
+    step_t0_title: (buyer) => `ผู้สร้าง → ${buyer}`,
+    step_t0_desc: (p) => `ผู้ซื้อ: ${p} USDT → escrow นอกเครือข่าย ตลาดรับค่าธรรมเนียมจากราคาหลัก`,
+    step_resale_title: (n, s, b) => `ขายต่อ #${n}: ${s} → ${b}`,
+    step_resale_desc: (p) => `ราคา: ${p} USDT อยู่ใน escrow เปลี่ยนเจ้าของใน DB เท่านั้น Gas: 0`,
+    step_settle_title: 'ชำระ on-chain (ธุรกรรมเดียว)',
+    step_settle_desc: (g) => `ประสบการณ์เสร็จสิ้น ไม่มีร้องเรียน 48 ชม. Gas: ${g} USDT`,
+    step_cancel_title: '⚠ ผู้สร้างยกเลิก', step_cancel_desc: 'ทีม Ehipas เริ่มยกเลิก พลิก DB Gas: 0 ทุกคนได้รับคืนเท่าที่จ่าย',
+    step_complaint_title: '⚠ ยอมรับคำร้องเรียน', step_complaint_desc: 'ทีม Ehipas ตรวจสอบและยืนยัน ผู้ชนะได้รับเงินคืนเต็มจำนวน',
+    tag_escrow: '→ Escrow', tag_gas_zero: 'Gas: 0', tag_on_chain: 'On-chain', tag_creator: 'ผู้สร้าง', tag_exchange: 'แลกเปลี่ยน', tag_gas: 'Gas', tag_refund: 'คืนเงิน', tag_no_gain: 'ไม่มีกำไร',
+    warn_spec_loss_title: '⚠ หมายเหตุทางเศรษฐกิจ',
+    warn_spec_loss: (markup, fees) => `ด้วยค่านายหน้า ${markup}% และค่าธรรมเนียมรวม ${fees}% นักเก็งกำไรขาดทุนในทุกการขายต่อ เพิ่มค่านายหน้าให้เกิน ${fees}% เพื่อให้นักเก็งกำไรได้กำไร`,
+    concl_ok: (e, c, g) => `ตลาดได้รับ <strong>${f2(e)} USDT</strong> ผู้สร้างได้รับ <strong>${f2(c)} USDT</strong> Gas: <strong>${f2(g)} USDT</strong>`,
+    concl_cancel: 'ทุกคนได้รับคืน <strong>เท่าที่จ่าย</strong> Gas: 0 <strong>ขาดทุน: 0 USDT</strong>',
+    concl_complaint: (f) => `ผู้ชนะได้รับคืน <strong>${f2(f)} USDT</strong> Gas: <strong>0 USDT</strong>`,
+  },
+  zh: {
+    hdr_title: '资金托管流模拟器',
+    s_ticket: '票务参数', s_fees: '费用', s_scenario: '场景',
+    p_start: '起始价格 (USDT)', p_markup: '转售加价 %', p_resales: '转售轮次',
+    p_comm: '交易所佣金 %', p_roy: '创作者版税 %', p_gas: 'Gas (USDT)',
+    sc_ok: '成功', sc_cancel: '创作者取消', sc_complaint: '投诉成立',
+    btn_run: '计算 →', empty_lbl: '设置参数并计算',
+    th_sys: '跟随系统', th_light: '浅色', th_dark: '深色',
+    insight_title: '核心架构决策',
+    insight_body: '<strong>链下托管 + 最终一次链上交易</strong><br>所有转售仅为数据库记录。Gas <strong>仅支付一次</strong>于最终结算。<br><br>取消或投诉时 — 链上从未调用。退款 = 数据库回滚。<strong>Gas损失风险 = 0 USDT</strong>',
+    flow_title: '资金流向', bal_title: '最终余额', bal_result: '结果',
+    concl_ok_title: '✓ 成功结算', concl_cancel_title: '⚠ 取消 — 全额退款', concl_complaint_title: '⚠ 投诉成立 — 退款给获胜者',
+    lbl_creator: '创作者', lbl_spec: (n) => `投机者 #${n}`, lbl_winner: '获胜者（最终）', lbl_exchange: '交易所', lbl_blockchain: 'Blockchain (gas)',
+    step_t0_title: (buyer) => `创作者 → ${buyer}`,
+    step_t0_desc: (p) => `买方: ${p} USDT → 链下托管。交易所从主价格中收取费用。`,
+    step_resale_title: (n, s, b) => `转售 #${n}: ${s} → ${b}`,
+    step_resale_desc: (p) => `价格: ${p} USDT 留在托管中 DB更改所有权 Gas: 0`,
+    step_settle_title: '链上结算（单笔交易）',
+    step_settle_desc: (g) => `体验完成，48小时无投诉。Gas: ${g} USDT`,
+    step_cancel_title: '⚠ 创作者取消', step_cancel_desc: 'Ehipas团队发起取消。链下回滚，Gas: 0。各方取回原款。',
+    step_complaint_title: '⚠ 投诉成立', step_complaint_desc: 'Ehipas团队核实确认。获胜者获全额退款，投机者退还利润。',
+    tag_escrow: '→ 托管', tag_gas_zero: 'Gas: 0', tag_on_chain: '链上', tag_creator: '创作者', tag_exchange: '交易所', tag_gas: 'Gas', tag_refund: '退款', tag_no_gain: '无利润',
+    warn_spec_loss_title: '⚠ 经济说明',
+    warn_spec_loss: (markup, fees) => `加价 ${markup}% 低于总费率 ${fees}%，投机者每次转售都亏损。将加价提高到 ${fees}% 以上可看到正余额。`,
+    concl_ok: (e, c, g) => `交易所获得 <strong>${f2(e)} USDT</strong> 创作者获得 <strong>${f2(c)} USDT</strong> Gas: <strong>${f2(g)} USDT</strong>`,
+    concl_cancel: '各方取回<strong>原付款项</strong>。Gas: 0。<strong>交易所损失: 0 USDT</strong>',
+    concl_complaint: (f) => `获胜者获退款 <strong>${f2(f)} USDT</strong> Gas: <strong>0 USDT</strong>`,
+  },
+  ru: {
+    hdr_title: 'Симулятор потоков эскроу',
+    s_ticket: 'Параметры билета', s_fees: 'Комиссии', s_scenario: 'Сценарий',
+    p_start: 'Стартовая цена (USDT)', p_markup: 'Наценка при перепродаже %', p_resales: 'Раундов перепродаж',
+    p_comm: 'Комиссия биржи %', p_roy: 'Роялти создателя %', p_gas: 'Gas (USDT)',
+    sc_ok: 'Успех', sc_cancel: 'Создатель отменил', sc_complaint: 'Обоснованная жалоба',
+    btn_run: 'Рассчитать →', empty_lbl: 'Настройте параметры и нажмите «Рассчитать»',
+    th_sys: 'Системная', th_light: 'Светлая', th_dark: 'Тёмная',
+    insight_title: 'Ключевое архитектурное решение',
+    insight_body: '<strong>Off-chain эскроу + одна on-chain транзакция в конце.</strong><br>Все перепродажи — только записи в БД, без блокчейна. Gas платится <strong>ровно один раз</strong> при финальном расчёте.<br><br>При отмене или жалобе — on-chain не вызывался. Возврат = разворот записей в БД. <strong>Риск потери gas = 0 USDT.</strong>',
+    flow_title: 'Поток денег', bal_title: 'Итоговые балансы', bal_result: 'Итог',
+    concl_ok_title: '✓ Успешное завершение', concl_cancel_title: '⚠ Отмена — полный возврат', concl_complaint_title: '⚠ Жалоба принята — возврат победителю',
+    lbl_creator: 'Создатель', lbl_spec: (n) => `Спекулянт #${n}`, lbl_winner: 'Победитель (финальный)', lbl_exchange: 'Биржа', lbl_blockchain: 'Blockchain (gas)',
+    step_t0_title: (buyer) => `Создатель → ${buyer}`,
+    step_t0_desc: (p) => `Покупатель вносит ${p} USDT → off-chain эскроу. Биржа удерживает комиссию с первичной цены. Смена владельца = запись в БД.`,
+    step_resale_title: (n, s, b) => `Перепродажа #${n}: ${s} → ${b}`,
+    step_resale_desc: (p) => `Цена: ${p} USDT. Остаётся в эскроу. Смена владельца в БД. Gas: 0.`,
+    step_settle_title: 'On-chain расчёт (единственная транзакция)',
+    step_settle_desc: (g) => `Впечатление прошло. 48ч без жалоб. Биржа вызывает смарт-контракт. Gas: ${g} USDT. Все выплаты из эскроу.`,
+    step_cancel_title: '⚠ Создатель отменил впечатление',
+    step_cancel_desc: 'Команда Ehipas инициирует отмену. Все транзакции off-chain — разворот в БД, gas = 0. Каждый получает ровно то что заплатил.',
+    step_complaint_title: '⚠ Жалоба принята',
+    step_complaint_desc: 'Команда Ehipas расследует и подтверждает жалобу. Победитель получает полный возврат. Спекулянты возвращают прибыли.',
+    tag_escrow: '→ Эскроу', tag_gas_zero: 'Gas: 0 (off-chain)', tag_on_chain: 'On-chain',
+    tag_creator: 'Создателю', tag_exchange: 'Бирже', tag_gas: 'Gas',
+    tag_refund: 'Возврат', tag_no_gain: 'Без прибыли',
+    warn_spec_loss_title: '⚠ Экономическое примечание',
+    warn_spec_loss: (markup, fees) => `При наценке ${markup}% и суммарных комиссиях ${fees}% (биржа + роялти) спекулянты получают убыток с каждой перепродажи. Чтобы спекулянты зарабатывали — наценка должна превышать суммарные комиссии. Поднимите наценку выше ${fees}%, чтобы увидеть положительные балансы.`,
+    concl_ok: (e, c, g) => `Биржа заработала <strong>${f2(e)} USDT</strong>. Создатель получил <strong>${f2(c)} USDT</strong>. Gas оплачен один раз: <strong>${f2(g)} USDT</strong>. Победитель получил впечатление.`,
+    concl_cancel: 'Все участники получают обратно <strong>ровно то что заплатили</strong>. Gas не тратился. <strong>Потери биржи: 0 USDT.</strong><br><br>Возможно только при off-chain эскроу. On-chain модель тратила бы gas на каждую перепродажу.',
+    concl_complaint: (final) => `Победитель получает полный возврат <strong>${f2(final)} USDT</strong>. Спекулянты получают обратно закупочную цену (без прибыли). Создатель не получает ничего. Gas: <strong>0 USDT</strong>.<br><br><strong>Обратная цепочка работает</strong> потому что все деньги находились в off-chain эскроу.`,
+  }
+};
+
+let lang = 'en';
+const tx = (k, ...a) => {
+  const v = L[lang][k] ?? L.en[k] ?? k;
+  return typeof v === 'function' ? v(...a) : v;
+};
+
+function applyLang() {
+  document.querySelectorAll('[data-i]').forEach(el => {
+    const k = el.getAttribute('data-i');
+    el.textContent = tx(k);
+  });
+  document.getElementById('ll').textContent = { en: 'EN', th: 'TH', zh: '中', ru: 'RU' }[lang];
+  document.documentElement.lang = lang;
+  ['en', 'th', 'zh', 'ru'].forEach(l => {
+    const el = document.getElementById('lc-' + l);
+    if (el) el.textContent = l === lang ? '✓' : '';
+    const di = document.querySelector(`[data-l="${l}"]`);
+    if (di) di.classList.toggle('on', l === lang);
+  });
+}
+
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('ehipas-lang', l);
+  closeDD();
+  applyLang();
+  // Auto-rerender results if they are already visible
+  if (document.getElementById('res').classList.contains('on')) {
+    run();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════
+let theme = 'system';
+const TICONS = { system: '⊙', light: '☀', dark: '☾' };
+
+function resolveTheme(t) {
+  if (t === 'system') return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return t;
+}
+
+function applyTheme(t) {
+  theme = t;
+  document.body.setAttribute('data-theme', resolveTheme(t));
+  document.getElementById('ticon').textContent = TICONS[t];
+  ['sys', 'light', 'dark'].forEach(k => {
+    const el = document.getElementById('tc-' + k);
+    if (el) el.textContent = (k === t || (k === 'sys' && t === 'system')) ? '✓' : '';
+    const di = document.getElementById('tc-' + k)?.closest('.ddi');
+    if (di) di.classList.toggle('on', k === t || (k === 'sys' && t === 'system'));
+  });
+}
+
+function setTheme(t) {
+  localStorage.setItem('ehipas-theme', t);
+  closeDD();
+  applyTheme(t);
+}
+
+// ═══════════════════════════════════════════════
+// DROPDOWN
+// ═══════════════════════════════════════════════
+let openDD = null;
+function togDD(id) {
+  const m = document.getElementById(id + '-dd'), ov = document.getElementById('ov');
+  if (openDD === id) { closeDD(); return; }
+  closeDD();
+  m.classList.add('open');
+  ov.classList.add('on');
+  openDD = id;
+}
+function closeDD() {
+  document.querySelectorAll('.ddmenu').forEach(m => m.classList.remove('open'));
+  document.getElementById('ov').classList.remove('on');
+  openDD = null;
+}
+
+// ═══════════════════════════════════════════════
+// PARAMS
+// ═══════════════════════════════════════════════
+const P = { start: 10, markup: 20, resales: 3, comm: 10, roy: 5, gas: 0.01 };
+let scenario = 'ok';
+
+function upd(k, v) {
+  const fv = parseFloat(v);
+  const disp = { start: fv, markup: fv + '%', resales: fv, comm: fv + '%', roy: fv + '%', gas: (fv / 100).toFixed(2) };
+  document.getElementById('v-' + k).textContent = disp[k];
+  if (k === 'start') P.start = fv;
+  else if (k === 'markup') P.markup = fv;
+  else if (k === 'resales') P.resales = fv;
+  else if (k === 'comm') P.comm = fv;
+  else if (k === 'roy') P.roy = fv;
+  else if (k === 'gas') P.gas = fv / 100;
+}
+
+function setScenario(s, lbl) {
+  scenario = s;
+  document.querySelectorAll('.ttog').forEach(t => t.className = t.className.replace(/\bon-\w+/g, ''));
+  const cls = { ok: 'on-ok', cancel: 'on-err', complaint: 'on-warn' };
+  lbl.classList.add(cls[s]);
+}
+
+const f2 = n => (+n).toFixed(2);
+
+// Helpers for labels (use current lang)
+const specLabel = n => tx('lbl_spec', n);
+const winnerLabel = () => tx('lbl_winner');
+const creatorLabel = () => tx('lbl_creator');
+const exchangeLabel = () => tx('lbl_exchange');
+const blockchainLabel = () => tx('lbl_blockchain');
+
+// ═══════════════════════════════════════════════
+// ECONOMIC CALCULATION ENGINE
+// ═══════════════════════════════════════════════
+/*
+  ESCROW MODEL:
+  - Primary sale: Buyer pays startPrice → escrow
+    Exchange takes: startPrice * comm/100  (primary commission)
+    Creator gets:  startPrice * (1 - comm/100)  (primary revenue)
+    Note: royalty is ONLY on secondary sales
+
+  - Secondary sale n: Seller lists at prevPrice*(1+markup/100)
+    Exchange takes: salePrice * comm/100
+    Creator gets:  salePrice * roy/100  (royalty)
+    Seller gets:   salePrice * (1 - comm/100 - roy/100)
+
+  - Speculator net = sum(received from resale) - sum(paid for purchase)
+    For speculator to profit: markup% > (comm% + roy%)
+    Because: salePrice*(1-comm%-roy%) > purchasePrice
+    => purchasePrice*(1+markup%)*(1-comm%-roy%) > purchasePrice
+    => (1+markup%)*(1-comm%-roy%) > 1
+
+  - Final settlement (success): one on-chain tx, exchange pays gas from its revenue
+  - Cancellation: off-chain reversal, gas=0, everyone gets back exactly what they paid
+  - Complaint: winner gets full refund of final price, speculators get back purchase price only
+*/
+
+function run() {
+  document.getElementById('empty').style.display = 'none';
+  const resEl = document.getElementById('res');
+  resEl.classList.add('on');
+
+  // Build price chain
+  // chain[0] = primary sale
+  // chain[1..n] = secondary sales
+  const chain = [];
+  let price = P.start;
+
+  chain.push({
+    round: 0,
+    type: 'primary',
+    seller: creatorLabel(),
+    buyer: specLabel(1),
+    price: price
+  });
+
+  for (let i = 1; i <= P.resales; i++) {
+    price = price * (1 + P.markup / 100);
+    const isLast = i === P.resales;
+    chain.push({
+      round: i,
+      type: 'secondary',
+      seller: specLabel(i),
+      buyer: isLast ? winnerLabel() : specLabel(i + 1),
+      price: price,
+      isLast: isLast
+    });
+  }
+
+  const finalPrice = price; // what winner paid
+
+  // ─── PRIMARY CALCULATIONS ───
+  const primComm = chain[0].price * P.comm / 100;       // exchange fee on primary
+  const primToCreator = chain[0].price - primComm;       // creator receives from primary (no royalty on primary)
+
+  // ─── SECONDARY CALCULATIONS ───
+  // For each resale: exchange fee + creator royalty + seller proceeds
+  const secCalc = chain.slice(1).map(tx2 => {
+    const secComm = tx2.price * P.comm / 100;
+    const secRoy  = tx2.price * P.roy / 100;
+    const sellerGets = tx2.price - secComm - secRoy;
+    return { ...tx2, secComm, secRoy, sellerGets };
+  });
+
+  // Total exchange and creator earnings
+  let exchTotal = primComm + secCalc.reduce((s, x) => s + x.secComm, 0);
+  const creatorTotal = primToCreator + secCalc.reduce((s, x) => s + x.secRoy, 0);
+
+  // ─── BUILD FLOW STEPS ───
+  const steps = [];
+
+  // T0: Primary sale (Creator → Spec#1)
+  steps.push({
+    time: 'T0',
+    cls: 'hl-pur',
+    title: tx('step_t0_title', chain[0].buyer),
+    desc: tx('step_t0_desc', f2(chain[0].price)),
+    tags: [
+      { l: `${f2(chain[0].price)} USDT`, c: 'ftag-acc' },
+      { l: `${tx('tag_exchange')}: ${f2(primComm)}`, c: 'ftag-ok' },
+      { l: `${tx('tag_creator')}: ${f2(primToCreator)}`, c: 'ftag-pur' },
+      { l: tx('tag_escrow'), c: 'ftag-gray' },
+    ]
+  });
+
+  // T1..Tn: Secondary sales
+  secCalc.forEach((s, i) => {
+    steps.push({
+      time: `T${i + 1}`,
+      cls: '',
+      title: tx('step_resale_title', i + 1, s.seller, s.buyer),
+      desc: tx('step_resale_desc', f2(s.price)),
+      tags: [
+        { l: `${f2(s.price)} USDT`, c: 'ftag-acc' },
+        { l: `${tx('tag_exchange')}: ${f2(s.secComm)}`, c: 'ftag-ok' },
+        { l: `${tx('tag_creator')}: ${f2(s.secRoy)}`, c: 'ftag-pur' },
+        { l: `${f2(s.sellerGets)} → ${s.seller}`, c: 'ftag-amber' },
+        { l: tx('tag_gas_zero'), c: 'ftag-gray' },
+      ]
+    });
+  });
+
+  // ─── SCENARIO: SUCCESS ───
+  if (scenario === 'ok') {
+    exchTotal -= P.gas; // exchange absorbs gas cost
+
+    steps.push({
+      time: 'T+48h',
+      cls: 'hl-ok',
+      title: tx('step_settle_title'),
+      desc: tx('step_settle_desc', f2(P.gas)),
+      tags: [
+        { l: `${tx('tag_creator')}: ${f2(creatorTotal)}`, c: 'ftag-pur' },
+        { l: `${tx('tag_exchange')}: ${f2(exchTotal)}`, c: 'ftag-ok' },
+        { l: `${tx('tag_gas')}: ${f2(P.gas)}`, c: 'ftag-gray' },
+        { l: tx('tag_on_chain'), c: 'ftag-acc' },
+      ]
+    });
+
+    // ─── BALANCES: SUCCESS ───
+    // Each participant: net = money received - money paid
+    const balances = {};
+
+    // Exchange
+    balances[exchangeLabel()] = { v: exchTotal };
+
+    // Creator
+    balances[creatorLabel()] = { v: creatorTotal };
+
+    // Blockchain (gas)
+    balances[blockchainLabel()] = { v: P.gas };
+
+    // Speculators: track paid and received
+    // Spec#i paid for their purchase, received from their resale
+    // Spec#1: paid chain[0].price (primary), received secCalc[0].sellerGets
+    // Spec#i (i>1): paid chain[i-1].price (their purchase), received secCalc[i-1].sellerGets
+    // Last speculator sells to Winner, so they receive but Winner doesn't pay into spec chain
+    const specPaid = {};
+    const specReceived = {};
+
+    // Primary purchase by Spec#1
+    specPaid[specLabel(1)] = (specPaid[specLabel(1)] || 0) + chain[0].price;
+
+    secCalc.forEach((s, i) => {
+      // Seller receives
+      specReceived[s.seller] = (specReceived[s.seller] || 0) + s.sellerGets;
+      // Buyer pays (if not the winner / last buyer)
+      if (!s.isLast) {
+        specPaid[s.buyer] = (specPaid[s.buyer] || 0) + s.price;
+      }
+    });
+
+    for (let i = 1; i <= P.resales; i++) {
+      const key = specLabel(i);
+      const paid = specPaid[key] || 0;
+      const received = specReceived[key] || 0;
+      balances[key] = { v: received - paid };
+    }
+
+    // Winner paid finalPrice and got experience (negative = cost)
+    balances[winnerLabel()] = { v: -finalPrice };
+
+    // Check if speculators are in loss (markup < total secondary fees)
+    const totalFees = P.comm + P.roy;
+    const specProfitable = (1 + P.markup / 100) * (1 - (P.comm + P.roy) / 100) > 1;
+    const warnHtml = !specProfitable
+      ? `<div class="warn-box"><span class="warn-icon">${tx('warn_spec_loss_title')}:</span> ${tx('warn_spec_loss', P.markup, totalFees)}</div>`
+      : '';
+
+    resEl.innerHTML = renderResult(steps, balances,
+      warnHtml +
+      `<div class="concl ok"><div class="concl-title ok">${tx('concl_ok_title')}</div><div class="concl-body">${tx('concl_ok', exchTotal, creatorTotal, P.gas)}</div></div>`
+    );
+
+  // ─── SCENARIO: CANCEL ───
+  } else if (scenario === 'cancel') {
+    steps.push({
+      time: '!', cls: 'hl-err',
+      title: tx('step_cancel_title'), desc: tx('step_cancel_desc'),
+      tags: [{ l: tx('tag_gas_zero'), c: 'ftag-gray' }, { l: tx('tag_refund'), c: 'ftag-ok' }]
+    });
+
+    // Everyone gets back what they paid — net = 0
+    const balances = {};
+    balances[exchangeLabel()] = { v: 0 };
+    balances[creatorLabel()] = { v: 0 };
+    balances[blockchainLabel()] = { v: 0 };
+    for (let i = 1; i <= P.resales; i++) balances[specLabel(i)] = { v: 0 };
+    balances[winnerLabel()] = { v: 0 };
+
+    resEl.innerHTML = renderResult(steps, balances,
+      `<div class="concl err"><div class="concl-title err">${tx('concl_cancel_title')}</div><div class="concl-body">${tx('concl_cancel')}</div></div>`
+    );
+
+  // ─── SCENARIO: COMPLAINT ───
+  } else {
+    steps.push({
+      time: '!', cls: 'hl-warn',
+      title: tx('step_complaint_title'), desc: tx('step_complaint_desc'),
+      tags: [
+        { l: `${tx('tag_refund')}: ${f2(finalPrice)}`, c: 'ftag-amber' },
+        { l: tx('tag_gas_zero'), c: 'ftag-gray' },
+        { l: tx('tag_no_gain'), c: 'ftag-red' }
+      ]
+    });
+
+    // Winner gets full refund → net 0
+    // Speculators get back their purchase price (no profit) → net 0
+    // Creator gets nothing → 0
+    // Exchange gets nothing → 0
+    // Gas = 0 (no on-chain tx)
+    const balances = {};
+    balances[exchangeLabel()] = { v: 0 };
+    balances[creatorLabel()] = { v: 0 };
+    balances[blockchainLabel()] = { v: 0 };
+    for (let i = 1; i <= P.resales; i++) balances[specLabel(i)] = { v: 0 };
+    balances[winnerLabel()] = { v: 0 };
+
+    resEl.innerHTML = renderResult(steps, balances,
+      `<div class="concl warn"><div class="concl-title warn">${tx('concl_complaint_title')}</div><div class="concl-body">${tx('concl_complaint', finalPrice)}</div></div>`
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════
+function renderResult(steps, balances, conclusion) {
+  return `
+    <div class="insight">
+      <div class="insight-title">${tx('insight_title')}</div>
+      <div class="insight-body">${tx('insight_body')}</div>
+    </div>
+    <div class="sec-sub">${tx('flow_title')}</div>
+    <div class="flow">
+      ${steps.map(s => `
+        <div class="fstep ${s.cls}">
+          <div class="ftime">${s.time}</div>
+          <div class="fcontent">
+            <div class="fstep-title">${s.title}</div>
+            <div class="fstep-desc">${s.desc}</div>
+            <div class="ftags">${s.tags.map(t => `<span class="ftag ${t.c}">${t.l}</span>`).join('')}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div class="sec-sub">${tx('bal_title')}</div>
+    <div class="bal-grid">
+      ${Object.entries(balances).map(([name, { v }]) => {
+        const isPos = v > 0.001, isNeg = v < -0.001;
+        const cardCls = isPos ? 'pos-card' : isNeg ? 'neg-card' : 'zero-card';
+        const amtCls = isPos ? 'pos' : isNeg ? 'neg' : 'zero';
+        const sign = isPos ? '+' : '';
+        return `<div class="bal-card ${cardCls}">
+          <div class="bal-label">${tx('bal_result')}</div>
+          <div class="bal-name">${name}</div>
+          <div class="bal-amount ${amtCls}">${sign}${f2(v)} USDT</div>
+        </div>`;
+      }).join('')}
+    </div>
+    ${conclusion}
+  `;
+}
+
+// ═══════════════════════════════════════════════
+// INIT — defaults: lang=en, theme=system
+// ═══════════════════════════════════════════════
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (theme === 'system') applyTheme('system');
+});
+
+// Restore saved prefs, fallback to defaults
+const savedTheme = localStorage.getItem('ehipas-theme') || 'system';
+const savedLang  = localStorage.getItem('ehipas-lang')  || 'en';
+lang = savedLang;
+applyTheme(savedTheme);
+applyLang();
+</script>
+</body>
+</html>
