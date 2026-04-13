@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ehipas — Finance Model</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Thai:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --mono:'DM Mono',monospace;
+  --sans:'DM Sans','Noto Sans Thai','Noto Sans SC',sans-serif;
+  --r:10px; --rs:6px;
+  --c-rev:#b8f73a; --c-exp:#f74a4a; --c-cum:#4af7c9;
+  --c-freeze:#f7b74a; --c-onetime:#9b7ef7;
+}
+
+[data-theme="dark"]{
+  --bg:#0d0d0b; --bg2:#141412; --bg3:#1c1c19;
+  --bd:#2a2a26; --bd2:#3a3a36;
+  --tx:#e8e6dc; --tx2:#88887e; --tx3:#555550;
+  --crd:#141412; --inp:#1c1c19;
+  --acc:#b8f73a; --acc-btn:#b8f73a; --acc-btn-tx:#0d0d0b;
+  --acc-dim:rgba(184,247,58,.09); --acc-brd:rgba(184,247,58,.35);
+  --shd:0 2px 16px rgba(0,0,0,.55);
+}
+[data-theme="light"]{
+  --bg:#f4f3ee; --bg2:#ffffff; --bg3:#eceae2;
+  --bd:#dbd9d0; --bd2:#c8c5bc;
+  --tx:#1a1a17; --tx2:#5c5c58; --tx3:#99998f;
+  --crd:#ffffff; --inp:#eceae2;
+  --acc:#2e7d0e; --acc-btn:#5cb82a; --acc-btn-tx:#ffffff;
+  --acc-dim:rgba(46,125,14,.07); --acc-brd:rgba(46,125,14,.30);
+  --shd:0 2px 16px rgba(0,0,0,.09);
+}
+
+html,body{width:100%;overflow-x:hidden}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px;line-height:1.5;transition:background .2s,color .2s}
+
+.hdr{border-bottom:1px solid var(--bd);padding:11px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:100;background:var(--bg)}
+.logo{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.1em;color:var(--acc);text-transform:uppercase;flex-shrink:0}
+.hdr-title{font-size:11px;color:var(--tx3);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hdr-ctrls{display:flex;gap:5px;align-items:center;flex-shrink:0}
+
+.ddwrap{position:relative;display:inline-block}
+.ddtrig{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx2);font-family:var(--mono);font-size:11px;padding:5px 8px;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;transition:border-color .15s,color .15s}
+.ddtrig:hover{border-color:var(--bd2);color:var(--tx)}
+.ddarrow{font-size:9px;opacity:.5}
+.ddmenu{display:none;position:absolute;right:0;top:calc(100% + 4px);background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rs);min-width:140px;box-shadow:var(--shd);z-index:300;overflow:hidden}
+.ddmenu.open{display:block}
+.ddi{display:flex;align-items:center;gap:8px;padding:9px 12px;font-size:12px;color:var(--tx2);cursor:pointer;transition:background .1s;border-bottom:1px solid var(--bd)}
+.ddi:last-child{border-bottom:none}
+.ddi:hover{background:var(--bg3);color:var(--tx)}
+.ddi.on{color:var(--acc)}
+.ddi .ck{font-size:10px;margin-left:auto;color:var(--acc)}
+.overlay{display:none;position:fixed;inset:0;z-index:99}
+.overlay.on{display:block}
+
+.wrap{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 45px);align-items:start}
+@media(max-width:767px){.wrap{grid-template-columns:1fr}}
+
+.sb{border-right:1px solid var(--bd);padding:16px 13px;background:var(--bg);overflow:hidden}
+@media(min-width:768px){.sb{position:sticky;top:45px;height:calc(100vh - 45px);overflow-y:auto}.sb::-webkit-scrollbar{width:3px}.sb::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}}
+@media(max-width:767px){.sb{border-right:none;border-bottom:1px solid var(--bd)}}
+
+.slbl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:11px;margin-top:3px}
+.ssec{margin-bottom:20px}
+
+.tgrid{display:grid;grid-template-columns:1fr;gap:5px}
+.ttog{display:flex;align-items:center;gap:8px;padding:8px 9px;border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;transition:border-color .2s,background .2s;user-select:none;background:var(--inp)}
+.ttog:hover{border-color:var(--bd2)}
+.ttog.on{border-color:var(--acc-brd);background:var(--acc-dim)}
+.ttog.dim{opacity:.4;cursor:default}
+.ttog input{display:none}
+.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ttog:not(.on) .tdot{background:var(--bd2)}
+.tname{font-size:11px;line-height:1.3}
+.ttag{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--tx3);text-transform:uppercase;flex-shrink:0}
+
+.main{padding:18px 14px;background:var(--bg);min-width:0;overflow:hidden}
+@media(min-width:768px){.main{padding:22px 26px}}
+
+.mrow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+@media(max-width:700px){.mrow{grid-template-columns:1fr 1fr}}
+
+.mcard{background:var(--crd);border:1px solid var(--bd);border-radius:var(--r);padding:14px 14px 12px}
+.mcard.accent{border-left:3px solid var(--acc);background:var(--acc-dim)}
+.mcard.accent .mv{color:var(--acc)}
+.mlbl{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px}
+.mv{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--tx);line-height:1}
+.msub{font-size:10px;color:var(--tx3);margin-top:4px}
+
+.ccard{border:1px solid var(--bd);border-radius:var(--r);padding:16px;background:var(--crd);margin-bottom:14px}
+.cctop{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.cctitle{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3)}
+.clegs{display:flex;gap:14px;flex-wrap:wrap}
+.cleg{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--tx2)}
+.cleg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+canvas{max-width:100%!important;height:auto!important}
+
+.evstrip{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.ev{display:flex;align-items:center;gap:5px;padding:5px 9px;border:1px solid var(--bd);border-radius:20px;font-family:var(--mono);font-size:10px;color:var(--tx2);background:var(--bg3)}
+.ev .em{font-size:9px;opacity:.65}
+.ev.hi{border-color:var(--acc-brd);color:var(--acc);background:var(--acc-dim)}
+
+.twrap{border:1px solid var(--bd);border-radius:var(--r);overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px;background:var(--crd);max-width:100%}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:640px}
+thead tr{background:var(--bg3);border-bottom:1px solid var(--bd)}
+th{padding:8px 11px;text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);font-weight:400;white-space:nowrap}
+th.ta{text-align:right}
+td{padding:8px 11px;border-bottom:1px solid var(--bd);white-space:nowrap;font-size:11px}
+td.ta{text-align:right}
+tr:last-child td{border-bottom:none}
+.mn{font-family:var(--mono)}
+.qrow td{background:var(--bg3);border-top:1px solid var(--bd2)}
+.qrow .ql{font-family:var(--mono);font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em}
+.red{color:#f74a4a}
+.grn{color:#b8f73a}
+[data-theme="light"] .grn{color:#2e7d0e}
+.teal{color:#4af7c9}
+.amb{color:#f7b74a}
+.pur{color:#9b7ef7}
+.dim{color:var(--tx3)}
+
+.notebox{border:1px solid var(--bd);border-left:3px solid var(--acc);border-radius:var(--r);padding:13px 15px;background:var(--acc-dim);margin-bottom:14px;font-size:11px;color:var(--tx2);line-height:1.7}
+.notebox strong{color:var(--acc)}
+
+.sbadge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;padding:3px 9px;border:1px solid var(--bd2);border-radius:20px;color:var(--tx2);background:var(--bg3)}
+.sbadge .dot{width:6px;height:6px;border-radius:50%;background:var(--c-rev)}
+
+.sep{font-family:var(--mono);font-size:9px;color:var(--tx3);letter-spacing:.12em;text-transform:uppercase;margin:20px 0 12px;display:flex;align-items:center;gap:10px}
+.sep::after{content:'';flex:1;height:1px;background:var(--bd)}
+</style>
+</head>
+<body data-theme="dark">
+
+<div class="overlay" id="ov" onclick="closeDD()"></div>
+
+<div class="hdr">
+  <span class="logo">ehipas</span>
+  <span class="hdr-title" data-i="hdr_title">Finance Model</span>
+  <div class="hdr-ctrls">
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('lang')">
+        <span id="ll">EN</span><span class="ddarrow">▾</span>
+      </button>
+      <div class="ddmenu" id="lang-dd">
+        <div class="ddi on" data-l="en" onclick="setLang('en')">🇬🇧 English<span class="ck" id="lc-en">✓</span></div>
+        <div class="ddi" data-l="ru" onclick="setLang('ru')">🇷🇺 Русский<span class="ck" id="lc-ru"></span></div>
+      </div>
+    </div>
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('theme')">
+        <span id="ticon">☾</span><span class="ddarrow">▾</span>
+      </button>
+      <div class="ddmenu" id="theme-dd">
+        <div class="ddi" onclick="setTheme('system')">⊙ <span data-i="th_sys">System</span><span class="ck" id="tc-sys"></span></div>
+        <div class="ddi" onclick="setTheme('light')">☀ <span data-i="th_light">Light</span><span class="ck" id="tc-light"></span></div>
+        <div class="ddi" onclick="setTheme('dark')">☾ <span data-i="th_dark">Dark</span><span class="ck" id="tc-dark">✓</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <aside class="sb">
+
+    <div class="ssec">
+      <div class="slbl" data-i="s_scen">Scenario</div>
+      <div class="tgrid">
+        <label class="ttog on" id="lb-K" onclick="setScenario('K',this)">
+          <input type="radio" name="scen" id="sc-K" checked>
+          <span class="tdot" style="background:var(--c-rev)"></span>
+          <span class="tname" data-i="sc_k">Conservative</span>
+          <span class="ttag" data-i="tg_k">К</span>
+        </label>
+        <label class="ttog dim" id="lb-B" title="Coming in next phase">
+          <input type="radio" name="scen" id="sc-B" disabled>
+          <span class="tdot" style="background:#4af7c9"></span>
+          <span class="tname" data-i="sc_b">Base</span>
+          <span class="ttag" data-i="tg_b">Б</span>
+        </label>
+        <label class="ttog dim" id="lb-O" title="Coming in next phase">
+          <input type="radio" name="scen" id="sc-O" disabled>
+          <span class="tdot" style="background:#9b7ef7"></span>
+          <span class="tname" data-i="sc_o">Optimistic</span>
+          <span class="ttag" data-i="tg_o">О</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="ssec">
+      <div class="slbl" data-i="s_layer">Revenue layer</div>
+      <div class="tgrid">
+        <label class="ttog on" id="lb-L1" onclick="setLayer(1,this)">
+          <input type="radio" name="layer" id="ly-1" checked>
+          <span class="tdot" style="background:var(--c-rev)"></span>
+          <span class="tname" data-i="l1">Ticket exchange</span>
+          <span class="ttag">L1</span>
+        </label>
+        <label class="ttog dim" title="Coming in next phase">
+          <input type="radio" name="layer" disabled>
+          <span class="tdot"></span>
+          <span class="tname" data-i="l25">Layers 2–5</span>
+          <span class="ttag">→</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="ssec">
+      <div class="slbl" data-i="s_disp">Display</div>
+      <div class="tgrid">
+        <label class="ttog on" id="tb-freeze" onclick="togFreeze(this)">
+          <input type="checkbox" checked>
+          <span class="tdot" style="background:var(--c-freeze)"></span>
+          <span class="tname" data-i="opt_frz">Capital freeze</span>
+        </label>
+        <label class="ttog on" id="tb-onetime" onclick="togOnetime(this)">
+          <input type="checkbox" checked>
+          <span class="tdot" style="background:var(--c-onetime)"></span>
+          <span class="tname" data-i="opt_one">One-time costs</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="ssec">
+      <div class="slbl" data-i="s_params">Core parameters</div>
+      <div style="font-size:10px;color:var(--tx2);line-height:1.9">
+        <div><span style="color:var(--tx3);font-family:var(--mono);font-size:9px">RESERVATION</span><br><span class="mn">$12 USDT</span></div>
+        <div style="margin-top:8px"><span style="color:var(--tx3);font-family:var(--mono);font-size:9px">TICKETS/EXP</span><br><span class="mn">10</span></div>
+        <div style="margin-top:8px"><span style="color:var(--tx3);font-family:var(--mono);font-size:9px">COMMISSION</span><br><span class="mn">10%</span></div>
+        <div style="margin-top:8px"><span style="color:var(--tx3);font-family:var(--mono);font-size:9px">MAINNET</span><br><span class="mn">M+9</span></div>
+        <div style="margin-top:8px"><span style="color:var(--tx3);font-family:var(--mono);font-size:9px">THB/USD</span><br><span class="mn">36</span></div>
+      </div>
+    </div>
+
+    <div class="ssec">
+      <div class="slbl" data-i="s_rev_formula">Rev/exp formula</div>
+      <div style="font-size:10px;color:var(--tx2);line-height:1.8">
+        <span style="color:var(--tx3);font-family:var(--mono);font-size:9px">CLEARING PRICE</span><br>
+        <span class="mn">P = R·(1 + 0.5·ln(m))</span><br>
+        <div style="margin-top:6px"><span style="color:var(--tx3);font-family:var(--mono);font-size:9px">PRIMARY</span><br><span class="mn">N·P·10%</span></div>
+        <div style="margin-top:6px"><span style="color:var(--tx3);font-family:var(--mono);font-size:9px">SECONDARY</span><br><span class="mn">spec decay × 1.3ʳ × 10%</span></div>
+      </div>
+    </div>
+
+  </aside>
+
+  <main class="main" id="main">
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <div style="font-size:16px;font-weight:300;letter-spacing:-.02em" data-i="page_title">Cash Flow Model</div>
+      <div class="sbadge"><span class="dot"></span><span data-i="badge_label">Scenario I · Conservative · Layer 1 · 36 months</span></div>
+    </div>
+
+    <div class="mrow" id="mrow"></div>
+    <div class="notebox" id="notebox"></div>
+
+    <div class="ccard">
+      <div class="cctop">
+        <span class="cctitle" data-i="ch_title">Monthly cash flow · M1–M36 (USD)</span>
+        <div class="clegs">
+          <span class="cleg"><span class="cleg-dot" style="background:var(--c-rev)"></span><span data-i="leg_rev">Revenue</span></span>
+          <span class="cleg"><span class="cleg-dot" style="background:var(--c-exp)"></span><span data-i="leg_exp">Expenses</span></span>
+          <span class="cleg"><span class="cleg-dot" style="background:var(--c-cum)"></span><span data-i="leg_cum">Cumulative (right axis)</span></span>
+        </div>
+      </div>
+      <canvas id="ch-cf" height="100"></canvas>
+    </div>
+
+    <div class="sep" data-i="sep_events">Key events</div>
+    <div class="evstrip" id="evstrip"></div>
+
+    <div class="sep" data-i="sep_detail">Monthly detail</div>
+    <div class="twrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-i="c_m">M</th>
+            <th data-i="c_event">Event</th>
+            <th class="ta" data-i="c_rev">Revenue</th>
+            <th class="ta" data-i="c_fixed">Fixed exp.</th>
+            <th class="ta" data-i="c_onetime">One-time</th>
+            <th class="ta" data-i="c_freeze">Freeze</th>
+            <th class="ta" data-i="c_net">Net</th>
+            <th class="ta" data-i="c_cum">Cumulative</th>
+            <th class="ta" data-i="c_rpe">Rev/exp</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const L = {
+  en: {
+    hdr_title: 'Finance Model',
+    s_scen: 'Scenario', s_layer: 'Revenue layer', s_disp: 'Display',
+    s_params: 'Core parameters', s_rev_formula: 'Rev/exp formula',
+    sc_k: 'Conservative', sc_b: 'Base', sc_o: 'Optimistic',
+    tg_k: 'К', tg_b: 'Б', tg_o: 'О',
+    l1: 'Ticket exchange', l25: 'Layers 2–5',
+    opt_frz: 'Capital freeze', opt_one: 'One-time costs',
+    page_title: 'Cash Flow Model',
+    badge_label: 'Scenario I · Conservative · Layer 1 · 36 months',
+    ch_title: 'Monthly cash flow · M1–M36 (USD)',
+    leg_rev: 'Revenue', leg_exp: 'Expenses', leg_cum: 'Cumulative (right axis)',
+    sep_events: 'Key events', sep_detail: 'Monthly detail',
+    c_m: 'M', c_event: 'Event', c_rev: 'Revenue', c_fixed: 'Fixed exp.',
+    c_onetime: 'One-time', c_freeze: 'Freeze', c_net: 'Net', c_cum: 'Cumulative', c_rpe: 'Rev/exp',
+    m_invest: 'Round budget', m_burn: 'Burn rate / mo', m_rev36: 'Revenue M36', m_be: 'Breakeven',
+    invest_note: '(+20% buffer, incl. freeze)',
+    burn_note: 'Q1 average',
+    rev36_note: 'Monthly at M36',
+    be_note: '36-month horizon',
+    be_val: '— not reached',
+    note_text: '<strong>Layer 1, Conservative, 36 months.</strong> Revenue never exceeds operating costs in this scenario — by design. Layer 1 alone is not sufficient for profitability. Layers 2–5 are the multiplier. The round budget shown is the maximum cash needed with buffer. Capital freeze ($45k) is partially recoverable.',
+    th_sys: 'System', th_light: 'Light', th_dark: 'Dark',
+    ev: { 1:'Dev start, KOL outreach', 2:'Company reg. + BOI lawyer', 3:'Capital freeze (BOI)', 8:'Smart contract audit', 9:'Mainnet launch (Ph1+Ph2)', 12:'KOL Bangkok event', 15:'Company audit', 24:'KOL Bangkok event', 36:'KOL Bangkok event' },
+    qlab: q => `Q${q}`
+  },
+  ru: {
+    hdr_title: 'Финансовая модель',
+    s_scen: 'Сценарий', s_layer: 'Слой доходов', s_disp: 'Отображение',
+    s_params: 'Параметры', s_rev_formula: 'Формула выручки/впечатл.',
+    sc_k: 'Консервативный', sc_b: 'Базовый', sc_o: 'Оптимистичный',
+    tg_k: 'К', tg_b: 'Б', tg_o: 'О',
+    l1: 'Билетная биржа', l25: 'Слои 2–5',
+    opt_frz: 'Заморозки капитала', opt_one: 'Единовременные',
+    page_title: 'Cash Flow модель',
+    badge_label: 'Сценарий I · Консервативный · Слой 1 · 36 мес.',
+    ch_title: 'Месячный cash flow · M1–M36 (USD)',
+    leg_rev: 'Выручка', leg_exp: 'Расходы', leg_cum: 'Нарастающий итог (правая ось)',
+    sep_events: 'Ключевые события', sep_detail: 'Помесячный разрез',
+    c_m: 'М', c_event: 'Событие', c_rev: 'Выручка', c_fixed: 'Пост. расх.',
+    c_onetime: 'Единовр.', c_freeze: 'Заморозка', c_net: 'Нетто', c_cum: 'Накопленный', c_rpe: 'Выр/впечатл.',
+    m_invest: 'Бюджет раунда', m_burn: 'Расход / мес', m_rev36: 'Выручка M36', m_be: 'Безубыточность',
+    invest_note: '(+20% буфер, вкл. заморозки)',
+    burn_note: 'средний Q1',
+    rev36_note: 'месячная в M36',
+    be_note: 'горизонт 36 мес.',
+    be_val: '— не достигается',
+    note_text: '<strong>Слой 1, Консервативный, 36 мес.</strong> Выручка не перекрывает расходы — это ожидаемо. Слой 1 сам по себе не обеспечивает прибыльность за 36 мес. Слои 2–5 — мультипликаторы. Бюджет раунда = максимальная потребность в деньгах с буфером. Заморозки ($45k) частично возвратные.',
+    th_sys: 'Системная', th_light: 'Светлая', th_dark: 'Тёмная',
+    ev: { 1:'Старт разработки, KOL-лендинги', 2:'Регистрация компании + юрист BOI', 3:'Заморозка: уставной капитал', 8:'Аудит смарт-контракта', 9:'Mainnet запуск (Ph1+Ph2)', 12:'KOL-ивент Бангкок', 15:'Первый аудит компании', 24:'KOL-ивент Бангкок', 36:'KOL-ивент Бангкок' },
+    qlab: q => `Q${q}`
+  }
+};
+
+let lang = 'en';
+const tx = k => (L[lang][k] ?? L.en[k] ?? k);
+
+function applyLang() {
+  document.querySelectorAll('[data-i]').forEach(el => {
+    const k = el.getAttribute('data-i'); el.textContent = tx(k);
+  });
+  document.getElementById('ll').textContent = { en: 'EN', ru: 'RU' }[lang];
+  document.documentElement.lang = lang;
+  ['en','ru'].forEach(l => {
+    const el = document.getElementById('lc-' + l);
+    if (el) el.textContent = l === lang ? '✓' : '';
+    const di = document.querySelector(`[data-l="${l}"]`);
+    if (di) di.classList.toggle('on', l === lang);
+  });
+  render();
+}
+function setLang(l) { lang = l; localStorage.setItem('ehipas-lang', l); closeDD(); applyLang(); }
+
+let theme = 'dark';
+function resolveTheme(t) {
+  if (t === 'system') return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return t;
+}
+function applyTheme(t) {
+  theme = t;
+  document.body.setAttribute('data-theme', resolveTheme(t));
+  document.getElementById('ticon').textContent = { system: '⊙', light: '☀', dark: '☾' }[t];
+  ['sys','light','dark'].forEach(k => {
+    const el = document.getElementById('tc-' + k);
+    if (el) el.textContent = (k === t || (k === 'sys' && t === 'system')) ? '✓' : '';
+  });
+  Chart.defaults.color = resolveTheme(t) === 'dark' ? '#88887e' : '#7a7a70';
+  renderChart();
+}
+function setTheme(t) { localStorage.setItem('ehipas-theme', t); closeDD(); applyTheme(t); }
+
+let openDD = null;
+function togDD(id) {
+  const m = document.getElementById(id + '-dd');
+  if (openDD === id) { closeDD(); return; }
+  closeDD(); m.classList.add('open'); document.getElementById('ov').classList.add('on'); openDD = id;
+}
+function closeDD() {
+  document.querySelectorAll('.ddmenu').forEach(m => m.classList.remove('open'));
+  document.getElementById('ov').classList.remove('on'); openDD = null;
+}
+
+let showFreeze = true, showOnetime = true;
+function togFreeze(lbl) { lbl.classList.toggle('on'); showFreeze = lbl.classList.contains('on'); render(); }
+function togOnetime(lbl) { lbl.classList.toggle('on'); showOnetime = lbl.classList.contains('on'); render(); }
+function setScenario(s, lbl) {
+  document.querySelectorAll('[id^="lb-K"],[id^="lb-B"],[id^="lb-O"]').forEach(el => el.classList.remove('on'));
+  lbl.classList.add('on'); render();
+}
+function setLayer(n, lbl) {
+  document.querySelectorAll('[id^="lb-L"]').forEach(el => el.classList.remove('on'));
+  lbl.classList.add('on'); render();
+}
+
+const OPS_MATRIX = [
+  { q:1,  exp_mid:1.5,  mult:1.5, spec:0.30, rounds:2 },
+  { q:2,  exp_mid:4.0,  mult:1.5, spec:0.30, rounds:2 },
+  { q:3,  exp_mid:7.5,  mult:1.7, spec:0.25, rounds:3 },
+  { q:4,  exp_mid:11.0, mult:2.0, spec:0.25, rounds:3 },
+  { q:5,  exp_mid:18.5, mult:2.0, spec:0.20, rounds:4 },
+  { q:6,  exp_mid:18.5, mult:2.0, spec:0.20, rounds:4 },
+  { q:7,  exp_mid:31.5, mult:2.2, spec:0.18, rounds:5 },
+  { q:8,  exp_mid:31.5, mult:2.2, spec:0.18, rounds:5 },
+  { q:9,  exp_mid:50.0, mult:2.5, spec:0.15, rounds:5 },
+  { q:10, exp_mid:50.0, mult:2.5, spec:0.15, rounds:5 },
+  { q:11, exp_mid:50.0, mult:2.5, spec:0.15, rounds:5 },
+  { q:12, exp_mid:50.0, mult:2.5, spec:0.15, rounds:5 },
+];
+
+const RESERVATION = 12, TICKETS = 10, COMMISSION = 0.10, MAINNET_MONTH = 9, MONTHS = 36;
+
+function revPerExp(mult, spec, rounds) {
+  const clearing = RESERVATION * (1 + 0.5 * Math.log(mult));
+  let primary = TICKETS * clearing * COMMISSION;
+  let secondary = 0, active = TICKETS * spec;
+  for (let r = 1; r <= rounds; r++) {
+    secondary += active * (clearing * Math.pow(1.3, r)) * COMMISSION;
+    active *= 0.65;
+  }
+  return { total: primary + secondary, clearing, primary, secondary };
+}
+
+function getOpsQ(month) {
+  if (month < MAINNET_MONTH) return null;
+  return Math.min(Math.ceil((month - MAINNET_MONTH + 1) / 3), OPS_MATRIX.length);
+}
+
+function monthlyRevenue(month) {
+  const oq = getOpsQ(month); if (!oq) return 0;
+  const q = OPS_MATRIX[oq - 1];
+  return q.exp_mid * revPerExp(q.mult, q.spec, q.rounds).total;
+}
+
+function getRevPerExpObj(month) {
+  const oq = getOpsQ(month); if (!oq) return null;
+  return revPerExp(OPS_MATRIX[oq-1].mult, OPS_MATRIX[oq-1].spec, OPS_MATRIX[oq-1].rounds);
+}
+
+function fixedExpenses(month) {
+  const oq = getOpsQ(month);
+  const expPerMonth = oq ? OPS_MATRIX[oq-1].exp_mid : 0;
+  const infra = expPerMonth < 15 ? 65 : expPerMonth < 50 ? 150 : expPerMonth < 120 ? 300 : 550;
+  return 1750 + 1667 + 40 + infra
+    + (month >= 3 ? 233 : 0)
+    + (month >= 3 ? 110 : 0)
+    + (month >= 15 ? 93 : 0);
+}
+
+const ONE_TIMES = {2:4400, 8:10000, 12:12500, 15:2200, 24:12500, 36:12500};
+const FREEZES = {2:17000, 3:28000};
+
+function buildCashFlow() {
+  const months = []; let cumulative = 0;
+  for (let m = 1; m <= MONTHS; m++) {
+    const revenue = Math.round(monthlyRevenue(m));
+    const fixed = Math.round(fixedExpenses(m));
+    const onetime = showOnetime ? (ONE_TIMES[m] || 0) : 0;
+    const freeze = showFreeze ? (FREEZES[m] || 0) : 0;
+    const totalExp = fixed + onetime + freeze;
+    const net = revenue - totalExp;
+    cumulative += net;
+    months.push({ month: m, revenue, fixed, onetime, freeze, totalExp, net, cumulative, rpe: getRevPerExpObj(m) });
+  }
+  return months;
+}
+
+let chartInst = null;
+const fmt = n => { const a = Math.abs(n); return (n<0?'−':'')+'$'+(a>=1000?(a/1000).toFixed(1)+'k':Math.abs(Math.round(n))); };
+const fmtFull = n => (n<0?'−':'+')+'$'+Math.abs(Math.round(n)).toLocaleString();
+const fmtPos  = n => '$'+Math.round(n).toLocaleString();
+
+function cdefs() {
+  const dk = resolveTheme(theme) === 'dark';
+  return { grid: dk?'rgba(58,58,54,.6)':'rgba(200,198,190,.5)', tick: dk?'#555550':'#99998f' };
+}
+
+function render() {
+  const cf = buildCashFlow();
+  renderMetrics(cf); renderNote(); renderChart(cf); renderEvents(); renderTable(cf);
+}
+
+function renderMetrics(cf) {
+  const minCum = Math.min(...cf.map(m => m.cumulative));
+  const roundBudget = Math.ceil(-minCum * 1.2 / 5000) * 5000;
+  const burnQ1 = Math.round((cf[0].totalExp + cf[1].totalExp) / 2);
+  const revM36 = cf[35].revenue;
+  document.getElementById('mrow').innerHTML = `
+    <div class="mcard accent">
+      <div class="mlbl">${tx('m_invest')}</div>
+      <div class="mv">$${(roundBudget/1000).toFixed(0)}k</div>
+      <div class="msub">${tx('invest_note')}</div>
+    </div>
+    <div class="mcard">
+      <div class="mlbl">${tx('m_burn')}</div>
+      <div class="mv">${fmt(burnQ1)}</div>
+      <div class="msub">${tx('burn_note')}</div>
+    </div>
+    <div class="mcard">
+      <div class="mlbl">${tx('m_rev36')}</div>
+      <div class="mv" style="color:var(--c-rev)">${fmt(revM36)}</div>
+      <div class="msub">${tx('rev36_note')}</div>
+    </div>
+    <div class="mcard">
+      <div class="mlbl">${tx('m_be')}</div>
+      <div class="mv" style="font-size:13px;color:var(--tx3);padding-top:4px">${tx('be_val')}</div>
+      <div class="msub">${tx('be_note')}</div>
+    </div>`;
+}
+
+function renderNote() {
+  document.getElementById('notebox').innerHTML = tx('note_text');
+}
+
+function renderChart(cf) {
+  cf = cf || buildCashFlow();
+  const labels = cf.map(m => 'M' + m.month);
+  const cd = cdefs();
+  const dk = resolveTheme(theme) === 'dark';
+  if (chartInst) { chartInst.destroy(); chartInst = null; }
+  chartInst = new Chart(document.getElementById('ch-cf'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: tx('leg_rev'), data: cf.map(m=>m.revenue), borderColor:'#b8f73a', backgroundColor:'rgba(184,247,58,.07)', borderWidth:1.5, pointRadius:0, pointHoverRadius:4, fill:true, tension:0.35, yAxisID:'y' },
+        { label: tx('leg_exp'), data: cf.map(m=>m.totalExp), borderColor:'#f74a4a', backgroundColor:'rgba(247,74,74,.05)', borderWidth:1.5, pointRadius:0, pointHoverRadius:4, fill:true, tension:0.2, yAxisID:'y' },
+        { label: tx('leg_cum'), data: cf.map(m=>m.cumulative), borderColor:'#4af7c9', backgroundColor:'transparent', borderWidth:2, borderDash:[4,3], pointRadius:0, pointHoverRadius:4, tension:0.3, yAxisID:'y2' }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:true,
+      interaction:{ mode:'index', intersect:false },
+      plugins: {
+        legend:{ display:false },
+        tooltip: {
+          backgroundColor: dk?'#1c1c19':'#ffffff',
+          borderColor: cd.grid, borderWidth:1,
+          titleColor: cd.tick,
+          bodyColor: dk?'#e8e6dc':'#1a1a17',
+          padding:10,
+          callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw<0?'−':''}$${Math.abs(ctx.raw).toLocaleString()}` }
+        }
+      },
+      scales: {
+        x: { grid:{color:cd.grid}, ticks:{color:cd.tick, font:{size:9,family:"'DM Mono',monospace"}, maxTicksLimit:13, maxRotation:0} },
+        y: { position:'left', grid:{color:cd.grid}, ticks:{color:cd.tick, font:{size:9,family:"'DM Mono',monospace"}, callback:v=>v>=1000?'$'+(v/1000).toFixed(0)+'k':'$'+v}, beginAtZero:true },
+        y2: { position:'right', grid:{drawOnChartArea:false}, ticks:{color:'#4af7c9', font:{size:9,family:"'DM Mono',monospace"}, callback:v=>{const a=Math.abs(v);const s=v<0?'−':'';return s+'$'+(a>=1000?(a/1000).toFixed(0)+'k':a);}} }
+      },
+      animation:{duration:300}
+    }
+  });
+}
+
+function renderEvents() {
+  const evData = L[lang].ev;
+  const items = [
+    {m:'M1',text:evData[1],hi:false},{m:'M2',text:evData[2],hi:false},
+    {m:'M3',text:evData[3],hi:false},{m:'M8',text:evData[8],hi:false},
+    {m:'M9',text:evData[9],hi:true},{m:'M12',text:evData[12],hi:false},
+    {m:'M15',text:evData[15],hi:false},{m:'M24',text:evData[24],hi:false},
+    {m:'M36',text:evData[36],hi:false}
+  ];
+  document.getElementById('evstrip').innerHTML = items.map(e=>
+    `<div class="ev${e.hi?' hi':''}"><span class="em">${e.m}</span>${e.text}</div>`
+  ).join('');
+}
+
+function renderTable(cf) {
+  const evMap = L[lang].ev;
+  let html = '';
+  for (let i = 0; i < cf.length; i++) {
+    const m = cf[i];
+    if ((m.month - 1) % 3 === 0) {
+      const q = Math.ceil(m.month / 3);
+      html += `<tr class="qrow"><td colspan="9"><span class="ql">${L[lang].qlab(q)}</span></td></tr>`;
+    }
+    const ev = evMap[m.month] || '';
+    const rpe = m.rpe ? '$'+m.rpe.total.toFixed(1) : '—';
+    html += `<tr>
+      <td class="mn dim">M${m.month}</td>
+      <td style="font-size:10px;color:var(--tx3);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ev}</td>
+      <td class="ta mn ${m.revenue>0?'grn':'dim'}">${m.revenue>0?fmtPos(m.revenue):'—'}</td>
+      <td class="ta mn">${fmtPos(m.fixed)}</td>
+      <td class="ta mn ${m.onetime>0?'pur':'dim'}">${m.onetime>0?fmtPos(m.onetime):'—'}</td>
+      <td class="ta mn ${m.freeze>0?'amb':'dim'}">${m.freeze>0?fmtPos(m.freeze):'—'}</td>
+      <td class="ta mn ${m.net>=0?'grn':'red'}">${fmtFull(m.net)}</td>
+      <td class="ta mn" style="color:var(--c-cum);font-weight:500">${fmtFull(m.cumulative)}</td>
+      <td class="ta mn dim">${rpe}</td>
+    </tr>`;
+  }
+  document.getElementById('tbody').innerHTML = html;
+}
+
+Chart.defaults.font.family = "'DM Mono', monospace";
+Chart.defaults.font.size = 10;
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (theme === 'system') applyTheme('system');
+});
+
+const savedTheme = localStorage.getItem('ehipas-theme') || 'dark';
+const savedLang  = localStorage.getItem('ehipas-lang')  || 'en';
+lang = savedLang;
+applyTheme(savedTheme);
+applyLang();
+</script>
+</body>
+</html>
