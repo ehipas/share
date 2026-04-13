@@ -8,8 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+Thai:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
-/* ── TOKENS ── */
 :root{
   --mono:'DM Mono',monospace;
   --sans:'DM Sans','Noto Sans Thai','Noto Sans SC',sans-serif;
@@ -29,6 +27,13 @@
   --rose:#f43f5e;--rose-dim:rgba(244,63,94,.13);
   --btn-tx:#0d0d0b;
   --shd:0 2px 16px rgba(0,0,0,.55);
+  /* bar colours for pre-breakeven state */
+  --bar-k-dim:rgba(184,247,58,.32);
+  --bar-b-dim:rgba(247,208,58,.32);
+  --bar-o-dim:rgba(95,168,255,.32);
+  --bar-23-dim:rgba(251,146,60,.32);
+  --bar-4-dim:rgba(45,212,191,.32);
+  --bar-5-dim:rgba(244,63,94,.32);
 }
 [data-theme="light"]{
   --bg:#f4f3ee;--bg2:#ffffff;--bg3:#eceae2;--bg4:#dddcd7;
@@ -44,18 +49,25 @@
   --rose:#be123c;--rose-dim:rgba(190,18,60,.1);
   --btn-tx:#ffffff;
   --shd:0 2px 16px rgba(0,0,0,.09);
+  /* FIX #5: higher contrast for pre-breakeven bars on light bg */
+  --bar-k-dim:rgba(46,125,14,.45);
+  --bar-b-dim:rgba(154,102,0,.45);
+  --bar-o-dim:rgba(26,95,168,.45);
+  --bar-23-dim:rgba(194,65,12,.45);
+  --bar-4-dim:rgba(13,148,136,.45);
+  --bar-5-dim:rgba(190,18,60,.45);
 }
 
 html,body{width:100%;overflow-x:hidden}
 body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5;transition:background .2s,color .2s}
 
-/* ── HEADER ── */
+/* HEADER */
 .hd{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:100;gap:8px;flex-wrap:wrap}
 .logo{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.12em;white-space:nowrap}
 .logo span{color:var(--text2)}
 .hdr-ctrls{display:flex;gap:5px;align-items:center;flex-shrink:0}
 
-/* ── DROPDOWN ── */
+/* DROPDOWN */
 .overlay{display:none;position:fixed;inset:0;z-index:99}
 .overlay.on{display:block}
 .ddwrap{position:relative;display:inline-block}
@@ -70,7 +82,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .ddi.on{color:var(--accent)}
 .ddi .ck{font-size:10px;margin-left:auto;color:var(--accent)}
 
-/* ── LAYOUT ── */
+/* LAYOUT */
 .wrap{max-width:1080px;margin:0 auto;padding:16px 14px}
 @media(min-width:768px){.wrap{padding:20px 24px}}
 .g4{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
@@ -80,37 +92,44 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .g2{display:grid;grid-template-columns:1fr;gap:14px}
 @media(min-width:700px){.g2{grid-template-columns:1fr 1fr;gap:16px}}
 
-/* ── SECTION HEADER ── */
+/* FIX #6: section header text wraps on mobile */
 .sh{display:flex;align-items:center;gap:10px;margin:20px 0 10px}
-.sh span{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--text2);white-space:nowrap}
-.sh::before,.sh::after{content:'';flex:1;height:1px;background:var(--border)}
+.sh span{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--text2);
+  white-space:normal;text-align:center;line-height:1.4;flex-shrink:1}
+@media(min-width:480px){.sh span{white-space:nowrap;letter-spacing:.14em}}
+.sh::before,.sh::after{content:'';flex:1;height:1px;background:var(--border);flex-shrink:0;min-width:10px}
 
-/* ── CARD ── */
+/* CARD */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
 @media(min-width:768px){.card{padding:18px}}
 .clabel{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .clabel::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* ── KPI ── */
+/* KPI */
 .kpi{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;position:relative;cursor:default}
 .kpi .l{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);margin-bottom:4px;display:flex;align-items:center;gap:5px}
 .kpi .v{font-family:var(--mono);font-size:20px;font-weight:500;line-height:1}
 @media(min-width:600px){.kpi .v{font-size:22px}}
 .kpi .v.g{color:var(--accent)}.kpi .v.r{color:var(--red)}.kpi .v.y{color:var(--yellow)}
-.kpi .s{font-family:var(--mono);font-size:9px;color:var(--text2);margin-top:4px}
+.kpi .s{font-family:var(--mono);font-size:9px;color:var(--text2);margin-top:4px;word-break:break-word}
 .iico{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;border:1px solid var(--border2);font-family:var(--mono);font-size:8px;color:var(--text2);cursor:pointer;flex-shrink:0;transition:all .15s;line-height:1;user-select:none}
 .iico:hover{border-color:var(--accent);color:var(--accent)}
 .kpi-popup{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg);border:1px solid var(--border2);border-radius:var(--re);padding:10px 12px;font-size:12px;color:var(--text2);line-height:1.5;z-index:50;box-shadow:var(--shd)}
 .kpi-popup.open{display:block}
 .kpi-popup b{color:var(--text);font-weight:500}
 
-/* ── SELECTORS ── */
-.sel-group{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;margin-bottom:14px}
-.sel-item{display:flex;flex-direction:column;gap:6px}
+/* SELECTORS */
+.sel-group{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin-bottom:14px}
+.sel-item{display:flex;flex-direction:column;gap:6px;min-width:0}
 .sel-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2)}
-.sel{display:flex;gap:0;border:1px solid var(--border);border-radius:var(--re);overflow:hidden;width:fit-content;flex-wrap:nowrap;max-width:100%;overflow-x:auto}
-.sbtn{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;padding:7px 11px;border-right:1px solid var(--border);color:var(--text2);background:var(--bg3);cursor:pointer;transition:all .15s;position:relative;white-space:nowrap;flex-shrink:0}
-@media(min-width:480px){.sbtn{font-size:10px;padding:7px 13px}}
+/* FIX #3: layer selector wraps on mobile */
+.sel{display:flex;gap:0;border:1px solid var(--border);border-radius:var(--re);overflow:hidden;width:fit-content;max-width:100%}
+/* for the layer selector specifically — allow wrap */
+.sel.wrap-sel{flex-wrap:wrap;width:100%}
+.sel.wrap-sel .sbtn{border-bottom:1px solid var(--border)}
+.sel.wrap-sel .sbtn:last-child{border-right:none;border-bottom:none}
+.sbtn{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;padding:6px 10px;border-right:1px solid var(--border);color:var(--text2);background:var(--bg3);cursor:pointer;transition:all .15s;position:relative;white-space:nowrap;flex-shrink:0}
+@media(min-width:400px){.sbtn{font-size:10px;padding:7px 12px}}
 .sbtn:last-child{border-right:none}
 .sbtn.ak{background:var(--accent);color:var(--btn-tx)}
 .sbtn.ab{background:var(--yellow);color:var(--btn-tx)}
@@ -125,28 +144,30 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .sbtn.locked{opacity:.3;cursor:not-allowed}
 .sbtn .ltag{font-size:7px;display:block;opacity:.75;margin-top:1px}
 
-/* ── CHART ── */
-.chart-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.chart-wrap{display:flex;gap:0;height:200px;position:relative;min-width:480px}
+/* FIX #8: chart — NO min-width, fully fluid, no horizontal scroll needed */
+.chart-wrap{display:flex;gap:0;height:200px;position:relative;width:100%}
 @media(min-width:600px){.chart-wrap{height:220px}}
-.chart-yaxis-col{width:40px;flex-shrink:0;position:relative;height:100%}
+.chart-yaxis-col{width:38px;flex-shrink:0;position:relative;height:100%}
 @media(min-width:600px){.chart-yaxis-col{width:44px}}
-.ytick{position:absolute;right:5px;font-family:var(--mono);font-size:7px;color:var(--text2);transform:translateY(50%);white-space:nowrap;text-align:right}
-@media(min-width:600px){.ytick{font-size:8px}}
-.chart-bars{flex:1;display:flex;align-items:flex-end;gap:4px;height:100%;position:relative;overflow:hidden}
+.ytick{position:absolute;right:4px;font-family:var(--mono);font-size:7px;color:var(--text2);transform:translateY(50%);white-space:nowrap;text-align:right}
+@media(min-width:600px){.ytick{font-size:8px;right:6px}}
+.chart-bars{flex:1;display:flex;align-items:flex-end;gap:2px;height:100%;position:relative;overflow:hidden}
+@media(min-width:480px){.chart-bars{gap:3px}}
 @media(min-width:600px){.chart-bars{gap:5px}}
-.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;cursor:default;position:relative;min-width:24px}
-.bar-rev{width:100%;border-radius:3px 3px 0 0;transition:height .35s ease;min-height:2px;position:relative}
-.bar-expl::after{content:'';position:absolute;inset:0;border-radius:3px 3px 0 0;box-shadow:0 0 10px var(--purple);opacity:.5}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;cursor:default;position:relative;min-width:0}
+.bar-rev{width:100%;border-radius:2px 2px 0 0;transition:height .35s ease;min-height:2px;position:relative}
+@media(min-width:400px){.bar-rev{border-radius:3px 3px 0 0}}
+.bar-expl::after{content:'';position:absolute;inset:0;border-radius:3px 3px 0 0;box-shadow:0 0 8px var(--purple);opacity:.5}
 .cost-line{position:absolute;left:0;right:0;border-top:1px dashed var(--red);pointer-events:none;z-index:2}
-.qlabel{font-family:var(--mono);font-size:7px;color:var(--text2);text-align:center;position:absolute;bottom:-16px}
+.qlabel{font-family:var(--mono);font-size:6px;color:var(--text2);text-align:center;position:absolute;bottom:-14px}
+@media(min-width:400px){.qlabel{font-size:7px;bottom:-15px}}
 @media(min-width:600px){.qlabel{font-size:8px;bottom:-18px}}
-.yr-labels{display:flex;gap:4px;margin-top:20px}
+.yr-labels{display:flex;gap:4px;margin-top:18px}
 @media(min-width:600px){.yr-labels{gap:5px;margin-top:22px}}
 
-/* ── TABLE ── */
+/* TABLE */
 .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.ft{width:100%;border-collapse:collapse;font-size:11px;min-width:320px}
+.ft{width:100%;border-collapse:collapse;font-size:11px;min-width:300px}
 @media(min-width:480px){.ft{font-size:12px}}
 .ft th{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--text2);padding:5px 6px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
 .ft td{padding:5px 6px;border-bottom:1px solid var(--border)}
@@ -157,7 +178,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .ft .tot td{border-top:1px solid var(--border2);font-weight:600}
 .ft .dim{color:var(--text2)}
 
-/* ── BURN ── */
+/* BURN */
 .burn-row{display:grid;grid-template-columns:24px 1fr 74px;align-items:center;gap:6px;margin-bottom:5px}
 @media(min-width:480px){.burn-row{grid-template-columns:26px 1fr 82px;gap:8px}}
 .burn-q{font-family:var(--mono);font-size:9px;color:var(--text2)}
@@ -166,12 +187,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .burn-fill span{font-family:var(--mono);font-size:7px;white-space:nowrap;overflow:hidden}
 .burn-num{font-family:var(--mono);font-size:9px;text-align:right;white-space:nowrap}
 
-/* ── TOOLTIP ── */
+/* TOOLTIP */
 .tip{position:fixed;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--re);padding:10px 12px;font-family:var(--mono);font-size:10px;display:none;z-index:200;pointer-events:none;min-width:190px;max-width:240px;box-shadow:var(--shd)}
 .tip .th{color:var(--text2);font-size:9px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
 .tip .tr{display:flex;justify-content:space-between;gap:12px;margin:2px 0}
 
-/* ── LEGEND ── */
+/* LEGEND */
 .legend-grid{display:grid;grid-template-columns:1fr;gap:10px}
 @media(min-width:500px){.legend-grid{grid-template-columns:1fr 1fr}}
 .leg-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--re);padding:11px 13px;cursor:pointer;transition:border-color .15s}
@@ -204,7 +225,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 <div class="hd">
   <div class="logo">EHIPAS <span>/ <span data-i="hdr_title">Financial Model</span></span></div>
   <div class="hdr-ctrls">
-    <!-- Lang -->
     <div class="ddwrap">
       <button class="ddtrig" onclick="togDD('lang')">
         <span id="ll">EN</span><span class="ddarrow">▾</span>
@@ -216,23 +236,20 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
         <div class="ddi"    data-l="ru" onclick="setLang('ru')">🇷🇺 Русский<span class="ck" id="lc-ru"></span></div>
       </div>
     </div>
-    <!-- Theme -->
     <div class="ddwrap">
       <button class="ddtrig" onclick="togDD('theme')">
-        <span id="ticon">☾</span><span class="ddarrow">▾</span>
+        <span id="ticon">⊙</span><span class="ddarrow">▾</span>
       </button>
       <div class="ddmenu" id="theme-dd">
-        <div class="ddi" onclick="setTheme('system')">⊙ <span data-i="th_sys">System</span><span class="ck" id="tc-sys"></span></div>
+        <div class="ddi" onclick="setTheme('system')">⊙ <span data-i="th_sys">System</span><span class="ck" id="tc-sys">✓</span></div>
         <div class="ddi" onclick="setTheme('light')">☀ <span data-i="th_light">Light</span><span class="ck" id="tc-light"></span></div>
-        <div class="ddi" onclick="setTheme('dark')">☾ <span data-i="th_dark">Dark</span><span class="ck" id="tc-dark">✓</span></div>
+        <div class="ddi" onclick="setTheme('dark')">☾ <span data-i="th_dark">Dark</span><span class="ck" id="tc-dark"></span></div>
       </div>
     </div>
   </div>
 </div>
 
 <div class="wrap">
-
-  <!-- SELECTORS -->
   <div class="sh"><span data-i="s_params">Parameters · 45 combinations</span></div>
   <div class="sel-group">
     <div class="sel-item">
@@ -251,9 +268,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
         <div class="sbtn"    onclick="pick('expl','vb',this)"   data-i="ex_vb">VB ×50</div>
       </div>
     </div>
-    <div class="sel-item">
+    <!-- FIX #3: wrap-sel class allows wrapping on mobile -->
+    <div class="sel-item" style="flex:1;min-width:180px">
       <div class="sel-label" data-i="s_layer">Revenue layer</div>
-      <div class="sel" id="layerSel">
+      <div class="sel wrap-sel" id="layerSel">
         <div class="sbtn al1" onclick="pick('layer',1,this)" data-i="ly_1">1 · KOL</div>
         <div class="sbtn"     onclick="pick('layer',2,this)" data-i="ly_2">2 · + Artifacts</div>
         <div class="sbtn"     onclick="pick('layer',3,this)" data-i="ly_3">3 · + Collabs</div>
@@ -263,20 +281,15 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
     </div>
   </div>
 
-  <!-- KPI -->
   <div class="g4" id="kpiRow"></div>
-
-  <!-- YEAR SUMMARIES -->
   <div class="g3" id="yrRow"></div>
 
-  <!-- CHART -->
   <div class="sh"><span data-i="s_chart">Cash Flow by Quarter</span></div>
   <div class="card" style="margin-bottom:14px">
-    <div class="chart-scroll">
-      <div class="chart-wrap">
-        <div class="chart-yaxis-col" id="yAxis"></div>
-        <div class="chart-bars" id="chartBars"></div>
-      </div>
+    <!-- FIX #8: no chart-scroll wrapper, chart is fully fluid -->
+    <div class="chart-wrap">
+      <div class="chart-yaxis-col" id="yAxis"></div>
+      <div class="chart-bars" id="chartBars"></div>
     </div>
     <div class="yr-labels" id="yrLabels"></div>
     <div class="leg-vis" style="margin-top:10px">
@@ -291,7 +304,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
     </div>
   </div>
 
-  <!-- TABLE + BURN -->
   <div class="g2" style="margin-bottom:14px">
     <div class="card">
       <div class="clabel" data-i="s_table">Quarterly table</div>
@@ -303,210 +315,214 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
     </div>
   </div>
 
-  <!-- LEGEND -->
   <div class="sh"><span data-i="s_legend">How to read the model</span></div>
   <div class="card">
     <div class="clabel" data-i="s_legend_sub">Interactive legend — tap a section</div>
     <div class="legend-grid" id="legendGrid"></div>
     <div class="legend-note" style="margin-top:12px" id="legendNote"></div>
   </div>
-
 </div>
 
 <div class="tip" id="tip"></div>
 
 <div class="foot">
-  <div class="fn">EHIPAS · FINMODEL v9 · BANGKOK · <span id="ds"></span></div>
+  <div class="fn">EHIPAS · FINMODEL v10 · BANGKOK · <span id="ds"></span></div>
   <div class="fn">45 combinations ✓ · Flash Auction ✓ · Polygon ✓</div>
 </div>
 
 <script>
-// ════════════════════════════════
-// I18N
-// ════════════════════════════════
+// ════════ I18N ════════
 const L={
   en:{
     hdr_title:'Financial Model',
     s_params:'Parameters · 45 combinations (5 layers × 3 scenarios × 3 explosive)',
-    s_scen:'Revenue scenario', s_expl:'Explosive growth (from Q9)', s_layer:'Revenue layer',
-    sc_k:'K — Conservative', sc_b:'B — Base', sc_o:'O — Optimistic',
-    ex_none:'None', ex_vk:'VK ×10', ex_vb:'VB ×50',
-    ly_1:'1 · KOL', ly_2:'2 · + Artifacts', ly_3:'3 · + Collabs', ly_4:'4 · + Country 2', ly_5:'5 · + Country 3',
-    s_chart:'Cash Flow by Quarter', s_table:'Quarterly table', s_burn:'Cumulative P&L',
-    s_legend:'How to read the model', s_legend_sub:'Interactive legend — tap a section',
-    kpi_be:'Break-even', kpi_ebitda:'EBITDA · Q12', kpi_rev:'Revenue · 3 years', kpi_round:'Round budget',
-    kpi_be_sub:'first profitable quarter', kpi_rev_sub:'total USDT · all layers', kpi_round_sub:'max drawdown × 1.25',
+    s_scen:'Revenue scenario',s_expl:'Explosive growth (from Q9)',s_layer:'Revenue layer',
+    sc_k:'K — Conservative',sc_b:'B — Base',sc_o:'O — Optimistic',
+    sc_short_k:'K',sc_short_b:'B',sc_short_o:'O',
+    ex_none:'None',ex_vk:'VK ×10',ex_vb:'VB ×50',
+    ly_1:'1 · KOL',ly_2:'2 · + Artifacts',ly_3:'3 · + Collabs',ly_4:'4 · + Country 2',ly_5:'5 · + Country 3',
+    s_chart:'Cash Flow by Quarter',s_table:'Quarterly table',s_burn:'Cumulative P&L',
+    s_legend:'How to read the model',s_legend_sub:'Interactive legend — tap a section',
+    kpi_be:'Break-even',kpi_ebitda:'EBITDA · Q12',kpi_rev:'Revenue · 3 years',kpi_round:'Round budget',
+    kpi_be_sub:'first profitable quarter',kpi_rev_sub:'total USDT · all layers',kpi_round_sub:'max drawdown × 1.25',
     yr_label:(y,q1,q2)=>`Year ${y} · Q${q1}–Q${q2}`,
-    yr_revenue:'revenue', yr_expenses:'expenses',
+    yr_revenue:'revenue',yr_expenses:'expenses',
     yr_info_title:(y)=>`Year ${y} breakdown`,
-    yr_info:(y,rev,cost,net,evs,beNote)=>`<b>Total revenue:</b> $${rev}<br><b>Total expenses:</b> $${cost}<br><b>Net P&L:</b> <b>${net}</b><br><b>Events/exp.:</b> ${evs} total for the year<br>${beNote}`,
+    yr_info:(y,rev,cost,net,evs,beNote)=>`<b>Total revenue:</b> $${rev}<br><b>Total expenses:</b> $${cost}<br><b>Net P&L:</b> <b>${net}</b><br><b>Experiences:</b> ${evs}/year<br>${beNote}`,
     yr_be_note:(q)=>`Break-even reached in Q${q} this year.`,
     yr_no_be:'Break-even not reached this year.',
-    th_quarter:'Qtr', th_exp:'Exp', th_revenue:'Revenue', th_expenses:'Expenses', th_net:'Net',
-    lv_k:'K', lv_b:'B ×1.5', lv_o:'O ×2.5', lv_23:'L2–3', lv_4:'L4 ×2', lv_5:'L5 ×3',
-    lv_expl:'Explosive', lv_cost:'Expenses',
+    th_quarter:'Qtr',th_exp:'Exp',th_revenue:'Revenue',th_expenses:'Expenses',th_net:'Net',
+    lv_k:'K',lv_b:'B ×1.5',lv_o:'O ×2.5',lv_23:'L2–3',lv_4:'L4 ×2',lv_5:'L5 ×3',lv_expl:'Explosive',lv_cost:'Expenses',
     leg_scen_title:'K / B / O — revenue scenarios',
-    leg_scen_body:'<b>K — Conservative</b>: slow growth, business works. Baseline from real market data.<br><b>B — Base</b>: realistic market. Revenue ×1.5 vs K — higher CR, lower churn.<br><b>O — Optimistic</b>: fast growth, high conversions. Revenue ×2.5 vs K.<br><br><span class="note" style="background:var(--accent-dim);color:var(--accent);border-color:var(--accent)">All three scenarios are realistic and grounded</span>',
+    leg_scen_body:'<b>K — Conservative</b>: slow growth, business works. Baseline.<br><b>B — Base</b>: realistic market. Revenue ×1.5 vs K.<br><b>O — Optimistic</b>: fast growth, high conversions. Revenue ×2.5 vs K.<br><br><span class="note" style="background:var(--accent-dim);color:var(--accent);border-color:var(--accent)">All three scenarios are realistic and grounded</span>',
     leg_expl_title:'VK ×10 / VB ×50 — explosive growth',
-    leg_expl_body:'Activates from <b>Q9 (start of year 3)</b>. Multiplier applied on top of scenario.<br><br><b>VK ×10</b> — network effect, exchange is known, automation works.<br><b>VB ×50</b> — corporate segment, NFT artifacts, viral sharing.<br><br><span class="note" style="background:var(--purple-dim);color:var(--purple);border-color:var(--purple)">Not guaranteed — potential, not forecast</span>',
+    leg_expl_body:'Activates from <b>Q9 (start of year 3)</b>. Applied on top of scenario.<br><b>VK ×10</b> — network effect, automation works.<br><b>VB ×50</b> — corporate segment, NFT artifacts, viral sharing.<br><br><span class="note" style="background:var(--purple-dim);color:var(--purple);border-color:var(--purple)">Not guaranteed — potential, not forecast</span>',
     leg_l2_title:'Layer 2 — Digital artifacts',
-    leg_l2_body:'After each experience, participants buy a <b>digital artifact</b> (NFT souvenir): photo, video, KOL signature.<br><br><b>40% participants × $8 USDT × 10% commission</b>. No additional costs.<br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">Active in layers 2–5</span>',
+    leg_l2_body:'After each experience, participants buy a <b>digital artifact</b> (NFT souvenir).<br><b>40% × $8 USDT × 10% commission</b>. No additional costs.<br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">Active in layers 2–5</span>',
     leg_l3_title:'Layer 3 — Collab experiences',
-    leg_l3_body:'<b>2+ KOLs</b> combine. More tickets, higher price, wider audience.<br>Exchange revenue per collab ≈ <b>×5 vs regular experience</b>.<br>Start Q3, grow to 5/quarter by Q12.<br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">Potential ×5 to all revenue metrics</span>',
+    leg_l3_body:'<b>2+ KOLs</b> combine. More tickets, higher price, wider audience.<br>Exchange revenue per collab ≈ <b>×5 vs regular</b>.<br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">Potential ×5 to all revenue metrics</span>',
     leg_l4_title:'Layer 4 — + Country 2 (×2 markets)',
-    leg_l4_body:'Second market (Vietnam, Indonesia, etc.) runs on same model. <b>All Layer 3 revenue doubles</b>.<br>Infrastructure is ready — platform scales without rebuilding.<br><br><span class="note" style="background:var(--teal-dim);color:var(--teal);border-color:var(--teal)">Horizon: 3+ years from M0</span>',
+    leg_l4_body:'Second market on the same model. <b>All Layer 3 revenue doubles</b>.<br>Infrastructure ready — no rebuild needed.<br><br><span class="note" style="background:var(--teal-dim);color:var(--teal);border-color:var(--teal)">Horizon: 3+ years from M0</span>',
     leg_l5_title:'Layer 5 — + Country 3 (×3 markets)',
-    leg_l5_body:'Third country. Total geo multiplier — <b>×3 vs layer 1</b>.<br>With O + VB×50 — <b>maximum model combination</b> (45th of 45).<br><br><span class="note" style="background:var(--rose-dim);color:var(--rose);border-color:var(--rose)">Layer 5 · O · VB×50 = upper potential bound</span>',
-    leg_round_title:'Round budget — how it\'s calculated',
-    leg_round_body:'<b>Max accumulated loss × 1.25</b> (25% buffer). Guidance, not final figure.<br><br>Excludes:<br>— One-time costs: registration, smart contract audit ($14–24k)<br>— Capital freezes: visa + charter capital (~$45k)<br><br>Possible <b>staged financing</b>: tranche 1 for 6 months, tranche 2+ after KPIs.',
-    leg_excl_title:'What\'s not in the model',
-    leg_excl_body:'<b>Outside current model:</b><br>— Corporate segment (brands as creators)<br>— Royalties and creator personal income<br>— One-time costs and capital freezes (~$45–55k)<br><br><span class="note" style="background:var(--bg4);color:var(--text2);border-color:var(--border2)">Real round budget is ~$45–55k higher</span>',
-    legend_note:'<b>Round budget</b> is guidance, not an offer. Possible <b>staged financing</b>: tranche 1 for 6 months, tranche 2+ after KPIs. This reduces investor risk and increases project discipline.<br><b>One-time costs and capital freezes</b> (~$45–55k) not included — added separately when finalizing.',
-    kpi_be_html:'<b>Break-even</b> — first quarter when exchange revenue exceeds expenses. Until then, losses accumulate. Earlier break-even = less funding needed.',
-    kpi_ebitda_html:'<b>EBITDA Q12</b> — revenue minus expenses in the last quarter of year 3.<br><b>K/B/O</b> — revenue scenario. <b>VK/VB</b> — explosive growth from Q9. Layer number — active revenue streams.',
-    kpi_rev_html:'<b>Total exchange revenue</b> over 3 years with all active layers. Excludes: creator revenue, royalties, founder personal income.',
-    kpi_round_html:'<b>Max accumulated loss × 1.25</b>. Minimum to raise to reach break-even with 25% buffer.<br>Excludes one-time costs and capital freezes (~$45–55k additional).<br>Staged financing possible: tranche 1 for 6 months, next after KPIs.',
-    th_sys:'System', th_light:'Light', th_dark:'Dark',
+    leg_l5_body:'Third country. Geo multiplier — <b>×3 vs layer 1</b>.<br>With O + VB×50 — <b>maximum model combination</b> (45th of 45).<br><br><span class="note" style="background:var(--rose-dim);color:var(--rose);border-color:var(--rose)">Layer 5 · O · VB×50 = upper potential bound</span>',
+    leg_round_title:"Round budget — how it's calculated",
+    leg_round_body:'<b>Max accumulated loss × 1.25</b> (25% buffer).<br>Excludes: one-time costs ($14–24k) + capital freezes (~$45k).<br>Staged financing possible: tranche 1 for 6 months, next after KPIs.',
+    leg_excl_title:"What's not in the model",
+    leg_excl_body:'<b>Outside current model:</b><br>— Corporate segment (brands as creators)<br>— Creator royalties and personal income<br>— One-time costs and capital freezes (~$45–55k)<br><br><span class="note" style="background:var(--bg4);color:var(--text2);border-color:var(--border2)">Real round budget is ~$45–55k higher</span>',
+    leg_simplified_title:'About this model',
+    leg_simplified_body:'This model is <b>simplified but realistic</b>. It covers the core revenue mechanics across 45 scenario combinations.<br><br>A comprehensive multi-dimensional model (full Monte Carlo, multi-variable sensitivity, correlation matrices) requires significantly more compute than is currently available.<br><br>Such compute can be <b>rented after closing the funding round</b> to build a full-scale financial model for board-level reporting and auditor review.<br><br><span class="note" style="background:var(--accent-dim);color:var(--accent);border-color:var(--accent)">This model is sufficient for investor conversations and pitch deck</span>',
+    legend_note:'<b>Round budget</b> is guidance, not an offer. Staged financing possible. <b>One-time costs and freezes</b> (~$45–55k) added separately.',
+    kpi_be_html:'<b>Break-even</b> — first quarter when exchange revenue exceeds expenses.',
+    kpi_ebitda_html:'<b>EBITDA Q12</b> — revenue minus expenses in the last quarter of year 3.<br>The label shows: scenario (K/B/O) · explosive growth if active · layer if > 1.',
+    kpi_rev_html:'<b>Total exchange revenue</b> over 3 years with all active layers.',
+    kpi_round_html:'<b>Max accumulated loss × 1.25</b>. Excludes one-time costs and freezes (~$45–55k additional).',
+    th_sys:'System',th_light:'Light',th_dark:'Dark',
   },
   th:{
     hdr_title:'โมเดลการเงิน',
     s_params:'พารามิเตอร์ · 45 การผสมผสาน (5 ชั้น × 3 สถานการณ์ × 3 การเติบโตแบบระเบิด)',
-    s_scen:'สถานการณ์รายได้', s_expl:'การเติบโตแบบระเบิด (ตั้งแต่ Q9)', s_layer:'ชั้นรายได้',
-    sc_k:'K — อนุรักษ์นิยม', sc_b:'B — พื้นฐาน', sc_o:'O — มองโลกในแง่ดี',
-    ex_none:'ไม่มี', ex_vk:'VK ×10', ex_vb:'VB ×50',
-    ly_1:'1 · KOL', ly_2:'2 · + สิ่งประดิษฐ์', ly_3:'3 · + ร่วมมือ', ly_4:'4 · + ประเทศ 2', ly_5:'5 · + ประเทศ 3',
-    s_chart:'กระแสเงินสดรายไตรมาส', s_table:'ตารางรายไตรมาส', s_burn:'P&L สะสม',
-    s_legend:'วิธีอ่านโมเดล', s_legend_sub:'ตำนานแบบโต้ตอบ — แตะส่วน',
-    kpi_be:'จุดคุ้มทุน', kpi_ebitda:'EBITDA · Q12', kpi_rev:'รายได้ · 3 ปี', kpi_round:'งบประมาณรอบ',
-    kpi_be_sub:'ไตรมาสที่มีกำไรครั้งแรก', kpi_rev_sub:'USDT รวม · ทุกชั้น', kpi_round_sub:'การสูญเสียสูงสุด × 1.25',
+    s_scen:'สถานการณ์รายได้',s_expl:'การเติบโตแบบระเบิด (ตั้งแต่ Q9)',s_layer:'ชั้นรายได้',
+    sc_k:'K — อนุรักษ์นิยม',sc_b:'B — พื้นฐาน',sc_o:'O — มองโลกในแง่ดี',
+    sc_short_k:'K',sc_short_b:'B',sc_short_o:'O',
+    ex_none:'ไม่มี',ex_vk:'VK ×10',ex_vb:'VB ×50',
+    ly_1:'1 · KOL',ly_2:'2 · + สิ่งประดิษฐ์',ly_3:'3 · + ร่วมมือ',ly_4:'4 · + ประเทศ 2',ly_5:'5 · + ประเทศ 3',
+    s_chart:'กระแสเงินสดรายไตรมาส',s_table:'ตารางรายไตรมาส',s_burn:'P&L สะสม',
+    s_legend:'วิธีอ่านโมเดล',s_legend_sub:'ตำนานแบบโต้ตอบ — แตะส่วน',
+    kpi_be:'จุดคุ้มทุน',kpi_ebitda:'EBITDA · Q12',kpi_rev:'รายได้ · 3 ปี',kpi_round:'งบประมาณรอบ',
+    kpi_be_sub:'ไตรมาสที่มีกำไรครั้งแรก',kpi_rev_sub:'USDT รวม · ทุกชั้น',kpi_round_sub:'การสูญเสียสูงสุด × 1.25',
     yr_label:(y,q1,q2)=>`ปีที่ ${y} · Q${q1}–Q${q2}`,
-    yr_revenue:'รายได้', yr_expenses:'ค่าใช้จ่าย',
+    yr_revenue:'รายได้',yr_expenses:'ค่าใช้จ่าย',
     yr_info_title:(y)=>`รายละเอียดปีที่ ${y}`,
-    yr_info:(y,rev,cost,net,evs,beNote)=>`<b>รายได้รวม:</b> $${rev}<br><b>ค่าใช้จ่ายรวม:</b> $${cost}<br><b>P&L สุทธิ:</b> <b>${net}</b><br><b>ประสบการณ์:</b> ${evs} รายการต่อปี<br>${beNote}`,
-    yr_be_note:(q)=>`ถึงจุดคุ้มทุนใน Q${q} ปีนี้`,
+    yr_info:(y,rev,cost,net,evs,beNote)=>`<b>รายได้รวม:</b> $${rev}<br><b>ค่าใช้จ่ายรวม:</b> $${cost}<br><b>P&L สุทธิ:</b> <b>${net}</b><br><b>ประสบการณ์:</b> ${evs}/ปี<br>${beNote}`,
+    yr_be_note:(q)=>`ถึงจุดคุ้มทุนใน Q${q}`,
     yr_no_be:'ยังไม่ถึงจุดคุ้มทุนในปีนี้',
-    th_quarter:'ไตรมาส', th_exp:'ประสบ', th_revenue:'รายได้', th_expenses:'ค่าใช้จ่าย', th_net:'สุทธิ',
-    lv_k:'K', lv_b:'B ×1.5', lv_o:'O ×2.5', lv_23:'ชั้น 2–3', lv_4:'ชั้น 4 ×2', lv_5:'ชั้น 5 ×3',
-    lv_expl:'ระเบิด', lv_cost:'ค่าใช้จ่าย',
+    th_quarter:'ไตรมาส',th_exp:'ประสบ.',th_revenue:'รายได้',th_expenses:'ค่าใช้จ่าย',th_net:'สุทธิ',
+    lv_k:'K',lv_b:'B ×1.5',lv_o:'O ×2.5',lv_23:'ชั้น2–3',lv_4:'ชั้น4 ×2',lv_5:'ชั้น5 ×3',lv_expl:'ระเบิด',lv_cost:'ค่าใช้จ่าย',
     leg_scen_title:'K / B / O — สถานการณ์รายได้',
-    leg_scen_body:'<b>K — อนุรักษ์นิยม</b>: เติบโตช้า แต่ธุรกิจทำงานได้<br><b>B — พื้นฐาน</b>: ตลาดจริง รายได้ ×1.5 เทียบ K<br><b>O — มองโลกในแง่ดี</b>: เติบโตเร็ว รายได้ ×2.5 เทียบ K<br><br><span class="note" style="background:var(--accent-dim);color:var(--accent);border-color:var(--accent)">ทุกสถานการณ์สมจริงและมีเหตุผล</span>',
+    leg_scen_body:'<b>K — อนุรักษ์นิยม</b>: เติบโตช้า แต่ธุรกิจทำงานได้<br><b>B — พื้นฐาน</b>: ตลาดจริง ×1.5<br><b>O — มองโลกในแง่ดี</b>: เติบโตเร็ว ×2.5<br><br><span class="note" style="background:var(--accent-dim);color:var(--accent);border-color:var(--accent)">ทุกสถานการณ์สมจริงและมีเหตุผล</span>',
     leg_expl_title:'VK ×10 / VB ×50 — การเติบโตแบบระเบิด',
-    leg_expl_body:'เริ่มตั้งแต่ <b>Q9 (ต้นปีที่ 3)</b><br><br><b>VK ×10</b> — เอฟเฟกต์เครือข่าย การทำงานอัตโนมัติ<br><b>VB ×50</b> — ส่วนองค์กร NFT การแชร์ไวรัล<br><br><span class="note" style="background:var(--purple-dim);color:var(--purple);border-color:var(--purple)">ไม่รับประกัน — ศักยภาพ ไม่ใช่การคาดการณ์</span>',
+    leg_expl_body:'เริ่มตั้งแต่ <b>Q9</b><br><b>VK ×10</b> — เอฟเฟกต์เครือข่าย<br><b>VB ×50</b> — ส่วนองค์กร NFT<br><br><span class="note" style="background:var(--purple-dim);color:var(--purple);border-color:var(--purple)">ไม่รับประกัน — ศักยภาพ ไม่ใช่การคาดการณ์</span>',
     leg_l2_title:'ชั้น 2 — สิ่งประดิษฐ์ดิจิทัล',
-    leg_l2_body:'หลังแต่ละประสบการณ์ ผู้เข้าร่วมซื้อ<b>สิ่งประดิษฐ์ดิจิทัล</b> (NFT)<br><br><b>40% × $8 USDT × 10% ค่าคอมมิชชัน</b><br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">ใช้งานในชั้น 2–5</span>',
+    leg_l2_body:'<b>40% × $8 USDT × 10% ค่าคอมมิชชัน</b><br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">ใช้งานในชั้น 2–5</span>',
     leg_l3_title:'ชั้น 3 — ประสบการณ์ร่วมมือ',
-    leg_l3_body:'<b>KOL 2+ คน</b> รวมตัวกัน ตั๋วมากขึ้น ราคาสูงขึ้น<br>รายได้ต่อการร่วมมือ ≈ <b>×5 ต่อประสบการณ์ปกติ</b><br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">ศักยภาพ ×5 สำหรับตัวชี้วัดรายได้ทั้งหมด</span>',
-    leg_l4_title:'ชั้น 4 — + ประเทศที่ 2 (×2 ตลาด)',
-    leg_l4_body:'ตลาดที่สองใช้โมเดลเดียวกัน <b>รายได้ชั้น 3 ทั้งหมดเพิ่มเป็นสองเท่า</b><br><br><span class="note" style="background:var(--teal-dim);color:var(--teal);border-color:var(--teal)">ขอบฟ้า: 3+ ปีจาก M0</span>',
-    leg_l5_title:'ชั้น 5 — + ประเทศที่ 3 (×3 ตลาด)',
-    leg_l5_body:'ประเทศที่สาม ตัวคูณทางภูมิศาสตร์รวม — <b>×3 เทียบชั้น 1</b><br>ร่วมกับ O + VB×50 — <b>การผสมสูงสุดของโมเดล</b> (ที่ 45 จาก 45)<br><br><span class="note" style="background:var(--rose-dim);color:var(--rose);border-color:var(--rose)">ชั้น 5 · O · VB×50 = ขอบบนของศักยภาพ</span>',
-    leg_round_title:'งบประมาณรอบ — วิธีคำนวณ',
-    leg_round_body:'<b>การสูญเสียสูงสุดสะสม × 1.25</b> (บัฟเฟอร์ 25%)<br><br>ไม่รวม:<br>— ค่าใช้จ่ายครั้งเดียว: การจดทะเบียน การตรวจสอบ ($14–24k)<br>— เงินทุนแช่แข็ง: วีซ่า + ทุนจดทะเบียน (~$45k)<br><br>การเงินแบบ<b>ขั้นตอน</b>เป็นไปได้',
+    leg_l3_body:'<b>KOL 2+ คน</b> รวมตัวกัน ≈ <b>×5</b><br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">ศักยภาพ ×5</span>',
+    leg_l4_title:'ชั้น 4 — + ประเทศที่ 2',
+    leg_l4_body:'<b>รายได้ทั้งหมดเพิ่มเป็นสองเท่า</b><br><br><span class="note" style="background:var(--teal-dim);color:var(--teal);border-color:var(--teal)">ขอบฟ้า: 3+ ปี</span>',
+    leg_l5_title:'ชั้น 5 — + ประเทศที่ 3',
+    leg_l5_body:'ตัวคูณ <b>×3</b> กับชั้น 1<br><br><span class="note" style="background:var(--rose-dim);color:var(--rose);border-color:var(--rose)">การผสมสูงสุด ชั้น5 · O · VB×50</span>',
+    leg_round_title:'งบประมาณรอบ',
+    leg_round_body:'<b>การสูญเสียสะสมสูงสุด × 1.25</b><br>ไม่รวมค่าใช้จ่ายครั้งเดียวและเงินทุนแช่แข็ง (~$45k)',
     leg_excl_title:'สิ่งที่ไม่อยู่ในโมเดล',
-    leg_excl_body:'<b>นอกโมเดลปัจจุบัน:</b><br>— ส่วนองค์กร<br>— ค่าลิขสิทธิ์และรายได้ส่วนตัวของผู้สร้าง<br>— ค่าใช้จ่ายครั้งเดียวและเงินทุนแช่แข็ง (~$45–55k)<br><br><span class="note" style="background:var(--bg4);color:var(--text2);border-color:var(--border2)">งบประมาณจริงสูงกว่า ~$45–55k</span>',
-    legend_note:'<b>งบประมาณรอบ</b> — การชี้นำ ไม่ใช่ข้อเสนอ การเงินแบบขั้นตอนเป็นไปได้<br><b>ค่าใช้จ่ายครั้งเดียวและเงินทุนแช่แข็ง</b> (~$45–55k) ไม่รวมอยู่',
+    leg_excl_body:'— ส่วนองค์กร<br>— ค่าลิขสิทธิ์<br>— ค่าใช้จ่ายครั้งเดียว (~$45–55k)<br><br><span class="note" style="background:var(--bg4);color:var(--text2);border-color:var(--border2)">งบประมาณจริงสูงกว่า ~$45–55k</span>',
+    leg_simplified_title:'เกี่ยวกับโมเดลนี้',
+    leg_simplified_body:'โมเดลนี้เป็น<b>แบบง่ายแต่สมจริง</b><br><br>โมเดลที่ครอบคลุมและหลายมิติต้องใช้ทรัพยากรการประมวลผลมากกว่าที่มีอยู่ในปัจจุบัน<br><br>ทรัพยากรดังกล่าวสามารถ<b>เช่าได้หลังจากปิดรอบการระดมทุน</b><br><br><span class="note" style="background:var(--accent-dim);color:var(--accent);border-color:var(--accent)">โมเดลนี้เพียงพอสำหรับการสนทนากับนักลงทุน</span>',
+    legend_note:'<b>งบประมาณรอบ</b> — การชี้นำ ไม่ใช่ข้อเสนอ',
     kpi_be_html:'<b>จุดคุ้มทุน</b> — ไตรมาสแรกที่รายได้เกินค่าใช้จ่าย',
     kpi_ebitda_html:'<b>EBITDA Q12</b> — รายได้ลบค่าใช้จ่ายในไตรมาสสุดท้ายของปีที่ 3',
-    kpi_rev_html:'<b>รายได้รวมของตลาดหลักทรัพย์</b> 3 ปีกับทุกชั้นที่ใช้งาน',
-    kpi_round_html:'<b>การสูญเสียสะสมสูงสุด × 1.25</b> ไม่รวมค่าใช้จ่ายครั้งเดียว (~$45–55k เพิ่มเติม)',
-    th_sys:'ระบบ', th_light:'สว่าง', th_dark:'มืด',
+    kpi_rev_html:'<b>รายได้รวม</b> 3 ปีกับทุกชั้น',
+    kpi_round_html:'<b>การสูญเสียสะสมสูงสุด × 1.25</b>',
+    th_sys:'ระบบ',th_light:'สว่าง',th_dark:'มืด',
   },
   zh:{
     hdr_title:'财务模型',
-    s_params:'参数 · 45种组合 (5层 × 3情景 × 3爆炸式增长)',
-    s_scen:'收益情景', s_expl:'爆炸式增长 (从Q9开始)', s_layer:'收益层',
-    sc_k:'K — 保守', sc_b:'B — 基础', sc_o:'O — 乐观',
-    ex_none:'无', ex_vk:'VK ×10', ex_vb:'VB ×50',
-    ly_1:'1 · KOL', ly_2:'2 · + 数字藏品', ly_3:'3 · + 联名', ly_4:'4 · + 国家2', ly_5:'5 · + 国家3',
-    s_chart:'按季度现金流', s_table:'季度表格', s_burn:'累计损益',
-    s_legend:'如何阅读模型', s_legend_sub:'交互式图例 — 点击查看',
-    kpi_be:'盈亏平衡', kpi_ebitda:'EBITDA · Q12', kpi_rev:'收益 · 3年', kpi_round:'融资预算',
-    kpi_be_sub:'首个盈利季度', kpi_rev_sub:'USDT总计 · 所有层', kpi_round_sub:'最大亏损 × 1.25',
+    s_params:'参数 · 45种组合 (5层 × 3情景 × 3爆炸增长)',
+    s_scen:'收益情景',s_expl:'爆炸式增长 (从Q9)',s_layer:'收益层',
+    sc_k:'K — 保守',sc_b:'B — 基础',sc_o:'O — 乐观',
+    sc_short_k:'K',sc_short_b:'B',sc_short_o:'O',
+    ex_none:'无',ex_vk:'VK ×10',ex_vb:'VB ×50',
+    ly_1:'1 · KOL',ly_2:'2 · + 数字藏品',ly_3:'3 · + 联名',ly_4:'4 · + 国家2',ly_5:'5 · + 国家3',
+    s_chart:'按季度现金流',s_table:'季度表格',s_burn:'累计损益',
+    s_legend:'如何阅读模型',s_legend_sub:'交互式图例 — 点击查看',
+    kpi_be:'盈亏平衡',kpi_ebitda:'EBITDA · Q12',kpi_rev:'收益 · 3年',kpi_round:'融资预算',
+    kpi_be_sub:'首个盈利季度',kpi_rev_sub:'USDT总计 · 所有层',kpi_round_sub:'最大亏损 × 1.25',
     yr_label:(y,q1,q2)=>`第${y}年 · Q${q1}–Q${q2}`,
-    yr_revenue:'收益', yr_expenses:'支出',
+    yr_revenue:'收益',yr_expenses:'支出',
     yr_info_title:(y)=>`第${y}年明细`,
-    yr_info:(y,rev,cost,net,evs,beNote)=>`<b>总收益：</b>$${rev}<br><b>总支出：</b>$${cost}<br><b>净损益：</b><b>${net}</b><br><b>活动数：</b>${evs}个/年<br>${beNote}`,
+    yr_info:(y,rev,cost,net,evs,beNote)=>`<b>总收益：</b>$${rev}<br><b>总支出：</b>$${cost}<br><b>净损益：</b><b>${net}</b><br><b>活动数：</b>${evs}/年<br>${beNote}`,
     yr_be_note:(q)=>`本年Q${q}达到盈亏平衡`,
     yr_no_be:'本年未达到盈亏平衡',
-    th_quarter:'季度', th_exp:'活动', th_revenue:'收益', th_expenses:'支出', th_net:'净额',
-    lv_k:'K', lv_b:'B ×1.5', lv_o:'O ×2.5', lv_23:'层2–3', lv_4:'层4 ×2', lv_5:'层5 ×3',
-    lv_expl:'爆炸增长', lv_cost:'支出',
+    th_quarter:'季度',th_exp:'活动',th_revenue:'收益',th_expenses:'支出',th_net:'净额',
+    lv_k:'K',lv_b:'B ×1.5',lv_o:'O ×2.5',lv_23:'层2–3',lv_4:'层4 ×2',lv_5:'层5 ×3',lv_expl:'爆炸增长',lv_cost:'支出',
     leg_scen_title:'K / B / O — 收益情景',
-    leg_scen_body:'<b>K — 保守</b>：增长缓慢，但业务运转正常。基准线。<br><b>B — 基础</b>：现实市场。收益为K的×1.5。<br><b>O — 乐观</b>：快速增长，高转化率。收益为K的×2.5。<br><br><span class="note" style="background:var(--accent-dim);color:var(--accent);border-color:var(--accent)">三种情景均现实且有据可查</span>',
+    leg_scen_body:'<b>K — 保守</b>：基准线。<br><b>B — 基础</b>：收益×1.5。<br><b>O — 乐观</b>：收益×2.5。<br><br><span class="note" style="background:var(--accent-dim);color:var(--accent);border-color:var(--accent)">三种情景均现实</span>',
     leg_expl_title:'VK ×10 / VB ×50 — 爆炸式增长',
-    leg_expl_body:'从<b>Q9（第3年初）</b>开始激活。在选定情景基础上叠加倍数。<br><br><b>VK ×10</b> — 网络效应，交易所知名，自动化运作。<br><b>VB ×50</b> — 企业客户、NFT藏品、病毒式传播。<br><br><span class="note" style="background:var(--purple-dim);color:var(--purple);border-color:var(--purple)">非保证 — 潜力，非预测</span>',
+    leg_expl_body:'从<b>Q9</b>激活<br><b>VK ×10</b> / <b>VB ×50</b><br><br><span class="note" style="background:var(--purple-dim);color:var(--purple);border-color:var(--purple)">非保证 — 潜力</span>',
     leg_l2_title:'层2 — 数字藏品',
-    leg_l2_body:'每次体验后，参与者可购买<b>数字藏品</b>（NFT纪念品）<br><br><b>40%参与者 × $8 USDT × 10%佣金</b>，无需额外成本<br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">在层2–5中激活</span>',
+    leg_l2_body:'<b>40% × $8 × 10%</b><br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">层2–5激活</span>',
     leg_l3_title:'层3 — 联名体验',
-    leg_l3_body:'<b>2+ KOL</b>联合举办活动。更多票、更高价格、更广受众。<br>交易所每场联名收益 ≈ <b>普通体验的×5</b><br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">所有收益指标潜在×5</span>',
-    leg_l4_title:'层4 — + 国家2（×2市场）',
-    leg_l4_body:'第二市场采用相同模式运营。<b>层3全部收益翻倍</b>。<br>基础设施已就绪——平台无需重建即可扩展。<br><br><span class="note" style="background:var(--teal-dim);color:var(--teal);border-color:var(--teal)">时间线：M0后3年以上</span>',
-    leg_l5_title:'层5 — + 国家3（×3市场）',
-    leg_l5_body:'第三个国家。总地理乘数 — <b>层1的×3</b>。<br>结合O + VB×50 — <b>模型最大组合</b>（第45个）。<br><br><span class="note" style="background:var(--rose-dim);color:var(--rose);border-color:var(--rose)">层5 · O · VB×50 = 潜力上限</span>',
-    leg_round_title:'融资预算 — 计算逻辑',
-    leg_round_body:'<b>最大累计亏损 × 1.25</b>（25%缓冲）。参考值，非最终数字。<br><br>不含：<br>— 一次性费用：注册、智能合约审计（$14–24k）<br>— 资本冻结：签证 + 注册资本（~$45k）<br><br>可采用<b>分阶段融资</b>：第1笔资金支持6个月，后续达到KPI后再融资',
+    leg_l3_body:'收益 ≈ <b>×5</b><br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">潜在×5</span>',
+    leg_l4_title:'层4 — + 国家2 (×2市场)',
+    leg_l4_body:'<b>层3收益全部翻倍</b><br><br><span class="note" style="background:var(--teal-dim);color:var(--teal);border-color:var(--teal)">M0后3年+</span>',
+    leg_l5_title:'层5 — + 国家3 (×3市场)',
+    leg_l5_body:'地理乘数<b>×3</b><br><br><span class="note" style="background:var(--rose-dim);color:var(--rose);border-color:var(--rose)">层5·O·VB×50 = 上限</span>',
+    leg_round_title:'融资预算',
+    leg_round_body:'<b>最大亏损 × 1.25</b><br>不含一次性费用和冻结（~$45k）',
     leg_excl_title:'模型未涵盖内容',
-    leg_excl_body:'<b>当前模型不包含：</b><br>— 企业客户板块（品牌作为创作者）<br>— 版税和创作者个人收入<br>— 一次性费用和资本冻结（~$45–55k）<br><br><span class="note" style="background:var(--bg4);color:var(--text2);border-color:var(--border2)">实际融资需求高出约$45–55k</span>',
-    legend_note:'<b>融资预算</b>是参考值，非正式报价。可采用<b>分阶段融资</b>。<br><b>一次性费用和资本冻结</b>（~$45–55k）未包含，在最终确定时单独添加。',
-    kpi_be_html:'<b>盈亏平衡</b> — 交易所收益首次超过支出的季度',
-    kpi_ebitda_html:'<b>EBITDA Q12</b> — 第3年最后一季度的收益减支出<br><b>K/B/O</b> — 收益情景。<b>VK/VB</b> — Q9起的爆炸式增长',
-    kpi_rev_html:'<b>3年交易所总收益</b>（含所有激活层）。不含创作者收益、版税、创始人个人收入',
-    kpi_round_html:'<b>最大累计亏损 × 1.25</b>。不含一次性费用和资本冻结（额外约$45–55k）',
-    th_sys:'跟随系统', th_light:'浅色', th_dark:'深色',
+    leg_excl_body:'— 企业客户<br>— 版税<br>— 一次性费用（~$45–55k）<br><br><span class="note" style="background:var(--bg4);color:var(--text2);border-color:var(--border2)">实际需求高出~$45–55k</span>',
+    leg_simplified_title:'关于此模型',
+    leg_simplified_body:'本模型<b>简化但现实</b>，涵盖45种组合的核心收益机制。<br><br>全面多维模型（蒙特卡洛、敏感性分析、相关矩阵）需要比目前可用的更多算力。<br><br>此类算力可在<b>完成融资后租用</b>，构建完整财务模型。<br><br><span class="note" style="background:var(--accent-dim);color:var(--accent);border-color:var(--accent)">此模型足以支撑投资者沟通</span>',
+    legend_note:'<b>融资预算</b>是参考值，可分阶段融资。',
+    kpi_be_html:'<b>盈亏平衡</b> — 收益首次超过支出的季度',
+    kpi_ebitda_html:'<b>EBITDA Q12</b> — 第3年最后季度净值。标签显示情景·增长·层',
+    kpi_rev_html:'<b>3年总收益</b>（含所有激活层）',
+    kpi_round_html:'<b>最大亏损 × 1.25</b>，不含一次性费用',
+    th_sys:'跟随系统',th_light:'浅色',th_dark:'深色',
   },
   ru:{
     hdr_title:'Финансовая модель',
     s_params:'Параметры · 45 комбинаций (5 слоёв × 3 сценария × 3 взрывных)',
-    s_scen:'Сценарий выручки', s_expl:'Взрывной рост (с Q9)', s_layer:'Слой доходов',
-    sc_k:'К — Консервативный', sc_b:'Б — Базовый', sc_o:'О — Оптимистичный',
-    ex_none:'Нет', ex_vk:'ВК ×10', ex_vb:'ВБ ×50',
-    ly_1:'1 · KOL', ly_2:'2 · + Артефакты', ly_3:'3 · + Коллаборации', ly_4:'4 · + Страна 2', ly_5:'5 · + Страна 3',
-    s_chart:'Cash Flow по кварталам', s_table:'Поквартальная таблица', s_burn:'Накопленный P&L',
-    s_legend:'Как читать модель', s_legend_sub:'Интерактивная легенда — нажмите на раздел',
-    kpi_be:'Break-even', kpi_ebitda:'EBITDA · Q12', kpi_rev:'Выручка · 3 года', kpi_round:'Бюджет раунда',
-    kpi_be_sub:'первый прибыльный квартал', kpi_rev_sub:'суммарно USDT · все слои', kpi_round_sub:'max drawdown × 1.25',
+    s_scen:'Сценарий выручки',s_expl:'Взрывной рост (с Q9)',s_layer:'Слой доходов',
+    sc_k:'К — Консервативный',sc_b:'Б — Базовый',sc_o:'О — Оптимистичный',
+    sc_short_k:'К',sc_short_b:'Б',sc_short_o:'О',
+    ex_none:'Нет',ex_vk:'ВК ×10',ex_vb:'ВБ ×50',
+    ly_1:'1 · KOL',ly_2:'2 · + Артефакты',ly_3:'3 · + Коллаборации',ly_4:'4 · + Страна 2',ly_5:'5 · + Страна 3',
+    s_chart:'Cash Flow по кварталам',s_table:'Поквартальная таблица',s_burn:'Накопленный P&L',
+    s_legend:'Как читать модель',s_legend_sub:'Интерактивная легенда — нажмите на раздел',
+    kpi_be:'Break-even',kpi_ebitda:'EBITDA · Q12',kpi_rev:'Выручка · 3 года',kpi_round:'Бюджет раунда',
+    kpi_be_sub:'первый прибыльный квартал',kpi_rev_sub:'суммарно USDT · все слои',kpi_round_sub:'max drawdown × 1.25',
     yr_label:(y,q1,q2)=>`Год ${y} · Q${q1}–Q${q2}`,
-    yr_revenue:'выручка', yr_expenses:'расходы',
+    yr_revenue:'выручка',yr_expenses:'расходы',
     yr_info_title:(y)=>`Детали года ${y}`,
-    yr_info:(y,rev,cost,net,evs,beNote)=>`<b>Выручка итого:</b> $${rev}<br><b>Расходы итого:</b> $${cost}<br><b>Net P&L:</b> <b>${net}</b><br><b>Впечатлений:</b> ${evs} за год<br>${beNote}`,
+    yr_info:(y,rev,cost,net,evs,beNote)=>`<b>Выручка итого:</b> $${rev}<br><b>Расходы итого:</b> $${cost}<br><b>Net P&L:</b> <b>${net}</b><br><b>Впечатлений:</b> ${evs}/год<br>${beNote}`,
     yr_be_note:(q)=>`Break-even достигнут в Q${q} этого года.`,
     yr_no_be:'Break-even в этом году не достигнут.',
-    th_quarter:'Кв.', th_exp:'Exp', th_revenue:'Выручка', th_expenses:'Расходы', th_net:'Net',
-    lv_k:'К', lv_b:'Б ×1.5', lv_o:'О ×2.5', lv_23:'Слои 2–3', lv_4:'Слой 4 ×2', lv_5:'Слой 5 ×3',
-    lv_expl:'Взрывной', lv_cost:'Расходы',
+    th_quarter:'Кв.',th_exp:'Exp',th_revenue:'Выручка',th_expenses:'Расходы',th_net:'Net',
+    lv_k:'К',lv_b:'Б ×1.5',lv_o:'О ×2.5',lv_23:'Слои 2–3',lv_4:'Слой 4 ×2',lv_5:'Слой 5 ×3',lv_expl:'Взрывной',lv_cost:'Расходы',
     leg_scen_title:'К / Б / О — сценарии выручки',
-    leg_scen_body:'<b>К — Консервативный</b>: всё идёт медленно, но бизнес работает. Baseline.<br><b>Б — Базовый</b>: реалистичный рынок. Выручка ×1.5 к К.<br><b>О — Оптимистичный</b>: быстрый рост, высокие конверсии. Выручка ×2.5 к К.<br><br><span class="note" style="background:var(--accent-dim);color:var(--accent);border-color:var(--accent)">Все три сценария реалистичны и обоснованы</span>',
+    leg_scen_body:'<b>К — Консервативный</b>: всё идёт медленно, но бизнес работает.<br><b>Б — Базовый</b>: реалистичный рынок. Выручка ×1.5 к К.<br><b>О — Оптимистичный</b>: быстрый рост. Выручка ×2.5 к К.<br><br><span class="note" style="background:var(--accent-dim);color:var(--accent);border-color:var(--accent)">Все три сценария реалистичны</span>',
     leg_expl_title:'ВК ×10 / ВБ ×50 — взрывной рост',
-    leg_expl_body:'Включается с <b>Q9 (начало 3-го года)</b>. Множитель поверх выбранного сценария.<br><br><b>ВК ×10</b> — сетевой эффект, биржа известна, механика автоматизирована.<br><b>ВБ ×50</b> — корпоративный сегмент, NFT-артефакты, вирусный шеринг.<br><br><span class="note" style="background:var(--purple-dim);color:var(--purple);border-color:var(--purple)">Не гарантирован — потенциал, не прогноз</span>',
+    leg_expl_body:'Включается с <b>Q9</b>. Поверх выбранного сценария.<br><b>ВК ×10</b> — сетевой эффект.<br><b>ВБ ×50</b> — корпоративный сегмент, NFT, вирусный шеринг.<br><br><span class="note" style="background:var(--purple-dim);color:var(--purple);border-color:var(--purple)">Не гарантирован — потенциал, не прогноз</span>',
     leg_l2_title:'Слой 2 — Цифровые артефакты',
-    leg_l2_body:'После каждого впечатления — <b>цифровой артефакт</b> (NFT-сувенир): фото, видео, подпись KOL.<br><br><b>40% участников × $8 USDT × 10% комиссия</b>. Без доп. расходов.<br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">Активен в слоях 2–5</span>',
+    leg_l2_body:'<b>40% участников × $8 USDT × 10% комиссия</b>. Без доп. расходов.<br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">Активен в слоях 2–5</span>',
     leg_l3_title:'Слой 3 — Коллаборационные впечатления',
-    leg_l3_body:'<b>2+ KOL</b> объединяются. Больше билетов, выше цена, шире аудитория.<br>Выручка биржи с коллаборации ≈ <b>×5 к обычному впечатлению</b>.<br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">Потенциально ×5 ко всем доходным показателям</span>',
+    leg_l3_body:'<b>2+ KOL</b> объединяются. Выручка ≈ <b>×5 к обычному впечатлению</b>.<br><br><span class="note" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">Потенциально ×5 ко всем показателям</span>',
     leg_l4_title:'Слой 4 — + Страна 2 (×2 рынка)',
-    leg_l4_body:'Второй рынок запускается по той же модели. <b>Вся выручка слоя 3 удваивается</b>.<br>Инфраструктура готова — платформа масштабируется без пересборки.<br><br><span class="note" style="background:var(--teal-dim);color:var(--teal);border-color:var(--teal)">Горизонт: 3+ лет от M0</span>',
+    leg_l4_body:'<b>Вся выручка слоя 3 удваивается.</b> Инфраструктура готова.<br><br><span class="note" style="background:var(--teal-dim);color:var(--teal);border-color:var(--teal)">Горизонт: 3+ лет от M0</span>',
     leg_l5_title:'Слой 5 — + Страна 3 (×3 рынка)',
-    leg_l5_body:'Третья страна. Суммарный геомультипликатор — <b>×3 к слою 1</b>.<br>С О + ВБ×50 — <b>максимальная комбинация модели</b> (45-я из 45).<br><br><span class="note" style="background:var(--rose-dim);color:var(--rose);border-color:var(--rose)">Слой 5 · О · ВБ×50 = верхняя граница потенциала</span>',
+    leg_l5_body:'Геомультипликатор <b>×3 к слою 1</b>.<br>С О + ВБ×50 — <b>максимальная комбинация</b> (45-я из 45).<br><br><span class="note" style="background:var(--rose-dim);color:var(--rose);border-color:var(--rose)">Слой 5 · О · ВБ×50 = верхняя граница</span>',
     leg_round_title:'Бюджет раунда — логика расчёта',
-    leg_round_body:'<b>Макс. накопленный убыток × 1.25</b> (буфер 25%). Ориентир, не финальная цифра.<br><br>Не включает:<br>— Единовременные расходы: регистрация, аудит ($14–24k)<br>— Заморозки: виза + уставной капитал (~$45k)<br><br>Возможно <b>поэтапное финансирование</b>: транш 1 на 6 мес., транш 2+ после KPI.',
+    leg_round_body:'<b>Макс. накопленный убыток × 1.25</b> (буфер 25%).<br>Не включает: единовременные расходы ($14–24k) + заморозки (~$45k).<br>Возможно поэтапное финансирование.',
     leg_excl_title:'Что не включено в модель',
-    leg_excl_body:'<b>За рамками текущей модели:</b><br>— Корпоративный сегмент (бренды как создатели)<br>— Роялти и личный доход создателей<br>— Единовременные расходы и заморозки (~$45–55k)<br><br><span class="note" style="background:var(--bg4);color:var(--text2);border-color:var(--border2)">Реальный бюджет раунда выше на ~$45–55k</span>',
-    legend_note:'<b>Бюджет раунда</b> — ориентир, не оферта. Возможно <b>поэтапное финансирование</b>: транш 1 на 6 мес., транш 2+ после KPI.<br><b>Единовременные расходы и заморозки</b> (~$45–55k) не включены.',
-    kpi_be_html:'<b>Break-even</b> — первый квартал, когда выручка биржи превысит расходы. До этого накапливается убыток.',
-    kpi_ebitda_html:'<b>EBITDA Q12</b> — разница выручки и расходов в последнем квартале года 3.<br><b>К/Б/О</b> — сценарий. <b>ВК/ВБ</b> — взрывной рост с Q9. Номер слоя — активные потоки доходов.',
-    kpi_rev_html:'<b>Суммарная выручка биржи</b> за 3 года со всеми активными слоями. Не включает: выручку создателей, роялти, доходы основателя.',
-    kpi_round_html:'<b>Макс. накопленный убыток × 1.25</b>. Без единовременных расходов и заморозок (~$45–55k дополнительно). Возможно поэтапное финансирование.',
-    th_sys:'Системная', th_light:'Светлая', th_dark:'Тёмная',
+    leg_excl_body:'— Корпоративный сегмент<br>— Роялти и личный доход создателей<br>— Единовременные расходы и заморозки (~$45–55k)<br><br><span class="note" style="background:var(--bg4);color:var(--text2);border-color:var(--border2)">Реальный бюджет раунда выше на ~$45–55k</span>',
+    leg_simplified_title:'О точности модели',
+    leg_simplified_body:'Эта модель — <b>упрощённая, но реалистичная</b>. Охватывает основную механику выручки в 45 комбинациях сценариев.<br><br>Полноценная многомерная модель (полный Монте-Карло, многофакторный анализ чувствительности, корреляционные матрицы) требует значительно большей вычислительной мощности, чем доступна сейчас.<br><br>Такие мощности можно <b>арендовать после закрытия раунда финансирования</b> — для построения модели уровня совета директоров и аудиторов.<br><br><span class="note" style="background:var(--accent-dim);color:var(--accent);border-color:var(--accent)">Текущей модели достаточно для разговора с инвестором и питч-дека</span>',
+    legend_note:'<b>Бюджет раунда</b> — ориентир, не оферта. Возможно поэтапное финансирование. <b>Единовременные расходы и заморозки</b> (~$45–55k) не включены.',
+    kpi_be_html:'<b>Break-even</b> — первый квартал, когда выручка биржи превысит расходы.',
+    kpi_ebitda_html:'<b>EBITDA Q12</b> — разница выручки и расходов в последнем квартале года 3.<br>В подписи: сценарий · взрывной рост (если включён) · слой (если > 1).',
+    kpi_rev_html:'<b>Суммарная выручка биржи</b> за 3 года со всеми активными слоями.',
+    kpi_round_html:'<b>Макс. накопленный убыток × 1.25</b>. Без единовременных расходов и заморозок (~$45–55k).',
+    th_sys:'Системная',th_light:'Светлая',th_dark:'Тёмная',
   }
 };
 
 let lang='en';
-const tx=k=>{const v=L[lang][k]??L.en[k]??k;return typeof v==='function'?v:v;};
-const txf=(k,...a)=>{const v=L[lang][k]??L.en[k]??k;return typeof v==='function'?v(...a):v;};
+const tx=k=>{const v=L[lang]?.[k]??L.en[k]??k;return typeof v==='function'?v:v;};
+const txf=(k,...a)=>{const v=L[lang]?.[k]??L.en[k]??k;return typeof v==='function'?v(...a):v;};
 
 function applyLang(){
   document.querySelectorAll('[data-i]').forEach(el=>{
-    const k=el.getAttribute('data-i');
-    const v=tx(k);if(typeof v==='string')el.textContent=v;
+    const k=el.getAttribute('data-i'),v=tx(k);
+    if(typeof v==='string')el.textContent=v;
   });
   document.getElementById('ll').textContent={en:'EN',th:'TH',zh:'中',ru:'RU'}[lang];
   document.documentElement.lang=lang;
@@ -514,29 +530,44 @@ function applyLang(){
     const el=document.getElementById('lc-'+l);if(el)el.textContent=l===lang?'✓':'';
     const di=document.querySelector(`[data-l="${l}"]`);if(di)di.classList.toggle('on',l===lang);
   });
+  updateDate(); // FIX #2: date changes with language
   buildLegend();
   if(window._d)render();
 }
 function setLang(l){lang=l;localStorage.setItem('ehipas-lang',l);closeDD();applyLang();}
 
-// ════════════════════════════════
+// FIX #2: Thai uses Buddhist Era (+543)
+function updateDate(){
+  const now=new Date();
+  let str;
+  if(lang==='th'){
+    const be=now.getFullYear()+543;
+    const months=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    str=`${now.getDate()} ${months[now.getMonth()]} ${be}`;
+  } else if(lang==='zh'){
+    str=`${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
+  } else if(lang==='ru'){
+    str=now.toLocaleDateString('ru-RU',{year:'numeric',month:'long',day:'numeric'});
+  } else {
+    str=now.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'numeric'});
+  }
+  document.getElementById('ds').textContent=str;
+}
+
 // THEME
-// ════════════════════════════════
-let currentThemePref='dark';
+let currentThemePref='system';
 const TICONS={system:'⊙',light:'☀',dark:'☾'};
 function resolveTheme(t){if(t==='system')return window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';return t;}
 function applyTheme(t){
   currentThemePref=t;
   document.body.setAttribute('data-theme',resolveTheme(t));
-  document.getElementById('ticon').textContent=TICONS[t]||'☾';
+  document.getElementById('ticon').textContent=TICONS[t]||'⊙';
   ['sys','light','dark'].forEach(k=>{const el=document.getElementById('tc-'+k);if(el)el.textContent=(k===t||(k==='sys'&&t==='system'))?'✓':'';});
 }
 function setTheme(t){localStorage.setItem('ehipas-theme',t);closeDD();applyTheme(t);}
 window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(currentThemePref==='system')applyTheme('system');});
 
-// ════════════════════════════════
 // DROPDOWN
-// ════════════════════════════════
 let openDD=null;
 function togDD(id){
   const m=document.getElementById(id+'-dd'),ov=document.getElementById('ov');
@@ -548,20 +579,18 @@ function closeDD(){
   document.getElementById('ov').classList.remove('on');openDD=null;
 }
 
-// ════════════════════════════════
 // DATA CONFIG
-// ════════════════════════════════
 const FIXED={price:12,tickets:10,fee:0.10,resalePrem:0.15};
 const QCOST={founder:5250,translator:5001,ops:666,accounting:330};
 function getQCost(q){return QCOST.founder+QCOST.translator+QCOST.ops+(q>=2?QCOST.accounting:0);}
 
 const SCENARIOS={
-  conservative:{short:'К',color:'var(--accent)',dim:'rgba(184,247,58,.28)',burnDim:'var(--accent-dim)',ac:'ak',revMult:1.0,
+  conservative:{ac:'ak',revMult:1.0,color:'var(--accent)',dim:'var(--bar-k-dim)',burnDim:'var(--accent-dim)',
     q:[{ev:[1,2],spec:.30,rounds:2},{ev:[3,5],spec:.30,rounds:2},{ev:[6,9],spec:.25,rounds:3},{ev:[10,12],spec:.25,rounds:3},
        {ev:[15,22],spec:.20,rounds:4},{ev:[15,22],spec:.20,rounds:4},{ev:[25,38],spec:.18,rounds:5},{ev:[25,38],spec:.18,rounds:5},
        {ev:[40,60],spec:.15,rounds:5},{ev:[40,60],spec:.15,rounds:5},{ev:[40,60],spec:.15,rounds:5},{ev:[40,60],spec:.15,rounds:5}]},
-  base:      {short:'Б',color:'var(--yellow)',dim:'rgba(247,208,58,.28)',burnDim:'var(--yellow-dim)',ac:'ab',revMult:1.5,q:null},
-  optimistic:{short:'О',color:'var(--blue)',  dim:'rgba(95,168,255,.28)', burnDim:'var(--blue-dim)',  ac:'ao',revMult:2.5,q:null},
+  base:      {ac:'ab',revMult:1.5,color:'var(--yellow)',dim:'var(--bar-b-dim)',burnDim:'var(--yellow-dim)',q:null},
+  optimistic:{ac:'ao',revMult:2.5,color:'var(--blue)',  dim:'var(--bar-o-dim)',burnDim:'var(--blue-dim)',  q:null},
 };
 const EXPLOSIVE={
   none:{mult:1, fromQ:99,ac:'ak'},
@@ -569,11 +598,11 @@ const EXPLOSIVE={
   vb:  {mult:50,fromQ:9, ac:'avb'},
 };
 const LAYERS={
-  1:{color:'var(--accent)', ac:'al1',geoMult:1, artifact:{active:false},collab:{active:false}},
-  2:{color:'var(--orange)', ac:'al2',geoMult:1, artifact:{active:true,penetration:.40,priceUSDT:8,fee:.10},collab:{active:false}},
-  3:{color:'var(--orange)', ac:'al3',geoMult:1, artifact:{active:true,penetration:.40,priceUSDT:8,fee:.10},collab:{active:true,byQ:[0,0,1,1,2,2,3,3,4,4,5,5],revMultPerEvent:5.0}},
-  4:{color:'var(--teal)',   ac:'al4',geoMult:2, artifact:{active:true,penetration:.40,priceUSDT:8,fee:.10},collab:{active:true,byQ:[0,0,1,1,2,2,3,3,4,4,5,5],revMultPerEvent:5.0}},
-  5:{color:'var(--rose)',   ac:'al5',geoMult:3, artifact:{active:true,penetration:.40,priceUSDT:8,fee:.10},collab:{active:true,byQ:[0,0,1,1,2,2,3,3,4,4,5,5],revMultPerEvent:5.0}},
+  1:{color:'var(--accent)', ac:'al1',geoMult:1, dim:'var(--bar-k-dim)',  burnDim:'var(--accent-dim)', artifact:{active:false},collab:{active:false}},
+  2:{color:'var(--orange)', ac:'al2',geoMult:1, dim:'var(--bar-23-dim)', burnDim:'var(--orange-dim)', artifact:{active:true,penetration:.40,priceUSDT:8,fee:.10},collab:{active:false}},
+  3:{color:'var(--orange)', ac:'al3',geoMult:1, dim:'var(--bar-23-dim)', burnDim:'var(--orange-dim)', artifact:{active:true,penetration:.40,priceUSDT:8,fee:.10},collab:{active:true,byQ:[0,0,1,1,2,2,3,3,4,4,5,5],revMultPerEvent:5.0}},
+  4:{color:'var(--teal)',   ac:'al4',geoMult:2, dim:'var(--bar-4-dim)',  burnDim:'var(--teal-dim)',   artifact:{active:true,penetration:.40,priceUSDT:8,fee:.10},collab:{active:true,byQ:[0,0,1,1,2,2,3,3,4,4,5,5],revMultPerEvent:5.0}},
+  5:{color:'var(--rose)',   ac:'al5',geoMult:3, dim:'var(--bar-5-dim)',  burnDim:'var(--rose-dim)',   artifact:{active:true,penetration:.40,priceUSDT:8,fee:.10},collab:{active:true,byQ:[0,0,1,1,2,2,3,3,4,4,5,5],revMultPerEvent:5.0}},
 };
 
 const S={scen:'conservative',expl:'none',layer:1};
@@ -627,18 +656,19 @@ function layCol(x){
   if(S.layer===5)return'var(--rose)';if(S.layer===4)return'var(--teal)';
   if(S.layer>=2)return'var(--orange)';return SCENARIOS[S.scen].color;
 }
-
-function render(){
-  const d=calcData();window._d=d;
-  renderKPI(d);renderYears(d);renderChart(d);renderTable(d);renderBurn(d);
+function layDim(){
+  if(S.layer>=2)return LAYERS[S.layer].dim;
+  return SCENARIOS[S.scen].dim;
 }
 
-// KPI INFO KEYS
+function render(){const d=calcData();window._d=d;renderKPI(d);renderYears(d);renderChart(d);renderTable(d);renderBurn(d);}
+
+// FIX #4: EBITDA subtitle uses language-aware scenario short
 const KPI_KEYS=[
-  {key:'be',   lk:'kpi_be',   sk:'kpi_be_sub',  hk:'kpi_be_html'},
-  {key:'ebitda',lk:'kpi_ebitda',sk:null,         hk:'kpi_ebitda_html'},
-  {key:'rev',  lk:'kpi_rev',  sk:'kpi_rev_sub',  hk:'kpi_rev_html'},
-  {key:'round',lk:'kpi_round',sk:'kpi_round_sub',hk:'kpi_round_html'},
+  {key:'be',    lk:'kpi_be',    sk:'kpi_be_sub',  hk:'kpi_be_html'},
+  {key:'ebitda',lk:'kpi_ebitda',sk:null,           hk:'kpi_ebitda_html'},
+  {key:'rev',   lk:'kpi_rev',   sk:'kpi_rev_sub',  hk:'kpi_rev_html'},
+  {key:'round', lk:'kpi_round', sk:'kpi_round_sub',hk:'kpi_round_html'},
 ];
 
 function renderKPI(d){
@@ -650,36 +680,40 @@ function renderKPI(d){
   const ebitda=d[11].net;
   let cum=0,minCum=0;d.forEach(x=>{cum+=x.net;if(cum<minCum)minCum=cum;});
   const round=Math.abs(minCum)*1.25;
-  const ebitdaSub=sc.short+(S.expl!=='none'?' + '+(L[lang]['ex_'+S.expl]||S.expl):'')+(S.layer>1?' · L'+S.layer:'');
+  // FIX #4: use translated short names
+  const scShortKey='sc_short_'+S.scen.replace('conservative','k').replace('base','b').replace('optimistic','o');
+  const scShort=tx(scShortKey);
+  const explLabel=S.expl!=='none'?' + '+tx('ex_'+S.expl):'';
+  const layerLabel=S.layer>1?' · L'+S.layer:'';
+  const ebitdaSub=scShort+explLabel+layerLabel;
+
   const vals=[
-    {v:beLabel,c:beCls},
-    {v:fp(ebitda),s:ebitdaSub,c:ebitda>=0?'g':'r'},
-    {v:f$(totRev),c:''},
-    {v:f$(round),c:'y'},
+    {v:beLabel,   s:tx('kpi_be_sub'),  c:beCls},
+    {v:fp(ebitda),s:ebitdaSub,          c:ebitda>=0?'g':'r'},
+    {v:f$(totRev),s:tx('kpi_rev_sub'),  c:''},
+    {v:f$(round), s:tx('kpi_round_sub'),c:'y'},
   ];
   document.getElementById('kpiRow').innerHTML=KPI_KEYS.map((info,i)=>`
     <div class="kpi" id="kpi-${info.key}">
       <div class="l">${tx(info.lk)}<span class="iico" onclick="toggleKpiPopup('${info.key}',event)">i</span></div>
       <div class="v ${vals[i].c}">${vals[i].v}</div>
-      <div class="s">${vals[i].s||tx(info.sk)||ebitdaSub}</div>
+      <div class="s">${vals[i].s}</div>
       <div class="kpi-popup" id="kpip-${info.key}">${tx(info.hk)}</div>
     </div>`).join('');
 }
-
 function toggleKpiPopup(key,ev){
   ev.stopPropagation();
   const p=document.getElementById('kpip-'+key),was=p.classList.contains('open');
-  document.querySelectorAll('.kpi-popup,.yr-popup').forEach(x=>x.classList.remove('open'));
+  document.querySelectorAll('.kpi-popup').forEach(x=>x.classList.remove('open'));
   if(!was)p.classList.add('open');
 }
-document.addEventListener('click',()=>document.querySelectorAll('.kpi-popup,.yr-popup').forEach(p=>p.classList.remove('open')));
+document.addEventListener('click',()=>document.querySelectorAll('.kpi-popup').forEach(p=>p.classList.remove('open')));
 
 function renderYears(d){
   document.getElementById('yrRow').innerHTML=[1,2,3].map(yr=>{
     const yd=d.filter(x=>x.yr===yr);
     const rev=yd.reduce((a,x)=>a+x.revenue,0),cost=yd.reduce((a,x)=>a+x.cost,0),net=rev-cost;
     const evs=Math.round(yd.reduce((a,x)=>a+x.evPerQ,0));
-    // find break-even within this year
     const beInYear=yd.findIndex(x=>x.net>=0);
     const beNote=beInYear>=0?txf('yr_be_note',yd[beInYear].q):tx('yr_no_be');
     const infoHtml=txf('yr_info',yr,Math.round(rev).toLocaleString(),Math.round(cost).toLocaleString(),fp(net),evs,beNote);
@@ -691,14 +725,14 @@ function renderYears(d){
     </div>`;
   }).join('');
 }
-
 function toggleYrPopup(yr,ev){
   ev.stopPropagation();
   const p=document.getElementById('yr-popup-'+yr),was=p.classList.contains('open');
-  document.querySelectorAll('.kpi-popup,.yr-popup').forEach(x=>x.classList.remove('open'));
+  document.querySelectorAll('.kpi-popup').forEach(x=>x.classList.remove('open'));
   if(!was)p.classList.add('open');
 }
 
+// FIX #5 & #8: no min-width, CSS variables for dim bars
 function renderChart(d){
   const H=200,sc=SCENARIOS[S.scen];
   const maxRev=Math.max(...d.map(x=>x.revenue))*1.12||1;
@@ -709,15 +743,14 @@ function renderChart(d){
     return`<div class="ytick" style="bottom:${t*100}%">${v<1000?Math.round(v):'$'+Math.round(v/1000)+'k'}</div>`;
   }).join('');
   document.getElementById('yAxis').innerHTML=ticks;
+  const dim=layDim();
   const bars=d.map((x,i)=>{
     const revH=(x.revenue/maxRev)*H,isBe=i===beQ,after=beQ>=0&&i>=beQ;
     let bg;
     if(x.isExpl)bg='var(--purple)';
     else if(isBe)bg='var(--yellow)';
-    else if(S.layer===5)bg=after?'var(--rose)':'rgba(244,63,94,.28)';
-    else if(S.layer===4)bg=after?'var(--teal)':'rgba(45,212,191,.28)';
-    else if(S.layer>=2)bg=after?'var(--orange)':'rgba(251,146,60,.28)';
-    else bg=after?sc.color:sc.dim;
+    else if(after)bg=layCol(x);
+    else bg=dim;
     return`<div class="bar-col" onmouseenter="showTip(event,${i})" onmouseleave="hideTip()" ontouchstart="showTip(event,${i})" ontouchend="hideTip()">
       <div class="bar-rev ${x.isExpl?'bar-expl':''}" style="height:${revH}px;background:${bg}"></div>
       <div class="qlabel">Q${x.q}</div></div>`;
@@ -731,11 +764,11 @@ function renderChart(d){
 function showTip(ev,i){
   const x=window._d[i],sc=SCENARIOS[S.scen],ex=EXPLOSIVE[S.expl],lay=LAYERS[S.layer];
   const col=layCol(x),t=document.getElementById('tip');
-  const geoRow=x.gm>1?`<div class="tr"><span>Geo ×</span><span style="color:${lay.color}">×${x.gm}</span></div>`:'';
-  const artRow=S.layer>=2?`<div class="tr"><span>${tx('leg_l2_title').split('—')[0].trim()}</span><span style="color:var(--orange)">+$${Math.round(x.artifactRev)}</span></div>`:'';
-  const colRow=S.layer>=3&&x.collabRev>0?`<div class="tr"><span>${tx('leg_l3_title').split('—')[0].trim()}</span><span style="color:var(--orange)">+$${Math.round(x.collabRev)}</span></div>`:'';
+  const geoRow=x.gm>1?`<div class="tr"><span>Geo</span><span style="color:${lay.color}">×${x.gm}</span></div>`:'';
+  const artRow=S.layer>=2?`<div class="tr"><span>${tx('leg_l2_title').split('—')[0].trim().split('—')[0].trim()}</span><span style="color:var(--orange)">+$${Math.round(x.artifactRev)}</span></div>`:'';
+  const colRow=S.layer>=3&&x.collabRev>0?`<div class="tr"><span>Collab</span><span style="color:var(--orange)">+$${Math.round(x.collabRev)}</span></div>`:'';
   const explRow=x.isExpl?`<div class="tr"><span>${tx('lv_expl')}</span><span style="color:var(--purple)">×${x.em}</span></div>`:'';
-  t.innerHTML=`<div class="th">Q${x.q} · Y${x.yr} · ${sc.short}</div>
+  t.innerHTML=`<div class="th">Q${x.q} · Y${x.yr}</div>
     <div class="tr"><span>Exp/mo</span><span>${x.evPerM.toFixed(1)}</span></div>
     <div class="tr"><span>Base</span><span style="color:${sc.color}">$${Math.round(x.baseRev/x.gm)}</span></div>
     ${geoRow}${artRow}${colRow}${explRow}
@@ -744,8 +777,8 @@ function showTip(ev,i){
     <div class="tr" style="margin-top:5px;border-top:1px solid var(--border);padding-top:5px">
       <span>${tx('th_net')}</span><span style="color:${x.net>=0?col:'var(--red)'}">${fp(x.net)}</span></div>`;
   t.style.display='block';
-  const cx=ev.clientX||ev.touches?.[0]?.clientX||0;
-  const cy=ev.clientY||ev.touches?.[0]?.clientY||0;
+  const cx=ev.clientX||(ev.touches?.[0]?.clientX)||0;
+  const cy=ev.clientY||(ev.touches?.[0]?.clientY)||0;
   t.style.left=Math.min(cx+14,window.innerWidth-250)+'px';
   t.style.top=Math.max(cy-110,10)+'px';
 }
@@ -769,8 +802,7 @@ function renderTable(d){
       <td class="num" style="color:${r-c>=0?sc.color:'var(--red)'};font-family:var(--mono)"><b>${fp(r-c)}</b></td></tr>`;
   });
   document.getElementById('qTable').innerHTML=`
-    <thead><tr>
-      <th>${tx('th_quarter')}</th><th class="num">${tx('th_exp')}</th>
+    <thead><tr><th>${tx('th_quarter')}</th><th class="num">${tx('th_exp')}</th>
       <th class="num">${tx('th_revenue')}</th><th class="num">${tx('th_expenses')}</th><th class="num">${tx('th_net')}</th>
     </tr></thead><tbody>${rows}</tbody>`;
 }
@@ -778,12 +810,11 @@ function renderTable(d){
 function renderBurn(d){
   const sc=SCENARIOS[S.scen];let cum=0;
   const maxAbs=Math.max(...d.map((_,i)=>{let s=0;d.slice(0,i+1).forEach(x=>s+=x.net);return Math.abs(s);}),1);
-  const dimMap={1:sc.burnDim,2:'var(--orange-dim)',3:'var(--orange-dim)',4:'var(--teal-dim)',5:'var(--rose-dim)'};
   document.getElementById('burnChart').innerHTML=d.map(x=>{
     cum+=x.net;
     const pct=Math.min(Math.abs(cum)/maxAbs*100,100),pos=cum>=0;
     const col=pos?layCol(x):'var(--red)';
-    const bg=pos?(x.isExpl?'var(--purple-dim)':dimMap[S.layer]):'var(--red-dim)';
+    const bg=pos?(x.isExpl?'var(--purple-dim)':LAYERS[S.layer].burnDim):'var(--red-dim)';
     const label=fp(cum);
     return`<div class="burn-row">
       <div class="burn-q">Q${x.q}</div>
@@ -793,16 +824,17 @@ function renderBurn(d){
   }).join('');
 }
 
-// LEGEND
+// FIX #7: added 'leg_simplified' item
 const LEG_KEYS=[
-  {color:'var(--accent)', tk:'leg_scen_title', bk:'leg_scen_body'},
-  {color:'var(--purple)', tk:'leg_expl_title', bk:'leg_expl_body'},
-  {color:'var(--orange)', tk:'leg_l2_title',   bk:'leg_l2_body'},
-  {color:'var(--orange)', tk:'leg_l3_title',   bk:'leg_l3_body'},
-  {color:'var(--teal)',   tk:'leg_l4_title',   bk:'leg_l4_body'},
-  {color:'var(--rose)',   tk:'leg_l5_title',   bk:'leg_l5_body'},
-  {color:'var(--yellow)', tk:'leg_round_title',bk:'leg_round_body'},
-  {color:'var(--text2)',  tk:'leg_excl_title', bk:'leg_excl_body'},
+  {color:'var(--accent)', tk:'leg_scen_title',       bk:'leg_scen_body'},
+  {color:'var(--purple)', tk:'leg_expl_title',       bk:'leg_expl_body'},
+  {color:'var(--orange)', tk:'leg_l2_title',         bk:'leg_l2_body'},
+  {color:'var(--orange)', tk:'leg_l3_title',         bk:'leg_l3_body'},
+  {color:'var(--teal)',   tk:'leg_l4_title',         bk:'leg_l4_body'},
+  {color:'var(--rose)',   tk:'leg_l5_title',         bk:'leg_l5_body'},
+  {color:'var(--yellow)', tk:'leg_round_title',      bk:'leg_round_body'},
+  {color:'var(--text2)',  tk:'leg_excl_title',       bk:'leg_excl_body'},
+  {color:'var(--border2)',tk:'leg_simplified_title', bk:'leg_simplified_body'},
 ];
 
 function buildLegend(){
@@ -823,13 +855,12 @@ function toggleLeg(i){
   if(!was)el.classList.add('open');
 }
 
-// INIT
-const savedTheme=localStorage.getItem('ehipas-theme')||'dark';
+// FIX #1: default EN + system theme
+const savedTheme=localStorage.getItem('ehipas-theme')||'system';
 const savedLang=localStorage.getItem('ehipas-lang')||'en';
 lang=savedLang;
 applyTheme(savedTheme);
 applyLang();
-document.getElementById('ds').textContent=new Date().toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'numeric'});
 render();
 </script>
 </body>
