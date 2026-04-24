@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ehipas — Crafts &amp; Folklore Fair · Collab Case</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Thai:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--mono:"DM Mono",monospace;--sans:"DM Sans","Noto Sans Thai","Noto Sans SC",sans-serif;--r:10px;--rs:6px}
+[data-theme="dark"]{--bg:#0d0d0b;--bg2:#141412;--bg3:#1c1c19;--bd:#2a2a26;--bd2:#3a3a36;--tx:#e8e6dc;--tx2:#88887e;--tx3:#555550;--acc:#b8f73a;--acc-btn:#b8f73a;--acc-btn-tx:#0d0d0b;--acc-dim:rgba(184,247,58,.09);--acc-brd:rgba(184,247,58,.35);--shd:0 2px 16px rgba(0,0,0,.55);--teal:#4af7c9;--amber:#f7b74a;--violet:#9b7ef7;--blue:#5fa8ff;--teal-dim:rgba(74,247,201,.09);--amber-dim:rgba(247,183,74,.09);--violet-dim:rgba(155,126,247,.09)}
+[data-theme="light"]{--bg:#f4f3ee;--bg2:#fff;--bg3:#eceae2;--bd:#dbd9d0;--bd2:#c8c5bc;--tx:#1a1a17;--tx2:#5c5c58;--tx3:#99998f;--acc:#2e7d0e;--acc-btn:#5cb82a;--acc-btn-tx:#fff;--acc-dim:rgba(46,125,14,.07);--acc-brd:rgba(46,125,14,.30);--shd:0 2px 16px rgba(0,0,0,.09);--teal:#0d9488;--amber:#9a6600;--violet:#7c3aed;--blue:#1a5fa8;--teal-dim:rgba(13,148,136,.07);--amber-dim:rgba(154,102,0,.07);--violet-dim:rgba(124,58,237,.07)}
+html,body{width:100%;overflow-x:hidden}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px;line-height:1.6;transition:background .2s,color .2s}
+.hdr{border-bottom:1px solid var(--bd);padding:11px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:100;background:var(--bg)}
+.logo{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.1em;color:var(--acc);text-transform:uppercase;flex-shrink:0}
+.hdr-sub{font-family:var(--mono);font-size:10px;color:var(--tx3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hdr-ctrls{display:flex;gap:5px;align-items:center;flex-shrink:0}
+.overlay{display:none;position:fixed;inset:0;z-index:99}.overlay.on{display:block}
+.ddwrap{position:relative;display:inline-block}
+.ddtrig{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx2);font-family:var(--mono);font-size:11px;padding:5px 8px;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;transition:border-color .15s,color .15s}
+.ddtrig:hover{border-color:var(--bd2);color:var(--tx)}
+.ddarrow{font-size:9px;opacity:.5}
+.ddmenu{display:none;position:absolute;right:0;top:calc(100% + 4px);background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rs);min-width:150px;box-shadow:var(--shd);z-index:300;overflow:hidden}
+.ddmenu.open{display:block}
+.ddi{display:flex;align-items:center;gap:8px;padding:9px 12px;font-size:12px;color:var(--tx2);cursor:pointer;border-bottom:1px solid var(--bd)}
+.ddi:last-child{border-bottom:none}.ddi:hover{background:var(--bg3);color:var(--tx)}.ddi.on{color:var(--acc)}
+.ddi .ck{font-size:10px;margin-left:auto;color:var(--acc)}
+.wrap{max-width:780px;margin:0 auto;padding:28px 16px 60px}
+@media(min-width:600px){.wrap{padding:36px 24px 80px}}
+.sh{display:flex;align-items:center;gap:10px;margin:32px 0 14px}
+.sh span{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--tx3);white-space:nowrap}
+.sh::before,.sh::after{content:"";flex:1;height:1px;background:var(--bd)}
+.hero{margin-bottom:32px}
+.hero-tag{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.16em;color:var(--acc);margin-bottom:10px}
+.hero-h{font-size:clamp(22px,5vw,36px);font-weight:300;line-height:1.2;letter-spacing:-.02em;margin-bottom:14px}
+.hero-h b{font-weight:500}
+.hero-lead{font-size:15px;color:var(--tx2);line-height:1.75;max-width:640px}
+.prose{font-size:14px;color:var(--tx2);line-height:1.8;margin-bottom:14px}
+.prose b{color:var(--tx);font-weight:500}.prose em{color:var(--acc)}
+.hbox{border:1px solid var(--bd);border-left:3px solid var(--acc);border-radius:var(--r);padding:13px 15px;background:var(--acc-dim);margin:14px 0}
+.hbox-l{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--acc);margin-bottom:7px}
+.hbox-t{font-size:13px;color:var(--tx2);line-height:1.7}.hbox-t b{color:var(--tx)}
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:14px 0}
+@media(min-width:480px){.sg{grid-template-columns:repeat(4,1fr)}}
+.sc{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:11px 13px}
+.sv{font-family:var(--mono);font-size:21px;font-weight:500;color:var(--acc);line-height:1}
+.su{font-family:var(--mono);font-size:9px;color:var(--tx3);margin-top:2px}
+.sl{font-size:11px;color:var(--tx2);margin-top:4px}
+.cgg{display:grid;grid-template-columns:1fr;gap:5px;margin:14px 0}
+@media(min-width:480px){.cgg{grid-template-columns:1fr 1fr}}
+.cgi{border:1px solid var(--bd);border-radius:var(--r);background:var(--bg2);overflow:hidden;cursor:pointer}
+.cgi:hover{border-color:var(--bd2)}.cgi.open{border-color:var(--acc-brd)}
+.cgh{display:flex;align-items:center;gap:9px;padding:10px 12px}
+.cgd{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.cgn{font-size:12px;font-weight:500;flex:1}.cgc{font-family:var(--mono);font-size:11px;color:var(--acc);flex-shrink:0}
+.cga{font-family:var(--mono);font-size:10px;color:var(--tx3);transition:transform .2s;flex-shrink:0}
+.cgi.open .cga{transform:rotate(90deg)}
+.cgb{display:none;padding:0 12px 11px;font-size:12px;color:var(--tx2);line-height:1.65;border-top:1px solid var(--bd)}
+.cgi.open .cgb{display:block}.cgb ul{padding-left:15px;margin-top:7px}.cgb li{margin-bottom:3px}
+.cgt{background:var(--bg3);border:1px solid var(--bd2);border-radius:var(--r);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;margin-top:7px}
+.cgt-l{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2)}
+.cgt-v{font-family:var(--mono);font-size:20px;color:var(--acc);font-weight:500}
+.flow{display:flex;flex-direction:column;margin:14px 0}
+@media(min-width:480px){.flow{flex-direction:row}}
+.fs{flex:1;background:var(--bg2);border:1px solid var(--bd);padding:11px 13px;position:relative}
+.fs:first-child{border-radius:var(--r) var(--r) 0 0}.fs:last-child{border-radius:0 0 var(--r) var(--r)}
+@media(min-width:480px){.fs:first-child{border-radius:var(--r) 0 0 var(--r)}.fs:last-child{border-radius:0 var(--r) var(--r) 0}.fs:not(:first-child){border-left:none}}
+.fs:not(:last-child){border-bottom:none}
+@media(min-width:480px){.fs:not(:last-child){border-bottom:1px solid var(--bd);border-right:none}}
+.fn{font-family:var(--mono);font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.ft{font-size:12px;font-weight:500;margin-bottom:3px;color:var(--tx)}
+.fd{font-size:11px;color:var(--tx2);line-height:1.6}
+.fa{display:none;position:absolute;right:-9px;top:50%;transform:translateY(-50%);z-index:2;font-family:var(--mono);font-size:15px;color:var(--tx3);background:var(--bg2);padding:1px 0}
+@media(min-width:480px){.fa{display:block}}
+.cc{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:16px;margin:14px 0}
+.ct{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--tx2);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ct::after{content:"";flex:1;height:1px;background:var(--bd)}
+.pr2{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+@media(min-width:480px){.pr2{flex-direction:row;flex-wrap:wrap;gap:14px}}
+.pm{flex:1;min-width:150px}
+.ph{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.pn{font-size:11px;color:var(--tx2)}.pv{font-family:var(--mono);font-size:11px;color:var(--acc);font-weight:500}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:var(--bd2);border-radius:1px;outline:none;cursor:pointer;display:block}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;background:var(--acc-btn);border-radius:50%;cursor:pointer;transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;background:var(--acc-btn);border-radius:50%;cursor:pointer}
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}
+@media(min-width:480px){.rg{grid-template-columns:repeat(4,1fr)}}
+.rc{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 11px}
+.rl{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:2px}
+.rv{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--tx)}.rv.a{color:var(--acc)}
+.rs{font-family:var(--mono);font-size:9px;color:var(--tx3);margin-top:1px}
+.bkd{margin-top:12px;border-top:1px solid var(--bd);padding-top:11px}
+.br{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.bw{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.bb{height:100%;border-radius:3px;transition:width .4s}
+.bl{font-size:11px;color:var(--tx2);width:140px;flex-shrink:0}
+.bv{font-family:var(--mono);font-size:10px;color:var(--tx2);width:95px;text-align:right;flex-shrink:0}
+.pvd{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:13px;margin:14px 0}
+.pdots{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.dot{width:9px;height:9px;border-radius:2px;background:var(--bg3);border:1px solid var(--bd2);cursor:pointer;transition:background .15s}
+.dot.on{background:var(--acc);border-color:var(--acc)}
+.pvl{font-family:var(--mono);font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em}
+.tl{margin:14px 0}.tlc{margin-bottom:7px}
+.tlh{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--r);cursor:pointer;user-select:none;background:var(--bg2);border:1px solid var(--bd)}
+.tlc.open .tlh{border-radius:var(--r) var(--r) 0 0}
+.tld{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.tln{font-size:13px;font-weight:500;flex:1}
+.tlb2{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:10px;flex-shrink:0}
+.tla{font-family:var(--mono);font-size:10px;color:var(--tx3);transition:transform .2s;flex-shrink:0}
+.tlc.open .tla{transform:rotate(90deg)}
+.tlbd{display:none;background:var(--bg2);border:1px solid var(--bd);border-top:none;border-radius:0 0 var(--r) var(--r);padding:13px}
+.tlc.open .tlbd{display:block}
+.tli{display:grid;grid-template-columns:1fr;gap:5px}
+@media(min-width:480px){.tli{grid-template-columns:1fr 1fr}}
+.ti{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 11px}
+.tit{font-size:12px;font-weight:500;margin-bottom:3px}.tid{font-size:11px;color:var(--tx2);line-height:1.55}
+.wg{display:grid;grid-template-columns:1fr;gap:7px;margin:14px 0}
+@media(min-width:480px){.wg{grid-template-columns:1fr 1fr 1fr}}
+.wc{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:12px}
+.wi{font-size:17px;margin-bottom:7px}.wt{font-size:12px;font-weight:500;margin-bottom:3px}
+.wd{font-size:11px;color:var(--tx2);line-height:1.55}
+.foot{border-top:1px solid var(--bd);padding:12px 16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:7px;max-width:780px;margin:0 auto}
+.fnt{font-family:var(--mono);font-size:9px;color:var(--tx3)}
+.fi{opacity:0;transform:translateY(10px);transition:opacity .45s,transform .45s}
+.fi.v{opacity:1;transform:none}
+</style>
+</head><body data-theme="system">
+<div class="overlay" id="ov" onclick="closeDD()"></div>
+<div class="hdr">
+  <span class="logo">ehipas</span>
+  <span class="hdr-sub" id="hdrSub"></span>
+  <div class="hdr-ctrls">
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('lang')"><span id="ll">EN</span><span class="ddarrow">&#9662;</span></button>
+      <div class="ddmenu" id="lang-dd">
+        <div class="ddi" data-l="en" onclick="setLang('en')">&#127468;&#127463; English<span class="ck" id="lc-en"></span></div>
+        <div class="ddi" data-l="th" onclick="setLang('th')">&#127481;&#127469; &#3616;&#3634;&#3625;&#3634;&#3652;&#3607;&#3618;<span class="ck" id="lc-th"></span></div>
+        <div class="ddi" data-l="zh" onclick="setLang('zh')">&#127464;&#127475; &#20013;&#25991;<span class="ck" id="lc-zh"></span></div>
+        <div class="ddi" data-l="ru" onclick="setLang('ru')">&#127479;&#127482; &#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;<span class="ck" id="lc-ru"></span></div>
+      </div>
+    </div>
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('theme')"><span id="ticon">&#9728;</span><span class="ddarrow">&#9662;</span></button>
+      <div class="ddmenu" id="theme-dd">
+        <div class="ddi" onclick="setTheme('system')">&#8857; <span id="ts-sys">System</span><span class="ck" id="tc-sys"></span></div>
+        <div class="ddi" onclick="setTheme('light')">&#9728; <span id="ts-lt">Light</span><span class="ck" id="tc-light"></span></div>
+        <div class="ddi" onclick="setTheme('dark')">&#9790; <span id="ts-dk">Dark</span><span class="ck" id="tc-dark"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="wrap">
+<div class="hero fi"><div class="hero-tag" id="ht"></div><h1 class="hero-h" id="hh"></h1><p class="hero-lead" id="hl"></p></div>
+<div class="sh fi"><span id="s_concept"></span></div>
+<div class="fi"><p class="prose" id="cp1"></p><p class="prose" id="cp2"></p>
+<div class="hbox"><div class="hbox-l" id="ha_l"></div><div class="hbox-t" id="ha_t"></div></div></div>
+<div class="sh fi"><span id="s_event"></span></div>
+<div class="fi"><p class="prose" id="ep1"></p><p class="prose" id="ep2"></p></div>
+<div class="sg fi">
+  <div class="sc"><div class="sv">77</div><div class="su" id="su1"></div><div class="sl" id="sl1"></div></div>
+  <div class="sc"><div class="sv">3</div><div class="su" id="su2"></div><div class="sl" id="sl2"></div></div>
+  <div class="sc"><div class="sv">10,000</div><div class="su" id="su3"></div><div class="sl" id="sl3"></div></div>
+  <div class="sc"><div class="sv">&#3647;100</div><div class="su" id="su4"></div><div class="sl" id="sl4"></div></div>
+</div>
+<div class="sh fi"><span id="s_cr"></span></div>
+<div class="fi"><p class="prose" id="cr_intro"></p></div>
+<div class="cgg fi" id="cgGrid"></div>
+<div class="cgt fi"><span class="cgt-l" id="cgt_l"></span><span class="cgt-v" id="cgt_v">1,078</span></div>
+<div class="sh fi"><span id="s_venue"></span></div>
+<div class="fi"><p class="prose" id="vp1"></p><p class="prose" id="vp2"></p></div>
+<div class="flow fi">
+  <div class="fs"><div class="fn">Step 1</div><div class="ft" id="fl1t"></div><div class="fd" id="fl1d"></div><div class="fa">&#8250;</div></div>
+  <div class="fs"><div class="fn">Step 2</div><div class="ft" id="fl2t"></div><div class="fd" id="fl2d"></div><div class="fa">&#8250;</div></div>
+  <div class="fs"><div class="fn">Step 3</div><div class="ft" id="fl3t"></div><div class="fd" id="fl3d"></div><div class="fa">&#8250;</div></div>
+  <div class="fs"><div class="fn">Step 4</div><div class="ft" id="fl4t"></div><div class="fd" id="fl4d"></div></div>
+</div>
+<div class="hbox fi" style="border-left-color:var(--teal)"><div class="hbox-l" style="color:var(--teal)" id="hr_l"></div><div class="hbox-t" id="hr_t"></div></div>
+<div class="sh fi"><span id="s_c1"></span></div>
+<div class="fi"><p class="prose" id="c1_intro"></p></div>
+<div class="cc fi">
+  <div class="ct" id="c1_title"></div>
+  <div class="pr2">
+    <div class="pm"><div class="ph"><span class="pn" id="p_res"></span><span class="pv" id="v-res">&#3647;100</span></div><input type="range" min="50" max="500" step="10" value="100" oninput="upd('res',this.value)"></div>
+    <div class="pm"><div class="ph"><span class="pn" id="p_mult"></span><span class="pv" id="v-mult">&#215;1.6</span></div><input type="range" min="10" max="40" step="1" value="16" oninput="upd('mult',this.value)"></div>
+    <div class="pm"><div class="ph"><span class="pn" id="p_spec"></span><span class="pv" id="v-spec">15%</span></div><input type="range" min="5" max="40" step="1" value="15" oninput="upd('spec',this.value)"></div>
+    <div class="pm"><div class="ph"><span class="pn" id="p_prov"></span><span class="pv" id="v-prov">77</span></div><input type="range" min="1" max="77" step="1" value="77" oninput="upd('prov',this.value)"></div>
+  </div>
+  <div class="rg" id="rg1"></div>
+  <div class="bkd" id="bk1"></div>
+</div>
+<div class="sh fi"><span id="s_c2"></span></div>
+<div class="fi"><p class="prose" id="c2_intro"></p></div>
+<div class="cc fi">
+  <div class="ct" id="c2_title"></div>
+  <div class="pr2">
+    <div class="pm"><div class="ph"><span class="pn" id="p_food"></span><span class="pv" id="v-food">&#3647;300</span></div><input type="range" min="100" max="800" step="50" value="300" oninput="upd('food',this.value)"></div>
+    <div class="pm"><div class="ph"><span class="pn" id="p_craft"></span><span class="pv" id="v-craft">&#3647;400</span></div><input type="range" min="0" max="2000" step="50" value="400" oninput="upd('craft',this.value)"></div>
+    <div class="pm"><div class="ph"><span class="pn" id="p_other"></span><span class="pv" id="v-other">&#3647;200</span></div><input type="range" min="0" max="500" step="50" value="200" oninput="upd('other',this.value)"></div>
+    <div class="pm"><div class="ph"><span class="pn" id="p_days"></span><span class="pv" id="v-days">3</span></div><input type="range" min="1" max="7" step="1" value="3" oninput="upd('days',this.value)"></div>
+  </div>
+  <div class="rg" id="rg2"></div>
+  <div class="bkd" id="bk2"></div>
+</div>
+<div class="sh fi"><span id="s_prov"></span></div>
+<div class="pvd fi"><div class="pdots" id="pdots"></div><div class="pvl" id="pv_l"></div></div>
+<div class="sh fi"><span id="s_eff"></span></div>
+<div class="fi"><p class="prose" id="eff_intro"></p></div>
+<div class="tl fi" id="tlDiv"></div>
+<div class="sh fi"><span id="s_why"></span></div>
+<div class="fi"><p class="prose" id="why_p"></p></div>
+<div class="wg fi">
+  <div class="wc"><div class="wi">&#9889;</div><div class="wt" id="w1t"></div><div class="wd" id="w1d"></div></div>
+  <div class="wc"><div class="wi">&#128279;</div><div class="wt" id="w2t"></div><div class="wd" id="w2d"></div></div>
+  <div class="wc"><div class="wi">&#128272;</div><div class="wt" id="w3t"></div><div class="wd" id="w3d"></div></div>
+  <div class="wc"><div class="wi">&#127963;</div><div class="wt" id="w4t"></div><div class="wd" id="w4d"></div></div>
+  <div class="wc"><div class="wi">&#129689;</div><div class="wt" id="w5t"></div><div class="wd" id="w5d"></div></div>
+  <div class="wc"><div class="wi">&#128241;</div><div class="wt" id="w6t"></div><div class="wd" id="w6d"></div></div>
+</div>
+<div class="hbox fi" style="border-left-color:var(--violet);background:var(--violet-dim)">
+  <div class="hbox-l" style="color:var(--violet)" id="ths_l"></div>
+  <div class="hbox-t" id="ths_t"></div>
+</div>
+</div>
+<div class="foot">
+  <div class="fnt">EHIPAS &middot; COLLAB CASE &middot; BANGKOK &middot; <span id="ds"></span></div>
+  <div class="fnt">Flash Auction &#10003; &middot; 77 Provinces &middot; 1,078 co-creators</div>
+</div>
+<script>const T={
+en:{
+  hdrSub:"Collaborative Experience · Crafts Fair Case Study",
+  ht:"Case Study · Collaborative Experience",
+  hh:"Annual Crafts &amp;<br><b>Folklore Fair</b>",
+  hl:"A single experience. 77 provinces. Over 1,000 co-creators per province — from national brands and Buddhist monasteries to indigenous craftspeople and national park rangers. This is what a collaborative experience on Ehipas looks like at scale.",
+  s_concept:"The concept",
+  cp1:"A <b>collaborative experience</b> on Ehipas is a single auction event co-created by many participants simultaneously. Unlike a solo KOL hosting a dinner or tour, a collaborative experience aggregates audience, cultural capital, and commercial power from hundreds of co-creators — each inviting their own followers, each adding their own layer to the experience.",
+  cp2:"The result is an experience at a scale impossible for any single creator. Because <em>everyone shares the same auction link</em>, the platform captures the full economic signal of collective demand — not scattered ticket sales across different channels.",
+  ha_l:"Authenticity criterion",
+  ha_t:"If <b>locals buy too</b> — the experience is authentic. A crafts fair where Bangkok residents travel 300 km and local grandmothers fight for the same ticket: that's the signal. Airbnb Experiences never achieved this. Ehipas can.",
+  s_event:"The experience",
+  ep1:"The <b>Annual Crafts &amp; Folklore Fair</b> takes place simultaneously in every one of Thailand's 77 provinces. Each fair runs for 3 days, scheduled on public holidays or long weekends. The venue: open land within a national park and/or the grounds of a major provincial monastery — lending the event both natural beauty and spiritual legitimacy.",
+  ep2:"Each province hosts its own fair shaped by local traditions. Northern provinces feature Lanna textiles and hill-tribe silver. Northeastern provinces highlight <em>mor lam</em> music and silk weaving. Southern provinces showcase batik and seafood culture. Same platform, different soul in every province.",
+  su1:"provinces",sl1:"Simultaneous fairs across Thailand",
+  su2:"days",sl2:"Per fair, on public holidays",
+  su3:"tickets",sl3:"Per province, flash auction",
+  su4:"start price",sl4:"Reservation price per ticket",
+  s_cr:"Co-creators",
+  cr_intro:"Each provincial fair is co-created by multiple groups. Every co-creator publishes their own invitation — a post, story, or reel — pointing to the experience page on Ehipas. Their followers become bidders. Their reputation becomes social proof.",
+  cgt_l:"Total co-creators per province",
+  s_venue:"Venue &amp; entry system",
+  vp1:"The fair grounds occupy open land at a national park or major monastery — capacity up to <b>10,000 visitors per day</b>. Entry and exit are managed by the provincial administration. No Ehipas staff required on-site after setup.",
+  vp2:"Ehipas provides <b>5 automated kiosks</b> at the entrance, connected to the internet. Each kiosk reads QR codes and issues RFID wristband stickers — the same technology used on Thai toll roads.",
+  fl1t:"Win the auction",fl1d:"Bidder wins flash auction on Ehipas. QR-coded ticket delivered to wallet or email. On-chain escrow released to co-creators.",
+  fl2t:"QR scan at kiosk",fl2d:"Visitor presents QR to Ehipas kiosk at fair entrance. On-chain verification. QR is immediately invalidated.",
+  fl3t:"RFID wristband issued",fl3d:"Kiosk prints RFID sticker. Same e-tag technology as Thai tollways. QR is now void — cannot be reused or shared.",
+  fl4t:"Multi-day free entry",fl4d:"RFID wristband opens the turnstile. Enter and exit freely across all 3 fair days. Exit is open — no RFID needed to leave.",
+  hr_l:"Why RFID, not repeated QR?",
+  hr_t:"QR codes can be photographed and shared. Once converted to RFID, the ticket becomes <b>non-duplicable</b> — capacity control is automated without Ehipas staff on site.",
+  s_c1:"Economic model · Ticket revenue",
+  c1_intro:"Adjust the parameters below. All calculations update in real time. Values in Thai Baht (THB) and USD at ฿36/USD working rate.",
+  c1_title:"Calculator 1 — Ticket Sales",
+  p_res:"Reservation price",p_mult:"Auction multiplier",p_spec:"Speculators",p_prov:"Provinces",
+  s_c2:"Economic model · In-fair activity",
+  c2_intro:"Once visitors enter the fair, a separate economy activates — food stalls, craft vendors, local products, traditional workshops, entertainment. Money circulates entirely within the provincial economy.",
+  c2_title:"Calculator 2 — In-Fair Economy",
+  p_food:"Daily food spend (฿)",p_craft:"Crafts / souvenirs (฿)",p_other:"Other spend (฿)",p_days:"Fair days",
+  s_prov:"Scale — 77 provinces",
+  pv_l:"Each dot = one province · click to toggle · calculators update",
+  s_eff:"Effects by time horizon",
+  eff_intro:"A single annual event in every province of Thailand generates effects that compound across three time horizons. Click each horizon to expand.",
+  s_why:"Why Ehipas",
+  why_p:"No platform existed that could coordinate 1,000+ co-creators around a single verifiable auction — and prove that both tourists and locals buy the same ticket.",
+  w1t:"Flash simultaneous auction",w1d:"+16.6% revenue vs English auction (1,000 Monte Carlo runs). All 10,000 bids land at once. Price discovery in seconds.",
+  w2t:"One link, 1,000 audiences",w2d:"Every co-creator shares the same Ehipas URL. Combined follower pool no single KOL could generate alone.",
+  w3t:"Off-chain escrow, on-chain proof",w3d:"Single on-chain transaction only on success. Zero gas loss on failed bids. Trust without friction.",
+  w4t:"Government alignment",w4d:"TAT, BOI, NIA Thailand, provincial administration all benefit. Sufficiency Economy (Rama IX) in digital form.",
+  w5t:"Royalties on every resale",w5d:"5% to co-creators on every secondary market transaction — automatically via smart contract.",
+  w6t:"Fiat + crypto, no friction",w6d:"Any Thai with a phone can bid. No wallet required for the fiat path. Blockchain is invisible infrastructure.",
+  ths_l:"The thesis",
+  ths_t:"\"Airbnb gave income to those with housing. <b>Ehipas gives income to those with nothing — except their life.</b>\" The crafts fair proves the thesis: the most powerful experiences are not sold — they are won.",
+  ts_sys:"System",ts_lt:"Light",ts_dk:"Dark",
+  cl_pp:"Platform / province",cl_pa:"Platform · all provinces",cl_cp:"Creators / province",cl_ua:"USD equivalent",
+  cl_prim:"Primary auction",cl_sec:"Secondary market",cl_roy:"Creator royalties",
+  cl_vis:"Spend / visitor",cl_ip:"In-fair / province",cl_ia:"All provinces total",cl_ind:"Indirect effect ×1.8",
+  cl_food:"Food & drinks",cl_cra:"Crafts & souvenirs",cl_oth:"Other",
+  cl_vol_headline:"Trading volume · all provinces",
+  cl_platform_fee:"platform fee",
+  cl_direct:"direct",
+  cl_econ_headline:"Economic effect · all provinces · ×1.8",
+  ef:[
+    {title:"Short-term",badge:"0–3 months",color:"var(--teal)",items:[
+      ["Direct ticket revenue","Platform revenue settled on-chain within 24 hours. Co-creators across 77 provinces receive primary income and royalties automatically."],
+      ["Provincial media coverage","Every province generates a local story. Officials, brands and KOLs all publish their involvement — multiplying earned media reach."],
+      ["Platform validation at scale","10,000 QR-to-RFID entries per province = proof that Ehipas ticketing infrastructure works at national scale."],
+      ["Social media explosion","1,000+ co-creators posting simultaneously = millions of organic impressions. Flash auction urgency drives sharing and FOMO."],
+      ["KOL relationship deepening","Each KOL sees their followers' engagement data and auction conversion rate. They want to do it again next year."],
+      ["Brand CSR activation","Brands receive measurable CSR output: ticket revenue attributed, visitor count, social reach, regional coverage — all documented."]
+    ]},
+    {title:"Medium-term",badge:"3–24 months",color:"var(--amber)",items:[
+      ["Creator community growth","Successful fairs create demand for year-round experiences. KOLs and artisans sign up for solo experiences on Ehipas between annual fairs."],
+      ["Tourism uplift","77 provincial fairs place Thailand on the international folk-culture tourism map. TAT actively promotes the annual event to foreign visitors."],
+      ["OTOP sales acceleration","10,000 × 77 = 770,000 qualified buyers exposed to OTOP products per year. Repeat orders and online sales follow the fair."],
+      ["Institutional partnerships","BOI, NIA Thailand and government ministries formalize relationships with Ehipas. Grant funding and regulatory fast-track open up."],
+      ["Artisan income stabilization","Craft producers who previously earned seasonally now have predictable, advance-sold income from fair tickets and in-fair sales."],
+      ["Secondary market maturation","Speculators and collectors establish provincial fair tickets as collectible assets. Resale volume generates ongoing royalty streams."]
+    ]},
+    {title:"Long-term",badge:"2–5 years",color:"var(--violet)",items:[
+      ["Cultural preservation engine","Annual fairs create institutional demand for traditional crafts. Artisans pass skills to the next generation because demand is provably growing."],
+      ["International cultural tourism","Thailand becomes the world's leading destination for living culture tourism — not museums, not staged shows, but real communities."],
+      ["Digital artisan economy","Craft producers develop direct-to-consumer digital identities. Ehipas profile becomes a verifiable reputation asset with on-chain provenance."],
+      ["Replication to other countries","The model replicates to Cambodia, Myanmar, Laos, Vietnam, Indonesia. Each new country ≈ ×2 revenue on the same infrastructure."],
+      ["AI-proof livelihoods","As AI displaces digital labor (2028–2032 peak), physical embodied culture becomes scarce and premium. Ehipas pre-positions artisans."],
+      ["National soft power asset","Thailand's government gains a measurable digital soft power instrument — cultural events documented on-chain, accessible globally via Ehipas."]
+    ]}
+  ]
+},
+th:{
+  hdrSub:"ประสบการณ์ร่วมสร้าง · กรณีศึกษา",
+  ht:"กรณีศึกษา · ประสบการณ์ร่วมสร้าง",
+  hh:"งานหัตถกรรมและ<br><b>วัฒนธรรมพื้นบ้าน</b>",
+  hl:"ประสบการณ์เดียว 77 จังหวัด ผู้ร่วมสร้างกว่า 1,000 คนต่อจังหวัด — จากแบรนด์ระดับชาติ วัดพุทธ ช่างฝีมือพื้นบ้าน ถึงเจ้าหน้าที่อุทยานแห่งชาติ",
+  s_concept:"แนวคิด",
+  cp1:"<b>ประสบการณ์ร่วมสร้าง</b>บน Ehipas คือกิจกรรมประมูลเดียวที่มีผู้สร้างหลายคนพร้อมกัน ต่างจาก KOL เดี่ยวที่จัดมื้อค่ำหรือทัวร์ การร่วมสร้างรวมผู้ชม ทุนวัฒนธรรม และพลังพาณิชย์จากผู้ร่วมสร้างหลายร้อยคน",
+  cp2:"ผลลัพธ์คือประสบการณ์ในระดับที่ผู้สร้างคนเดียวไม่สามารถทำได้ และเพราะ<em>ทุกคนแชร์ลิงก์เดียวกัน</em> แพลตฟอร์มจึงบันทึกสัญญาณเศรษฐกิจของความต้องการรวม",
+  ha_l:"เกณฑ์ความแท้จริง",
+  ha_t:"ถ้า<b>คนท้องถิ่นก็ซื้อ</b> — ประสบการณ์นั้นแท้จริง งานหัตถกรรมที่ชาวกรุงเทพฯ เดินทาง 300 กม. และคุณยายท้องถิ่นแย่งตั๋วใบเดียวกัน: นั่นคือสัญญาณ Airbnb Experiences ไม่เคยทำได้",
+  s_event:"ประสบการณ์",
+  ep1:"<b>งานหัตถกรรมและวัฒนธรรมพื้นบ้านประจำปี</b>จัดพร้อมกันใน 77 จังหวัด แต่ละงาน 3 วัน ตรงกับวันหยุดราชการ สถานที่: พื้นที่เปิดโล่งในอุทยานแห่งชาติหรือบริเวณวัดสำคัญประจำจังหวัด",
+  ep2:"แต่ละจังหวัดมีงานที่มีเอกลักษณ์ของตัวเอง ภาคเหนือเน้นผ้าล้านนาและเครื่องเงินชาวเขา ภาคอีสานเน้น<em>หมอลำ</em>และผ้าไหม ภาคใต้เน้นผ้าบาติกและวัฒนธรรมอาหารทะเล",
+  su1:"จังหวัด",sl1:"งานพร้อมกันทั่วไทย",
+  su2:"วัน",sl2:"ต่องาน วันหยุดราชการ",
+  su3:"ตั๋ว",sl3:"ต่อจังหวัด แฟลชออคชัน",
+  su4:"ราคาเริ่มต้น",sl4:"ราคาขั้นต่ำต่อตั๋ว",
+  s_cr:"ผู้ร่วมสร้าง",
+  cr_intro:"แต่ละงานจังหวัดร่วมสร้างโดยหลายกลุ่ม ทุกคนโพสต์คำเชิญชวนชี้ไปยังหน้าประสบการณ์บน Ehipas ผู้ติดตามของพวกเขากลายเป็นผู้เสนอราคา",
+  cgt_l:"ผู้ร่วมสร้างทั้งหมดต่อจังหวัด",
+  s_venue:"สถานที่และระบบเข้าร่วม",
+  vp1:"พื้นที่งานในอุทยานแห่งชาติหรือวัดสำคัญ รองรับได้ถึง <b>10,000 คนต่อวัน</b> การเข้า-ออกจัดการโดยฝ่ายปกครองจังหวัด",
+  vp2:"Ehipas จัดเตรียม <b>5 ตู้อัตโนมัติ</b> ที่ทางเข้าพร้อมอินเทอร์เน็ต แต่ละตู้อ่าน QR code และออก RFID สติ๊กเกอร์ — เทคโนโลยีเดียวกับป้ายทางด่วน",
+  fl1t:"ชนะการประมูล",fl1d:"ผู้เสนอราคาชนะบน Ehipas ตั๋ว QR ส่งถึงกระเป๋า/อีเมล",
+  fl2t:"สแกน QR ที่ตู้",fl2d:"ตรวจสอบ on-chain QR ถูกยกเลิกทันที",
+  fl3t:"รับสายรัดข้อมือ RFID",fl3d:"ตู้พิมพ์สติ๊กเกอร์ RFID เทคโนโลยีเดียวกับแท็กทางด่วน QR ใช้ไม่ได้อีกต่อไป",
+  fl4t:"เข้าร่วมหลายวัน",fl4d:"สายรัดข้อมือ RFID เปิดประตูได้ เข้า-ออกอิสระตลอด 3 วัน",
+  hr_l:"ทำไมต้องใช้ RFID?",
+  hr_t:"QR code สามารถถ่ายรูปและแชร์ได้ เมื่อแปลงเป็น RFID ตั๋วจะ<b>ซ้ำไม่ได้</b> — ควบคุมความจุอัตโนมัติโดยไม่ต้องมีเจ้าหน้าที่ Ehipas ในสถานที่",
+  s_c1:"โมเดลเศรษฐกิจ · รายได้จากตั๋ว",
+  c1_intro:"ปรับพารามิเตอร์ด้านล่าง การคำนวณทั้งหมดอัปเดตแบบเรียลไทม์ หน่วยเป็นบาทและ USD (฿36/USD)",
+  c1_title:"เครื่องคิดเลข 1 — การขายตั๋ว",
+  p_res:"ราคาขั้นต่ำ",p_mult:"ตัวคูณการประมูล",p_spec:"นักเก็งกำไร",p_prov:"จังหวัด",
+  s_c2:"โมเดลเศรษฐกิจ · กิจกรรมในงาน",
+  c2_intro:"เมื่อผู้เข้าร่วมเข้าในงาน เศรษฐกิจอีกส่วนหนึ่งจะเริ่มทำงาน — แผงอาหาร ร้านหัตถกรรม สินค้าท้องถิ่น เงินหมุนเวียนในระบบเศรษฐกิจจังหวัดทั้งหมด",
+  c2_title:"เครื่องคิดเลข 2 — เศรษฐกิจในงาน",
+  p_food:"ค่าอาหารต่อวัน (฿)",p_craft:"หัตถกรรม/ของที่ระลึก (฿)",p_other:"อื่นๆ (฿)",p_days:"วันจัดงาน",
+  s_prov:"ขนาด — 77 จังหวัด",
+  pv_l:"แต่ละจุด = หนึ่งจังหวัด · คลิกเพื่อสลับ",
+  s_eff:"ผลกระทบตามระยะเวลา",
+  eff_intro:"กิจกรรมประจำปีเดียวในทุกจังหวัดสร้างผลกระทบในสามระยะ คลิกแต่ละระยะเพื่อขยาย",
+  s_why:"ทำไมต้อง Ehipas",
+  why_p:"ไม่มีแพลตฟอร์มใดที่ประสานผู้ร่วมสร้างกว่า 1,000 คนรอบการประมูลที่ตรวจสอบได้เดียว และพิสูจน์ว่าทั้งนักท่องเที่ยวและคนท้องถิ่นซื้อตั๋วใบเดียวกัน",
+  w1t:"แฟลชออคชันพร้อมกัน",w1d:"+16.6% รายได้เทียบกับออคชันอังกฤษ (1,000 รอบ Monte Carlo)",
+  w2t:"ลิงก์เดียว 1,000 ผู้ชม",w2d:"ผู้ร่วมสร้างทุกคนแชร์ URL เดียวกัน กลุ่มผู้ติดตามรวมที่ KOL คนเดียวไม่สามารถทำได้",
+  w3t:"Escrow off-chain หลักฐาน on-chain",w3d:"ธุรกรรม on-chain เดียวเมื่อสำเร็จเท่านั้น ไม่มี gas สูญหาย",
+  w4t:"สอดคล้องกับภาครัฐ",w4d:"TAT BOI NIA ล้วนได้ประโยชน์โดยตรง เศรษฐกิจพอเพียง (รัชกาลที่ 9) ในรูปแบบดิจิทัล",
+  w5t:"ค่าลิขสิทธิ์จากการขายต่อทุกครั้ง",w5d:"5% ให้ผู้ร่วมสร้างทุกธุรกรรมตลาดรอง — อัตโนมัติผ่าน smart contract",
+  w6t:"ฟีแอต + คริปโต ไร้อุปสรรค",w6d:"คนไทยทุกคนที่มีโทรศัพท์สามารถเสนอราคาได้ ไม่ต้องมีกระเป๋าคริปโต",
+  ths_l:"วิทยานิพนธ์",
+  ths_t:"\"Airbnb ให้รายได้แก่คนที่มีบ้าน <b>Ehipas ให้รายได้แก่คนที่ไม่มีอะไร — นอกจากชีวิตของตัวเอง</b>\" งานหัตถกรรมพิสูจน์วิทยานิพนธ์: ประสบการณ์ที่ทรงพลังที่สุดไม่ได้ถูกขาย — แต่ถูกชนะ",
+  ts_sys:"ระบบ",ts_lt:"สว่าง",ts_dk:"มืด",
+  cl_pp:"แพลตฟอร์ม/จังหวัด",cl_pa:"แพลตฟอร์ม ทุกจังหวัด",cl_cp:"ผู้สร้าง/จังหวัด",cl_ua:"เทียบเท่า USD",
+  cl_prim:"ตลาดหลัก",cl_sec:"ตลาดรอง",cl_roy:"ค่าลิขสิทธิ์ผู้สร้าง",
+  cl_vis:"ค่าใช้จ่าย/ผู้เข้าร่วม",cl_ip:"ในงาน/จังหวัด",cl_ia:"รวมทุกจังหวัด",cl_ind:"ผลกระทบทางอ้อม ×1.8",
+  cl_food:"อาหาร & เครื่องดื่ม",cl_cra:"หัตถกรรม & ของที่ระลึก",cl_oth:"อื่นๆ",
+  cl_vol_headline:"มูลค่าการซื้อขายรวม · ทุกจังหวัด",
+  cl_platform_fee:"ค่าธรรมเนียมแพลตฟอร์ม",
+  cl_direct:"ตรง",
+  cl_econ_headline:"ผลกระทบทางเศรษฐกิจ · ทุกจังหวัด · ×1.8",
+  ef:[
+    {title:"ระยะสั้น",badge:"0–3 เดือน",color:"var(--teal)",items:[
+      ["รายได้จากตั๋วโดยตรง","รายได้แพลตฟอร์มชำระ on-chain ภายใน 24 ชั่วโมง ผู้ร่วมสร้างทั่ว 77 จังหวัดได้รับรายได้หลักและค่าลิขสิทธิ์โดยอัตโนมัติ"],
+      ["สื่อจังหวัดครอบคลุม","ทุกจังหวัดมีเรื่องราวท้องถิ่น เจ้าหน้าที่ แบรนด์ และ KOL ล้วนเผยแพร่การมีส่วนร่วม"],
+      ["ตรวจสอบแพลตฟอร์ม","10,000 รายการ QR-to-RFID ต่อจังหวัด = หลักฐานการทำงานในระดับชาติ"],
+      ["โซเชียลมีเดียระเบิด","ผู้ร่วมสร้าง 1,000+ คนโพสต์พร้อมกัน = การแสดงผลออร์แกนิกหลายล้านครั้ง"]
+    ]},
+    {title:"ระยะกลาง",badge:"3–24 เดือน",color:"var(--amber)",items:[
+      ["ชุมชนผู้สร้างเติบโต","งานที่ประสบความสำเร็จสร้างความต้องการประสบการณ์ตลอดทั้งปี"],
+      ["การท่องเที่ยวเพิ่มขึ้น","งาน 77 จังหวัดวางไทยบนแผนที่การท่องเที่ยวพื้นบ้านนานาชาติ"],
+      ["เร่งยอดขาย OTOP","10,000 × 77 = 770,000 ผู้ซื้อที่มีคุณภาพได้เห็นสินค้า OTOP ต่อปี"],
+      ["ความร่วมมือเชิงสถาบัน","BOI, NIA ไทย และกระทรวงต่างๆ ทำให้ความสัมพันธ์กับ Ehipas เป็นทางการ"]
+    ]},
+    {title:"ระยะยาว",badge:"2–5 ปี",color:"var(--violet)",items:[
+      ["เครื่องยนต์อนุรักษ์วัฒนธรรม","งานประจำปีสร้างความต้องการงานหัตถกรรมดั้งเดิมเชิงสถาบัน"],
+      ["การท่องเที่ยวเชิงวัฒนธรรมนานาชาติ","ไทยกลายเป็นจุดหมายชั้นนำของโลกสำหรับการท่องเที่ยววัฒนธรรมมีชีวิต"],
+      ["อาชีพที่ทนทานต่อ AI","เมื่อ AI แทนที่แรงงานดิจิทัล วัฒนธรรมที่มีตัวตนทางกายภาพกลายเป็นสินค้าหายากและพรีเมียม"],
+      ["สินทรัพย์ซอฟต์พาวเวอร์แห่งชาติ","รัฐบาลไทยได้เครื่องมือซอฟต์พาวเวอร์ดิจิทัลที่วัดได้"]
+    ]}
+  ]
+},zh:{
+  hdrSub:"协作体验 · 案例研究",
+  ht:"案例研究 · 协作体验",
+  hh:"年度手工艺与<br><b>民俗文化集市</b>",
+  hl:"一个体验。77个府。每府超过1,000位共同创作者——从全国品牌和佛教寺院，到土著工匠和国家公园护林员。这就是Ehipas协作体验的规模。",
+  s_concept:"概念",
+  cp1:"Ehipas上的<b>协作体验</b>是由多位参与者同时共同创作的单一拍卖活动。与单独KOL举办晚宴或旅游不同，协作体验汇聚了数百位共同创作者的受众、文化资本和商业力量——每人邀请自己的粉丝，每人为体验增添独特层次。",
+  cp2:"结果是任何单一创作者都无法达到的规模体验。因为<em>所有人共享同一拍卖链接</em>，平台捕捉到集体需求的完整经济信号——而非分散在不同渠道的零散票务销售。",
+  ha_l:"真实性标准",
+  ha_t:"如果<b>当地人也购买</b>——这个体验就是真实的。一个曼谷居民驱车300公里、当地老奶奶争抢同一张票的手工艺集市：这就是信号。Airbnb体验从未做到这一点。Ehipas可以。",
+  s_event:"体验",
+  ep1:"<b>年度手工艺与民俗文化集市</b>在泰国所有77个府同时举行。每个集市持续3天，安排在公共假期或长周末。场地：国家公园内的开阔土地和/或主要省级寺院的场地——赋予活动自然之美和精神合法性。",
+  ep2:"每个府举办具有当地传统特色的集市。北部府以兰纳纺织品和山地部落银器为特色。东北部府突出<em>摩兰</em>音乐和丝绸织造。南部府展示蜡染和海鲜文化。同一平台，每个府有不同的灵魂。",
+  su1:"个府",sl1:"全泰同步举办集市",
+  su2:"天",sl2:"每个集市，公共假期",
+  su3:"张票",sl3:"每府，闪拍",
+  su4:"起拍价",sl4:"每张票的保留价格",
+  s_cr:"共同创作者",
+  cr_intro:"每个省级集市由多个群体共同创作。每位共同创作者发布自己的邀请——帖子、故事或视频——指向Ehipas上的体验页面。他们的粉丝成为竞拍者。他们的声誉成为社会证明。",
+  cgt_l:"每府共同创作者总数",
+  s_venue:"场地与入场系统",
+  vp1:"集市场地占据国家公园或主要寺院的开阔土地——容量最多<b>每天10,000名访客</b>。入场和退场由省级行政管理。设置后无需Ehipas工作人员在场。",
+  vp2:"Ehipas在入口处提供<b>5台联网自动售货机</b>。每台机器读取QR码并发放RFID腕带贴纸——与泰国公路收费站使用的相同技术。",
+  fl1t:"赢得拍卖",fl1d:"竞拍者在Ehipas上赢得闪拍。带QR码的票券送达钱包或邮箱。链上托管款项释放给共同创作者。",
+  fl2t:"在售货机扫描QR码",fl2d:"访客在集市入口的Ehipas售货机出示QR码。链上验证。QR码立即作废。",
+  fl3t:"发放RFID腕带",fl3d:"售货机打印RFID贴纸。与泰国公路电子标签技术相同。QR码现已无效——无法重复使用或共享。",
+  fl4t:"多日免费入场",fl4d:"RFID腕带打开闸机。在集市全部3天内自由进出。出口开放——离开无需RFID。",
+  hr_l:"为什么用RFID而不是重复QR？",
+  hr_t:"QR码可以被拍照和共享。一旦转换为RFID，票券变得<b>不可复制</b>——无需Ehipas工作人员在场即可自动控制容量。",
+  s_c1:"经济模型 · 票务收入",
+  c1_intro:"调整以下参数。所有计算实时更新。数值以泰铢(THB)和美元(฿36/USD)表示。",
+  c1_title:"计算器1 — 票务销售",
+  p_res:"保留价格",p_mult:"拍卖乘数",p_spec:"投机者",p_prov:"府数",
+  s_c2:"经济模型 · 集市内活动",
+  c2_intro:"访客进入集市后，另一个经济体系启动——食品摊位、工艺品供应商、当地产品、传统工作坊、娱乐活动。资金完全在省级经济体系内循环。",
+  c2_title:"计算器2 — 集市内经济",
+  p_food:"每日餐饮消费(฿)",p_craft:"手工艺/纪念品(฿)",p_other:"其他消费(฿)",p_days:"集市天数",
+  s_prov:"规模 — 77个府",
+  pv_l:"每个点 = 一个府 · 点击切换 · 计算器自动更新",
+  s_eff:"按时间维度划分的影响",
+  eff_intro:"泰国每个府每年举办一次活动，在三个时间维度上产生复合效应。点击每个维度展开。",
+  s_why:"为什么选择Ehipas",
+  why_p:"没有任何平台能够协调1,000+位共同创作者围绕单一可验证拍卖——并证明游客和当地人购买同一张票。",
+  w1t:"闪拍同步拍卖",w1d:"与英式拍卖相比收入+16.6%（1,000次蒙特卡洛模拟）。所有10,000次出价同时到达。秒级价格发现。",
+  w2t:"一个链接，1,000个受众",w2d:"每位共同创作者共享同一Ehipas网址。任何单一KOL都无法单独产生的综合粉丝群。",
+  w3t:"链下托管，链上证明",w3d:"仅在成功时进行单次链上交易。失败出价零Gas损失。无摩擦信任。",
+  w4t:"政府协调",w4d:"TAT、BOI、NIA泰国、省级行政机构均受益。拉玛九世充足经济的数字形式。",
+  w5t:"每次转售均有版税",w5d:"每次二级市场交易自动通过智能合约向共同创作者支付5%。",
+  w6t:"法币+加密货币，无摩擦",w6d:"任何拥有手机的泰国人都可以出价。法币通道无需钱包。区块链是隐形基础设施。",
+  ths_l:"论点",
+  ths_t:"\"Airbnb给有住房的人带来收入。<b>Ehipas给什么都没有的人带来收入——除了他们的生命。</b>\" 手工艺集市证明了这个论点：最强大的体验不是被出售的——而是被赢得的。",
+  ts_sys:"跟随系统",ts_lt:"浅色",ts_dk:"深色",
+  cl_pp:"平台/每府",cl_pa:"平台·所有府",cl_cp:"创作者/每府",cl_ua:"美元等值",
+  cl_prim:"一级拍卖",cl_sec:"二级市场",cl_roy:"创作者版税",
+  cl_vis:"消费/访客",cl_ip:"集市内/每府",cl_ia:"所有府合计",cl_ind:"间接效应×1.8",
+  cl_food:"餐饮",cl_cra:"手工艺&纪念品",cl_oth:"其他",
+  cl_vol_headline:"交易总额 · 所有府",
+  cl_platform_fee:"平台手续费",
+  cl_direct:"直接",
+  cl_econ_headline:"经济效应 · 所有府 · ×1.8",
+  ef:[
+    {title:"短期",badge:"0–3个月",color:"var(--teal)",items:[
+      ["直接票务收入","平台收入在24小时内完成链上结算。77个府的共同创作者自动收到主要收入和版税。"],
+      ["省级媒体覆盖","每个府产生本地故事。官员、品牌和KOL都发布他们的参与情况——倍增赚取的媒体覆盖。"],
+      ["规模验证平台","每府10,000次QR转RFID入场=证明Ehipas票务基础设施在全国规模上有效运作。"],
+      ["社交媒体爆炸","1,000+位共同创作者同时发帖=数百万次有机曝光。闪拍紧迫感驱动分享和FOMO。"]
+    ]},
+    {title:"中期",badge:"3–24个月",color:"var(--amber)",items:[
+      ["创作者社区增长","成功的集市为全年体验创造需求。KOL和工匠在年度集市之间在Ehipas上注册独立体验。"],
+      ["旅游提升","77个省级集市将泰国置于国际民俗文化旅游地图上。TAT积极向外国访客推广年度活动。"],
+      ["OTOP销售加速","10,000×77=每年770,000名合格买家接触OTOP产品。集市后跟进重复订单和在线销售。"],
+      ["机构合作","BOI、NIA泰国和政府部委与Ehipas正式化关系。补助资金和监管快速通道开放。"]
+    ]},
+    {title:"长期",badge:"2–5年",color:"var(--violet)",items:[
+      ["文化保护引擎","年度集市为传统手工艺创造机构需求。工匠将技能传授给下一代，因为需求明显增长。"],
+      ["国际文化旅游","泰国成为世界领先的活文化旅游目的地——不是博物馆，不是表演秀，而是真实社区。"],
+      ["防AI职业","随着AI取代数字劳动力（2028–2032高峰），实体文化变得稀缺且溢价。Ehipas预先为工匠定位。"],
+      ["国家软实力资产","泰国政府获得可衡量的数字软实力工具——在链上记录的文化活动，通过Ehipas全球可及。"]
+    ]}
+  ]
+},
+ru:{
+  hdrSub:"Коллаборационное впечатление · Кейс",
+  ht:"Кейс · Коллаборационное впечатление",
+  hh:"Ежегодная ярмарка<br><b>ремёсел и фольклора</b>",
+  hl:"Одно впечатление. 77 провинций. Более 1000 со-создателей на провинцию — от национальных брендов и буддийских монастырей до народных ремесленников и смотрителей национальных парков.",
+  s_concept:"Концепция",
+  cp1:"<b>Коллаборационное впечатление</b> на Ehipas — единый аукционный ивент, созданный одновременно множеством участников. В отличие от соло-KOL, оно агрегирует аудиторию, культурный капитал и коммерческую силу сотен со-создателей — каждый приглашает свою аудиторию, каждый добавляет свой слой.",
+  cp2:"Результат — впечатление масштаба, недостижимого для одного создателя. Поскольку <em>все делятся одной ссылкой на аукцион</em>, платформа фиксирует полный экономический сигнал коллективного спроса.",
+  ha_l:"Критерий аутентичности",
+  ha_t:"Если <b>местные тоже покупают</b> — впечатление настоящее. Ярмарка, на которую жители Бангкока едут 300 км, а местные бабушки борются за тот же билет: вот этот сигнал. Airbnb Experiences этого так и не достиг.",
+  s_event:"Впечатление",
+  ep1:"<b>Ежегодная ярмарка ремёсел и фольклора</b> проходит одновременно во всех 77 провинциях Таиланда. Каждая ярмарка — 3 дня, в праздничные дни. Место: поле в национальном парке и/или территория крупного провинциального монастыря.",
+  ep2:"В каждой провинции — своя ярмарка с местным колоритом. На севере: ланнские ткани и серебро горных племён. На северо-востоке: <em>мор лам</em> и шёлк. На юге: батик и морская культура. Одна платформа — разная душа в каждой провинции.",
+  su1:"провинций",sl1:"Одновременно по всему Таиланду",
+  su2:"дня",sl2:"Каждая ярмарка, в праздники",
+  su3:"билетов",sl3:"На провинцию, флэш-аукцион",
+  su4:"старт. цена",sl4:"Цена резервирования за билет",
+  s_cr:"Со-создатели",
+  cr_intro:"Каждая провинциальная ярмарка создаётся совместно несколькими группами. Каждый со-создатель публикует своё приглашение — пост, историю или рил — со ссылкой на страницу впечатления на Ehipas.",
+  cgt_l:"Всего со-создателей на провинцию",
+  s_venue:"Место и система входа",
+  vp1:"Территория ярмарки — поле в национальном парке или при крупном монастыре, вместимость до <b>10 000 посетителей в день</b>. Вход/выход организует провинциальная администрация.",
+  vp2:"Ehipas предоставляет <b>5 автоматизированных киосков</b> на входе с интернетом. Каждый читает QR-коды и выдаёт RFID-наклейки — та же технология, что на платных дорогах Таиланда.",
+  fl1t:"Победа в аукционе",fl1d:"Победитель получает QR-билет в кошелёк или на почту. On-chain эскроу освобождается со-создателям.",
+  fl2t:"Сканирование QR у киоска",fl2d:"Посетитель подносит QR к киоску Ehipas. On-chain верификация. QR немедленно аннулируется.",
+  fl3t:"Выдача RFID-наклейки",fl3d:"Киоск печатает RFID-стикер — та же технология, что e-tag на платных дорогах. QR больше не действует.",
+  fl4t:"Многодневный свободный вход",fl4d:"RFID-наклейка открывает шлагбаум. Вход и выход свободны все 3 дня ярмарки. Выход открытый — RFID не нужен.",
+  hr_l:"Почему RFID, а не повторный QR?",
+  hr_t:"QR-код можно сфотографировать и передать. После конвертации в RFID билет становится <b>неповторяемым</b> — контроль вместимости автоматизирован без сотрудников Ehipas на месте.",
+  s_c1:"Экономическая модель · Выручка от билетов",
+  c1_intro:"Настройте параметры. Все расчёты обновляются в реальном времени. Значения в батах и USD (курс ฿36/USD).",
+  c1_title:"Калькулятор 1 — Продажа билетов",
+  p_res:"Старт. цена",p_mult:"Мультипликатор",p_spec:"Спекулянты",p_prov:"Провинций",
+  s_c2:"Экономическая модель · Экономика ярмарки",
+  c2_intro:"Когда посетители входят на ярмарку, запускается отдельная экономика — еда, ремёсла, местные продукты, мастерские. Деньги оборачиваются внутри провинциальной экономики.",
+  c2_title:"Калькулятор 2 — Экономика ярмарки",
+  p_food:"Еда в день (฿)",p_craft:"Ремёсла/сувениры (฿)",p_other:"Прочее (฿)",p_days:"Дней ярмарки",
+  s_prov:"Масштаб — 77 провинций",
+  pv_l:"Каждая точка = одна провинция · нажмите для переключения · калькуляторы обновятся",
+  s_eff:"Эффекты по временным горизонтам",
+  eff_intro:"Одно ежегодное мероприятие в каждой провинции генерирует эффекты в трёх временных горизонтах. Нажмите на горизонт, чтобы развернуть.",
+  s_why:"Почему Ehipas",
+  why_p:"Ни одна платформа не могла координировать 1000+ со-создателей вокруг единого верифицируемого аукциона — и доказать, что туристы и местные покупают один и тот же билет.",
+  w1t:"Флэш-аукцион (одновременно)",w1d:"+16.6% выручки vs английский аукцион (1000 прогонов Монте-Карло). Все 10 000 ставок одновременно.",
+  w2t:"Одна ссылка, 1000 аудиторий",w2d:"Все со-создатели делятся одним URL. Совокупная аудитория, недостижимая для одиночного KOL.",
+  w3t:"Off-chain эскроу, on-chain доказательство",w3d:"Одна on-chain транзакция только при успехе. Ноль потерь на газ при несостоявшихся ставках.",
+  w4t:"Государственное партнёрство",w4d:"TAT, BOI, NIA Thailand — всем выгодно. Экономика достаточности Рамы IX в цифровой форме.",
+  w5t:"Роялти при каждой перепродаже",w5d:"5% со-создателям с каждой сделки вторичного рынка — автоматически через смарт-контракт.",
+  w6t:"Фиат + крипта, без трений",w6d:"Любой тайец со смартфоном может поставить. Кошелёк не нужен для фиатного пути.",
+  ths_l:"Тезис",
+  ths_t:"«Airbnb дал доход тем, у кого есть жильё. <b>Ehipas даёт доход тем, у кого нет ничего — кроме своей жизни.</b>» Ярмарка ремёсел доказывает тезис: самые мощные впечатления не продаются — они выигрываются.",
+  ts_sys:"Системная",ts_lt:"Светлая",ts_dk:"Тёмная",
+  cl_pp:"Платформа/провинция",cl_pa:"Платформа · все провинции",cl_cp:"Создатели/провинция",cl_ua:"Эквивалент USD",
+  cl_prim:"Первичный рынок",cl_sec:"Вторичный рынок",cl_roy:"Роялти создателей",
+  cl_vis:"Расходы/посетитель",cl_ip:"Ярмарка/провинция",cl_ia:"Все провинции итого",cl_ind:"Косвенный эффект ×1.8",
+  cl_food:"Еда и напитки",cl_cra:"Ремёсла и сувениры",cl_oth:"Прочее",
+  cl_vol_headline:"Торговый оборот · все провинции",
+  cl_platform_fee:"комиссия платформы",
+  cl_direct:"прямой эффект",
+  cl_econ_headline:"Экономический эффект · все провинции · ×1.8",
+  ef:[
+    {title:"Краткосрочные",badge:"0–3 месяца",color:"var(--teal)",items:[
+      ["Прямая выручка от билетов","Расчёт on-chain в течение 24 ч после ярмарки. Со-создатели по 77 провинциям получают доход и роялти автоматически."],
+      ["Провинциальное медиапокрытие","Каждая провинция получает свою локальную историю. Чиновники, бренды и KOL публикуют участие — умножая охват."],
+      ["Валидация инфраструктуры","10 000 QR-to-RFID входов на провинцию = доказательство работы инфраструктуры Ehipas в национальном масштабе."],
+      ["Взрыв в соцсетях","1000+ со-создателей одновременно = миллионы органических показов. Срочность флэш-аукциона разгоняет шеринг и FOMO."]
+    ]},
+    {title:"Среднесрочные",badge:"3–24 месяца",color:"var(--amber)",items:[
+      ["Рост сообщества создателей","Успешные ярмарки создают спрос на круглогодичные впечатления. KOL и ремесленники регистрируются для соло-впечатлений."],
+      ["Туристический рост","77 провинциальных ярмарок ставят Таиланд на карту международного фольклорного туризма."],
+      ["Ускорение продаж OTOP","770 000 квалифицированных покупателей ежегодно знакомятся с продуктами OTOP. Повторные заказы следуют."],
+      ["Институциональные партнёрства","BOI, NIA Thailand и министерства формализуют отношения с Ehipas. Гранты и регуляторный fast-track открываются."]
+    ]},
+    {title:"Долгосрочные",badge:"2–5 лет",color:"var(--violet)",items:[
+      ["Двигатель культурного сохранения","Ежегодные ярмарки создают институциональный спрос на традиционные ремёсла. Мастера передают навыки следующему поколению."],
+      ["Международный культурный туризм","Таиланд становится мировым лидером живого культурного туризма — не музеи, а настоящие общины."],
+      ["Профессии, защищённые от ИИ","В пик вытеснения ИИ (2028–2032) физически воплощённая культура становится дефицитной и премиальной."],
+      ["Актив мягкой силы страны","Правительство Таиланда получает измеримый инструмент цифровой мягкой силы — события на блокчейне, доступные глобально."]
+    ]}
+  ]
+}
+};const CG=[
+  {color:"#b8f73a",n:{en:"Famous KOLs",th:"KOL ดัง",zh:"知名KOL",ru:"Известные KOL"},cnt:150,
+   d:{en:"Actors, athletes, bloggers, musicians, chefs, fitness influencers, travel creators, comedians, fashion icons. Each invites their own follower base to bid on a ticket to the fair.",
+      th:"นักแสดง นักกีฬา บล็อกเกอร์ นักดนตรี เชฟ อินฟลูเอนเซอร์ฟิตเนส ครีเอเตอร์ท่องเที่ยว แต่ละคนเชิญผู้ติดตามของตัวเองมาประมูลตั๋ว",
+      zh:"演员、运动员、博主、音乐人、厨师、健身达人、旅游创作者、喜剧演员、时尚偶像。每人邀请自己的粉丝竞拍集市门票。",
+      ru:"Актёры, спортсмены, блогеры, музыканты, шефы, фитнес-инфлюенсеры, тревел-создатели. Каждый приглашает свою аудиторию торговаться за билет."},
+   l:{en:["Film & TV actors, directors","National athletes & coaches","Fashion & beauty influencers","Food & travel bloggers","Fitness & wellness creators","Music & entertainment artists","Comedy & lifestyle creators"],
+      th:["นักแสดงภาพยนตร์/ทีวี","นักกีฬาทีมชาติ","อินฟลูเอนเซอร์แฟชั่น/บิวตี้","บล็อกเกอร์อาหาร/ท่องเที่ยว","ครีเอเตอร์สุขภาพ","นักดนตรีและศิลปิน","ครีเอเตอร์ตลกและไลฟ์สไตล์"],
+      zh:["影视演员、导演","国家运动员和教练","时尚与美妆达人","美食与旅游博主","健身与健康创作者","音乐与娱乐艺人","喜剧与生活方式创作者"],
+      ru:["Актёры кино/ТВ","Национальные спортсмены","Блогеры фэшн/бьюти","Фуд и тревел-блогеры","Фитнес-создатели","Музыканты","Комедийные создатели"]}},
+  {color:"#4af7c9",n:{en:"National Brands",th:"แบรนด์ระดับชาติ",zh:"全国品牌",ru:"Национальные бренды"},cnt:50,
+   d:{en:"Singha, Chang, True, Bangchak, PTT, Central, 7-Eleven, Bangkok Bank, KBank, SCB, KrungThai, AIS, DTAC, The Mall, Lotus's. Their CSR budgets find measurable cultural return.",
+      th:"สิงห์ ช้าง ทรู บางจาก ปตท. เซ็นทรัล เซเว่น-อีเลฟเว่น ธนาคารกรุงเทพ กสิกร ไทยพาณิชย์ กรุงไทย AIS DTAC",
+      zh:"胜狮、象牌、True、Bangchak、PTT、Central、7-Eleven、曼谷银行、开泰银行、暹罗商业银行、泰京银行、AIS、DTAC等主要泰国企业。",
+      ru:"Singha, Chang, True, Bangchak, PTT, Central, 7-Eleven, Bangkok Bank, KBank, SCB, KrungThai и другие крупные тайские корпорации."},
+   l:{en:["Beer & beverages (Singha, Chang, Leo)","Telecom (True, DTAC, AIS)","Energy (PTT, Bangchak)","Retail (Central, The Mall, Lotus's)","Banking (BBL, KBank, SCB, KTB)","Convenience (7-Eleven, FamilyMart)"],
+      th:["เบียร์&เครื่องดื่ม (สิงห์ ช้าง ลีโอ)","โทรคมนาคม (ทรู DTAC AIS)","พลังงาน (ปตท. บางจาก)","ค้าปลีก (เซ็นทรัล โลตัส)","ธนาคาร (กรุงเทพ กสิกร ไทยพาณิชย์ กรุงไทย)","ร้านสะดวกซื้อ (เซเว่น แฟมิลี่มาร์ท)"],
+      zh:["啤酒饮料(胜狮、象牌、Leo)","电信(True、DTAC、AIS)","能源(PTT、Bangchak)","零售(Central、The Mall、Lotus's)","银行(BBL、开泰、暹商、泰京)","便利店(7-Eleven、全家)"],
+      ru:["Пиво/напитки (Singha, Chang, Leo)","Телеком (True, DTAC, AIS)","Энергетика (PTT, Bangchak)","Ритейл (Central, The Mall, Lotus's)","Банки (BBL, KBank, SCB, KTB)","Продуктовые ритейлеры"]}},
+  {color:"#f7b74a",n:{en:"Provincial Administration",th:"หน่วยงานราชการจังหวัด",zh:"省级行政机构",ru:"Провинц. администрация"},cnt:15,
+   d:{en:"Governor's Office, TAT local branch, Provincial Police, Public Health, Education, Agriculture, Cultural Office, Municipality, Department of National Parks.",
+      th:"สำนักงานจังหวัด ททท. ตำรวจ สาธารณสุข ศึกษา เกษตร วัฒนธรรม เทศบาล อุทยานแห่งชาติ",
+      zh:"省长办公室、TAT地方分支机构、省级警察局、公共卫生局、教育局、农业局、文化局、市政府、国家公园管理局。",
+      ru:"Канцелярия губернатора, TAT, полиция, здравоохранение, образование, сельское хозяйство, управление культуры, муниципалитет."},
+   l:{en:["Provincial Governor's Office","Tourism Authority of Thailand (local)","Provincial Police","Public Health Department","Agriculture & Cooperatives Office","Cultural Office & Heritage Dept","Municipality","National Parks Dept"],
+      th:["สำนักงานจังหวัด","ททท. ท้องถิ่น","ตำรวจภูธรจังหวัด","สาธารณสุขจังหวัด","เกษตรและสหกรณ์","วัฒนธรรมจังหวัด","เทศบาล","อุทยานแห่งชาติ"],
+      zh:["省长办公室","TAT地方分支","省级警察局","公共卫生部门","农业与合作社局","文化遗产局","市政府","国家公园局"],
+      ru:["Канцелярия губернатора","TAT (местный филиал)","Полиция","Здравоохранение","Сельское хозяйство","Управление культуры","Муниципалитет","Нацпарки"]}},
+  {color:"#fb923c",n:{en:"Provincial Business",th:"ธุรกิจท้องถิ่น",zh:"省级商业",ru:"Провинц. бизнес"},cnt:500,
+   d:{en:"From major regional retailers and hotel chains to street food vendors and micro-entrepreneurs. Every business in the province benefits from 10,000 visitors arriving — most actively promote the fair.",
+      th:"ตั้งแต่ผู้ค้าปลีกระดับภูมิภาคและโรงแรม ไปจนถึงแม่ค้าอาหารริมถนนและผู้ประกอบการรายย่อย",
+      zh:"从主要地区零售商和连锁酒店，到街头小吃摊贩和微型企业主。省内每家企业都从10,000名访客中受益——大多数积极推广集市。",
+      ru:"От крупных ритейлеров и отелей до уличных торговцев. Каждый бизнес провинции выигрывает от 10 000 посетителей."},
+   l:{en:["Hotels, guesthouses & resorts","Restaurants, food courts & street food","Transport (buses, songthaew, tuk-tuk)","OTOP-certified local producers","Local markets & shopping streets","Travel agencies & tour operators","Micro street vendors & hawkers"],
+      th:["โรงแรมและรีสอร์ท","ร้านอาหารและอาหารริมถนน","ขนส่ง (สองแถว ตุ๊กตุ๊ก)","ผู้ผลิตสินค้า OTOP","ตลาดและถนนช้อปปิ้ง","บริษัทท่องเที่ยว","แม่ค้าและพ่อค้าริมถนน"],
+      zh:["酒店、民宿和度假村","餐厅、美食广场和街头小吃","交通(巴士、双排卡车、嘟嘟车)","OTOP认证本地生产商","当地市场和购物街","旅行社和旅游运营商","街头小摊贩"],
+      ru:["Отели и гестхаусы","Рестораны и уличная еда","Транспорт (сонгтео, тук-тук)","Производители OTOP","Рынки и торговые улицы","Турагентства","Уличные торговцы"]}},
+  {color:"#c084fc",n:{en:"Provincial Sangha",th:"คณะสงฆ์จังหวัด",zh:"省级僧伽",ru:"Провинц. Сангха"},cnt:50,
+   d:{en:"Buddhist monasteries hosting the fair on their grounds, providing cultural programming, traditional vegetarian markets, meditation workshops and extending temple reputation to new audiences.",
+      th:"วัดพุทธที่เป็นสถานที่จัดงาน ให้รายการวัฒนธรรม ตลาดอาหารมังสวิรัติ เวิร์กช็อปสมาธิ",
+      zh:"在其场地举办集市的佛教寺院，提供文化节目、传统素食市场、冥想工作坊，将寺院声誉延伸到新受众。",
+      ru:"Буддийские монастыри: площадка, культурные программы, вегетарианский рынок, медитационные воркшопы, амулеты."},
+   l:{en:["Major monastery as fair venue","Temple cultural programs","Traditional vegetarian food market","Dhamma & meditation workshops","Monk craft & amulet market","Buddhist calendar event alignment"],
+      th:["วัดสำคัญเป็นสถานที่จัดงาน","โครงการวัฒนธรรมในวัด","ตลาดอาหารมังสวิรัติ","เวิร์กช็อปสมาธิและธรรมะ","ตลาดงานหัตถกรรมพระ","กิจกรรมตามปฏิทินพุทธ"],
+      zh:["主要寺院作为集市场地","寺院文化项目","传统素食市场","佛法与冥想工作坊","僧侣手工艺与佛牌市场","佛教历法活动对齐"],
+      ru:["Монастырь как площадка","Культурные программы","Вегетарианский рынок","Медитация/дхамма","Рынок амулетов","Буддийский календарь"]}},
+  {color:"#f74a4a",n:{en:"Craftspeople & Folklore",th:"ช่างฝีมือและผู้สืบทอดวัฒนธรรม",zh:"工匠与民俗传承者",ru:"Ремесленники и фольклор"},cnt:200,
+   d:{en:"The soul of the fair. Traditional textile weavers, potters, silversmiths, woodcarvers, folk musicians, classical dancers, traditional food masters, Muay Boran practitioners, medicinal herb traders.",
+      th:"จิตวิญญาณของงาน ช่างทอผ้า ช่างปั้น ช่างเงิน ช่างแกะสลัก นักดนตรีพื้นบ้าน นักฟ้อนรำ ผู้เชี่ยวชาญอาหาร มวยโบราณ",
+      zh:"集市的灵魂。传统纺织工匠、陶工、银匠、木雕师、民间音乐家、古典舞者、传统食品大师、古泰拳练习者、草药商人。",
+      ru:"Душа ярмарки. Ткачи, гончары, серебряных дел мастера, резчики, народные музыканты, танцоры, хранители рецептов, практики муай боран."},
+   l:{en:["Traditional textile weavers (silk, cotton, batik)","Silversmiths & jewellery makers","Woodcarvers & lacquerware artists","Folk musicians & classical dancers","Traditional food & recipe keepers","Medicinal herb & Thai medicine traders","Muay Boran & martial arts masters","Puppet & performing arts masters"],
+      th:["ช่างทอผ้า (ไหม ฝ้าย บาติก)","ช่างเงินและเครื่องประดับ","ช่างแกะสลักไม้และเครื่องเขิน","นักดนตรีพื้นบ้านและนักฟ้อนรำ","ผู้รักษาสูตรอาหารดั้งเดิม","ผู้ค้าสมุนไพรและแพทย์แผนไทย","มวยโบราณและศิลปะการต่อสู้","ลิเกและศิลปะการแสดง"],
+      zh:["传统纺织工匠(丝绸、棉布、蜡染)","银匠与珠宝制作者","木雕与漆器艺人","民间音乐家与古典舞者","传统食谱传承人","草药与泰医商人","古泰拳与武术大师","木偶与表演艺术大师"],
+      ru:["Ткачи (шёлк, хлопок, батик)","Серебряных дел мастера","Резчики и лаковые изделия","Народные музыканты и танцоры","Хранители рецептов","Травники и тайская медицина","Муай боран и боевые искусства","Кукловоды и исполнители"]}},
+  {color:"#5fa8ff",n:{en:"National Parks",th:"อุทยานแห่งชาติ",zh:"国家公园",ru:"Национальные парки"},cnt:3,
+   d:{en:"1–5 national park representatives per province provide the venue, natural backdrops, guided nature trails, eco-camping zones and wildlife exhibits. Signals government legitimacy.",
+      th:"ตัวแทนอุทยาน 1–5 คนต่อจังหวัด จัดสถานที่ ทัวร์เดินป่า แคมปิ้งเชิงอนุรักษ์ นิทรรศการสัตว์ป่า",
+      zh:"每省1–5名国家公园代表提供场地、自然背景、导游自然小径、生态露营区和野生动物展览。彰显政府合法性。",
+      ru:"1–5 представителей нацпарков: площадка, экотуризм, лесные тропы, кемпинг, выставки дикой природы."},
+   l:{en:["Venue & open land provision","Guided nature trail tours","Eco-camping & nature activities","Wildlife & ecology exhibits","Forest conservation awareness","Park ranger cultural demonstrations"],
+      th:["จัดสถานที่และพื้นที่เปิดโล่ง","ทัวร์เดินป่านำทาง","แคมปิ้งเชิงอนุรักษ์","นิทรรศการสัตว์ป่าและนิเวศวิทยา","สร้างจิตสำนึกอนุรักษ์ป่า","สาธิตวัฒนธรรมเจ้าหน้าที่"],
+      zh:["提供场地和开阔土地","导游自然小径游览","生态露营与自然活动","野生动物与生态展览","森林保护意识","公园护林员文化展示"],
+      ru:["Площадка и земля","Экскурсии по тропам","Эко-кемпинг","Выставки дикой природы","Просвещение по охране леса","Программы рейнджеров"]}},
+  {color:"#88887e",n:{en:"Universities & Schools",th:"มหาวิทยาลัยและวิทยาลัย",zh:"大学与学校",ru:"Вузы и колледжи"},cnt:20,
+   d:{en:"Regional universities (performing arts, folklore, Thai medicine, art & design), vocational colleges and secondary schools bring academic legitimacy and the next generation of practitioners.",
+      th:"มหาวิทยาลัยภูมิภาค (ศิลปะการแสดง คติชนวิทยา แพทย์แผนไทย ศิลปะ) วิทยาลัยอาชีวศึกษา โรงเรียน",
+      zh:"地区大学(表演艺术、民俗学、泰国传统医学、艺术设计)、职业学院和中学带来学术合法性和下一代从业者。",
+      ru:"Региональные вузы, профколледжи и школы — академическая легитимность и следующее поколение мастеров."},
+   l:{en:["Performing arts & fine arts faculties","Folklore & ethnology departments","Thai traditional medicine schools","Art, design & craft programs","Culinary arts programs","Vocational craft training centers"],
+      th:["คณะศิลปะการแสดงและวิจิตรศิลป์","ภาควิชาคติชนวิทยา","โรงเรียนแพทย์แผนไทย","หลักสูตรศิลปะและหัตถกรรม","หลักสูตรศิลปะการประกอบอาหาร","ศูนย์ฝึกอาชีพหัตถกรรม"],
+      zh:["表演艺术与美术学院","民俗学与人种学系","泰国传统医学院校","艺术、设计与工艺课程","烹饪艺术课程","职业工艺培训中心"],
+      ru:["Исполнительские искусства","Фольклористика и этнология","Тайская традиционная медицина","Искусство, дизайн и ремёсла","Кулинарные программы","Профцентры ремёсел"]}},
+  {color:"#f7d03a",n:{en:"OTOP Cooperatives",th:"สหกรณ์ OTOP",zh:"OTOP合作社",ru:"Кооперативы OTOP"},cnt:30,
+   d:{en:"One Tambon One Product certified cooperatives — ~80,000 products nationally. The fair is their highest-visibility annual sales event, attracting collectors and buyers from across Thailand.",
+      th:"สหกรณ์ที่ได้รับการรับรอง OTOP — ~80,000 ผลิตภัณฑ์ทั่วประเทศ งานนี้เป็นช่องทางการขายที่มีความสามารถมองเห็นสูงสุดของปี",
+      zh:"一村一品认证合作社——全国约80,000种产品。集市是他们全年知名度最高的销售活动，吸引全泰国的收藏家和买家。",
+      ru:"Сертифицированные OTOP кооперативы — ~80 000 продуктов по всей стране. Ярмарка — их главное ежегодное событие продаж."},
+   l:{en:["OTOP 5-star certified products","Organic farm cooperatives","Women's weaving cooperatives","Community enterprise groups","Agricultural processing units","Heritage recipe food producers"],
+      th:["สินค้า OTOP 5 ดาว","สหกรณ์เกษตรออร์แกนิก","สหกรณ์ทอผ้าสตรี","กลุ่มวิสาหกิจชุมชน","หน่วยแปรรูปผลผลิต","ผู้ผลิตอาหารสูตรมรดก"],
+      zh:["OTOP五星认证产品","有机农业合作社","女性编织合作社","社区企业集团","农业加工单位","传统食谱食品生产商"],
+      ru:["Продукты OTOP 5 звёзд","Органические фермерские кооперативы","Женские ткацкие кооперативы","Общественные предприятия","Агропереработчики","Хранители традиционных рецептов"]}},
+  {color:"#4af7c9",n:{en:"Indigenous & Ethnic Communities",th:"ชนพื้นเมืองและชาติพันธุ์",zh:"土著与少数民族社区",ru:"Коренные общины"},cnt:10,
+   d:{en:"Hill tribes in the North (Hmong, Karen, Akha, Lisu), Malay-Muslim communities in the South, Mon and Khmer heritage groups in the East. Their crafts command premium prices from collectors.",
+      th:"ชาวเขาภาคเหนือ (ม้ง กะเหรี่ยง อาข่า ลีซู) ชุมชนมลายู-มุสลิมภาคใต้ กลุ่มมอญและเขมร",
+      zh:"北部山地部落(苗族、克伦族、阿卡族、傈僳族)、南部马来穆斯林社区、东部孟族和高棉文化遗产群体。他们的手工艺深受收藏家追捧。",
+      ru:"Горные племена севера (хмонг, карен, акха, лису), малайско-мусульманские общины юга, народы мон и кхмер востока."},
+   l:{en:["Northern hill tribe silver & textiles","Southern batik & Malay weaving","Khmer & Mon cultural artifacts","Indigenous food traditions","Traditional healing ceremonies","Ethnic music & dance performance"],
+      th:["เครื่องเงินและผ้าทอชาวเขา","บาติกภาคใต้และการทอผ้ามลายู","โบราณวัตถุเขมรและมอญ","อาหารพื้นเมืองดั้งเดิม","พิธีกรรมการรักษาแบบดั้งเดิม","ดนตรีและการฟ้อนรำชาติพันธุ์"],
+      zh:["北部山地部落银饰与纺织品","南部蜡染与马来编织","高棉与孟族文化器物","土著食物传统","传统治愈仪式","民族音乐与舞蹈表演"],
+      ru:["Серебро и ткани горных племён","Батик и малайское ткачество","Артефакты кхмер и мон","Традиционная кухня","Ритуалы целительства","Этническая музыка и танцы"]}}
+];// === STATE ===
+let lang='en';
+let themePref='system';
+const P={res:100,mult:1.6,spec:15,prov:77,food:300,craft:400,other:200,days:3};
+
+// === THEME ===
+const TICONS={system:'⊙',light:'☀',dark:'☾'};
+function resolveTheme(t){
+  if(t==='system') return window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  return t;
+}
+function applyTheme(t){
+  themePref=t;
+  document.body.setAttribute('data-theme',resolveTheme(t));
+  document.getElementById('ticon').textContent=TICONS[t]||'⊙';
+  ['sys','light','dark'].forEach(k=>{
+    const el=document.getElementById('tc-'+k);
+    if(el) el.textContent=(k===t||(k==='sys'&&t==='system'))?'✓':'';
+  });
+  const tt=T[lang]||T.en;
+  const s=document.getElementById('ts-sys'),l=document.getElementById('ts-lt'),d=document.getElementById('ts-dk');
+  if(s) s.textContent=tt.ts_sys;
+  if(l) l.textContent=tt.ts_lt;
+  if(d) d.textContent=tt.ts_dk;
+}
+function setTheme(t){
+  localStorage.setItem('ehipas-theme',t);
+  closeDD();
+  applyTheme(t);
+}
+window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{
+  if(themePref==='system') applyTheme('system');
+});
+
+// === DROPDOWN ===
+let openDD=null;
+function togDD(id){
+  const m=document.getElementById(id+'-dd');
+  const ov=document.getElementById('ov');
+  if(openDD===id){closeDD();return;}
+  closeDD();
+  m.classList.add('open');
+  ov.classList.add('on');
+  openDD=id;
+}
+function closeDD(){
+  document.querySelectorAll('.ddmenu').forEach(m=>m.classList.remove('open'));
+  const ov=document.getElementById('ov');
+  if(ov) ov.classList.remove('on');
+  openDD=null;
+}
+
+// === LANG ===
+function applyLang(){
+  const tt=T[lang]||T.en;
+  const ids=['hdrSub','ht','hh','hl','s_concept','cp1','cp2','ha_l','ha_t',
+    's_event','ep1','ep2','su1','sl1','su2','sl2','su3','sl3','su4','sl4',
+    's_cr','cr_intro','cgt_l','s_venue','vp1','vp2',
+    'fl1t','fl1d','fl2t','fl2d','fl3t','fl3d','fl4t','fl4d','hr_l','hr_t',
+    's_c1','c1_intro','c1_title','p_res','p_mult','p_spec','p_prov',
+    's_c2','c2_intro','c2_title','p_food','p_craft','p_other','p_days',
+    's_prov','pv_l','s_eff','eff_intro','s_why','why_p',
+    'w1t','w1d','w2t','w2d','w3t','w3d','w4t','w4d','w5t','w5d','w6t','w6d',
+    'ths_l','ths_t'];
+  ids.forEach(k=>{
+    const el=document.getElementById(k);
+    if(el && tt[k]!==undefined) el.innerHTML=tt[k];
+  });
+  document.getElementById('ll').textContent={en:'EN',th:'TH',zh:'中',ru:'RU'}[lang]||'EN';
+  document.documentElement.lang=lang;
+  ['en','th','zh','ru'].forEach(l=>{
+    const ck=document.getElementById('lc-'+l);
+    if(ck) ck.textContent=l===lang?'✓':'';
+    const di=document.querySelector('[data-l="'+l+'"]');
+    if(di) di.classList.toggle('on',l===lang);
+  });
+  const s=document.getElementById('ts-sys'),l2=document.getElementById('ts-lt'),d=document.getElementById('ts-dk');
+  if(s) s.textContent=tt.ts_sys;
+  if(l2) l2.textContent=tt.ts_lt;
+  if(d) d.textContent=tt.ts_dk;
+  updateDate();
+  buildCG();
+  buildEffects();
+  calcRender();
+}
+function setLang(l){
+  lang=l;
+  localStorage.setItem('ehipas-lang',l);
+  closeDD();
+  applyLang();
+}
+
+// === DATE ===
+function updateDate(){
+  const now=new Date();
+  let s;
+  if(lang==='th'){
+    const m=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    s=now.getDate()+' '+m[now.getMonth()]+' '+(now.getFullYear()+543);
+  } else if(lang==='ru'){
+    s=now.toLocaleDateString('ru-RU',{year:'numeric',month:'long',day:'numeric'});
+  } else if(lang==='zh'){
+    s=now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日';
+  } else {
+    s=now.toLocaleDateString('en-GB',{year:'numeric',month:'short',day:'numeric'});
+  }
+  const el=document.getElementById('ds');
+  if(el) el.textContent=s;
+}
+
+// === CREATOR GROUPS ===
+function buildCG(){
+  const grid=document.getElementById('cgGrid');
+  if(!grid) return;
+  grid.innerHTML=CG.map((g,i)=>`
+    <div class="cgi" id="cg${i}" onclick="togCG(${i})">
+      <div class="cgh">
+        <span class="cgd" style="background:${g.color}"></span>
+        <span class="cgn">${g.n[lang]||g.n.en}</span>
+        <span class="cgc">~${g.cnt}</span>
+        <span class="cga">›</span>
+      </div>
+      <div class="cgb">
+        <p style="margin:8px 0 4px">${g.d[lang]||g.d.en}</p>
+        <ul>${(g.l[lang]||g.l.en).map(x=>'<li>'+x+'</li>').join('')}</ul>
+      </div>
+    </div>`).join('');
+  const tot=CG.reduce((s,g)=>s+g.cnt,0);
+  const tv=document.getElementById('cgt_v');
+  if(tv) tv.textContent=tot.toLocaleString();
+}
+function togCG(i){
+  const el=document.getElementById('cg'+i);
+  const was=el.classList.contains('open');
+  document.querySelectorAll('.cgi').forEach(e=>e.classList.remove('open'));
+  if(!was) el.classList.add('open');
+}
+
+// === PROVINCE DOTS ===
+function buildDots(){
+  const wrap=document.getElementById('pdots');
+  if(!wrap) return;
+  wrap.innerHTML='';
+  for(let i=0;i<77;i++){
+    const d=document.createElement('div');
+    d.className='dot on';
+    d.title='Province '+(i+1);
+    d.onclick=()=>{
+      d.classList.toggle('on');
+      P.prov=document.querySelectorAll('.dot.on').length;
+      document.getElementById('v-prov').textContent=P.prov;
+      calcRender();
+    };
+    wrap.appendChild(d);
+  }
+}
+
+// === FORMAT HELPERS (USD only) ===
+const toUSD=thb=>thb/36;
+const fmtUSD=n=>{
+  if(n>=1e6) return '$'+(n/1e6).toFixed(2)+'M';
+  if(n>=1e3) return '$'+(n/1e3).toFixed(1)+'K';
+  return '$'+Math.round(n).toLocaleString();
+};
+const fmtTHB=n=>{
+  if(n>=1e9) return '฿'+(n/1e9).toFixed(2)+'B';
+  if(n>=1e6) return '฿'+(n/1e6).toFixed(1)+'M';
+  if(n>=1e3) return '฿'+(n/1e3).toFixed(0)+'K';
+  return '฿'+Math.round(n).toLocaleString();
+};
+
+// === CALCULATORS ===
+function upd(k,raw){
+  const v=parseFloat(raw);
+  const disp={
+    res:'฿'+v,
+    mult:'×'+(v/10).toFixed(1),
+    spec:v+'%',
+    prov:Math.round(v),
+    food:'฿'+v,
+    craft:'฿'+v,
+    other:'฿'+v,
+    days:Math.round(v)
+  };
+  const el=document.getElementById('v-'+k);
+  if(el) el.textContent=disp[k];
+  if(k==='mult') P.mult=v/10;
+  else P[k]=v;
+  calcRender();
+}
+
+function calcRender(){
+  const tt=T[lang]||T.en;
+
+  // ── CALC 1: Ticket revenue ──
+  const N=10000, fee=0.10, roy=0.05, rp=0.15;
+  const pAvg=P.res*P.mult;
+
+  // Primary market
+  const primPlat=N*pAvg*fee;       // platform fee on primary
+  const primCreator=N*pAvg*(1-fee); // creator income on primary
+
+  // Secondary market (2 resale rounds, speculators only)
+  const nSpec=Math.round(N*P.spec/100);
+  let secPlat=0, secRoy=0, price2=pAvg;
+  for(let r=0;r<2;r++){
+    price2*=(1+rp);
+    secPlat+=nSpec*price2*fee;
+    secRoy +=nSpec*price2*roy;
+  }
+
+  // Totals per province & all provinces
+  const exchPerProv =primPlat+secPlat;         // exchange (platform) revenue
+  const exchAllTHB  =exchPerProv*P.prov;
+  const exchAllUSD  =toUSD(exchAllTHB);
+
+  const creatPerProv=primCreator+secRoy;
+  const m1=Math.max(primPlat,secPlat,secRoy)||1;
+
+  // Full trading volume (primary + secondary)
+  const primVolTHB  = N * pAvg * P.prov;
+  let   secVolTHB   = 0, pv2 = pAvg;
+  for(let r=0;r<2;r++){pv2*=(1+rp); secVolTHB+=nSpec*pv2*P.prov;}
+  const totalVolTHB = primVolTHB + secVolTHB;
+  const totalVolUSD = toUSD(totalVolTHB);
+
+  // Headline 1
+  const rg1=document.getElementById('rg1');
+  if(rg1) rg1.innerHTML=`
+    <div class="rc" style="grid-column:1/-1;background:var(--acc-dim);border-color:var(--acc-brd)">
+      <div class="rl" style="color:var(--acc)">${tt.cl_vol_headline||'Trading volume · all provinces'}</div>
+      <div class="rv a" style="font-size:22px">${fmtUSD(totalVolUSD)}</div>
+      <div class="rs">${fmtTHB(totalVolTHB)} · ${tt.cl_platform_fee} ${fmtUSD(toUSD(exchAllTHB))}</div>
+    </div>`;
+
+  const bk1=document.getElementById('bk1');
+  if(bk1) bk1.innerHTML=`
+    <div class="br"><div class="bl">${tt.cl_prim}</div><div class="bw"><div class="bb" style="width:${primPlat/m1*100}%;background:var(--acc)"></div></div><div class="bv">${fmtUSD(toUSD(primPlat))}</div></div>
+    <div class="br"><div class="bl">${tt.cl_sec}</div><div class="bw"><div class="bb" style="width:${secPlat/m1*100}%;background:var(--teal)"></div></div><div class="bv">${fmtUSD(toUSD(secPlat))}</div></div>
+    <div class="br"><div class="bl">${tt.cl_roy}</div><div class="bw"><div class="bb" style="width:${secRoy/m1*100}%;background:var(--violet)"></div></div><div class="bv">${fmtUSD(toUSD(secRoy))}</div></div>`;
+
+  // ── CALC 2: In-fair economy ──
+  const foodTot =P.food*P.days*N;
+  const craftTot=P.craft*N;
+  const otherTot=P.other*N;
+  const infairPerProv=foodTot+craftTot+otherTot;
+  const infairAllTHB =infairPerProv*P.prov;
+  const indirectTHB  =infairAllTHB*1.8;
+  const econAllUSD   =toUSD(indirectTHB);  // economic effect incl. multiplier
+  const m2=Math.max(foodTot,craftTot,otherTot)||1;
+
+  // Headline 2
+  const rg2=document.getElementById('rg2');
+  if(rg2) rg2.innerHTML=`
+    <div class="rc" style="grid-column:1/-1;background:var(--amber-dim);border-color:rgba(247,183,74,.35)">
+      <div class="rl" style="color:var(--amber)">${tt.cl_econ_headline||'Economic effect · all provinces · ×1.8'}</div>
+      <div class="rv" style="font-size:22px;color:var(--amber)">${fmtUSD(econAllUSD)}</div>
+      <div class="rs">${fmtTHB(indirectTHB)} · ${tt.cl_direct} ${fmtUSD(toUSD(infairAllTHB))}</div>
+    </div>`;
+
+  const bk2=document.getElementById('bk2');
+  if(bk2) bk2.innerHTML=`
+    <div class="br"><div class="bl">${tt.cl_food}</div><div class="bw"><div class="bb" style="width:${foodTot/m2*100}%;background:var(--amber)"></div></div><div class="bv">${fmtUSD(toUSD(foodTot))}</div></div>
+    <div class="br"><div class="bl">${tt.cl_cra}</div><div class="bw"><div class="bb" style="width:${craftTot/m2*100}%;background:var(--acc)"></div></div><div class="bv">${fmtUSD(toUSD(craftTot))}</div></div>
+    <div class="br"><div class="bl">${tt.cl_oth}</div><div class="bw"><div class="bb" style="width:${otherTot/m2*100}%;background:var(--blue)"></div></div><div class="bv">${fmtUSD(toUSD(otherTot))}</div></div>`;
+}
+
+// === EFFECTS ===
+function buildEffects(){
+  const tt=T[lang]||T.en;
+  const div=document.getElementById('tlDiv');
+  if(!div) return;
+  div.innerHTML=(tt.ef||T.en.ef).map((ef,i)=>`
+    <div class="tlc" id="tl${i}">
+      <div class="tlh" onclick="togTL(${i})">
+        <span class="tld" style="background:${ef.color}"></span>
+        <span class="tln">${ef.title}</span>
+        <span class="tlb2" style="background:rgba(128,128,128,.1);color:${ef.color};border:1px solid ${ef.color}55">${ef.badge}</span>
+        <span class="tla">›</span>
+      </div>
+      <div class="tlbd">
+        <div class="tli">${ef.items.map(it=>`
+          <div class="ti">
+            <div class="tit">${it[0]}</div>
+            <div class="tid">${it[1]}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+}
+function togTL(i){
+  const el=document.getElementById('tl'+i);
+  const was=el.classList.contains('open');
+  document.querySelectorAll('.tlc').forEach(e=>e.classList.remove('open'));
+  if(!was) el.classList.add('open');
+}
+
+// === FADE-IN OBSERVER ===
+const obs=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting) e.target.classList.add('v');});
+},{threshold:0.07});
+document.querySelectorAll('.fi').forEach(el=>obs.observe(el));
+
+// === INIT ===
+(function(){
+  const savedLang=localStorage.getItem('ehipas-lang')||'en';
+  const savedTheme=localStorage.getItem('ehipas-theme')||'system';
+  lang=savedLang;
+  buildDots();
+  applyTheme(savedTheme);
+  applyLang();
+})();
+</script>
+</body>
+</html>
