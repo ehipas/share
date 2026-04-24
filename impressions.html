@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ehipas — Витрина впечатлений</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&family=Noto+Sans+Thai:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --mono:'DM Mono',monospace;
+  --sans:'DM Sans','Noto Sans Thai','Noto Sans SC',sans-serif;
+  --r:10px;--rs:6px;
+  --cat-adapt:#f7b74a;--cat-exotic:#f74a4a;
+  --cat-buddhism:#9b7ef7;--cat-culture:#4af7c9;
+  --diff-low:#4af7c9;--diff-med:#f7b74a;--diff-high:#f74a4a;
+}
+[data-theme="dark"]{
+  --bg:#0d0d0b;--bg2:#141412;--bg3:#1c1c19;
+  --bd:#2a2a26;--bd2:#3a3a36;
+  --tx:#e8e6dc;--tx2:#88887e;--tx3:#555550;
+  --crd:#141412;--inp:#1c1c19;
+  --acc:#b8f73a;--acc-btn:#b8f73a;--acc-btn-tx:#0d0d0b;
+  --acc-dim:rgba(184,247,58,.09);--acc-brd:rgba(184,247,58,.35);
+  --shd:0 2px 16px rgba(0,0,0,.55);
+  --fbg:rgba(184,247,58,.09);--fbrd:rgba(184,247,58,.38);
+}
+[data-theme="light"]{
+  --bg:#f4f3ee;--bg2:#fff;--bg3:#eceae2;
+  --bd:#dbd9d0;--bd2:#c8c5bc;
+  --tx:#1a1a17;--tx2:#5c5c58;--tx3:#99998f;
+  --crd:#fff;--inp:#eceae2;
+  --acc:#2e7d0e;--acc-btn:#5cb82a;--acc-btn-tx:#fff;
+  --acc-dim:rgba(46,125,14,.07);--acc-brd:rgba(46,125,14,.30);
+  --shd:0 2px 16px rgba(0,0,0,.09);
+  --fbg:rgba(46,125,14,.07);--fbrd:rgba(46,125,14,.32);
+}
+html,body{width:100%;overflow-x:hidden}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px;line-height:1.5;transition:background .2s,color .2s}
+
+/* HEADER */
+.hdr{border-bottom:1px solid var(--bd);padding:11px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:100;background:var(--bg)}
+.logo{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.1em;color:var(--acc);text-transform:uppercase;flex-shrink:0}
+.hdr-title{font-size:11px;color:var(--tx3);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hdr-ctrls{display:flex;gap:5px;align-items:center;flex-shrink:0}
+.sw{flex:1;max-width:300px;min-width:0;position:relative}
+.sw input{width:100%;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx);font-family:var(--sans);font-size:12px;padding:5px 8px 5px 26px;outline:none;transition:border-color .15s}
+.sw input:focus{border-color:var(--bd2)}
+.sw input::placeholder{color:var(--tx3)}
+.si{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--tx3);pointer-events:none}
+
+/* DROPDOWN */
+.ddwrap{position:relative;display:inline-block}
+.ddtrig{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx2);font-family:var(--mono);font-size:11px;padding:5px 8px;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;transition:border-color .15s,color .15s}
+.ddtrig:hover{border-color:var(--bd2);color:var(--tx)}
+.ddarrow{font-size:9px;opacity:.5}
+.ddmenu{display:none;position:absolute;right:0;top:calc(100% + 4px);background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rs);min-width:152px;box-shadow:var(--shd);z-index:300;overflow:hidden}
+.ddmenu.open{display:block}
+.ddi{display:flex;align-items:center;gap:8px;padding:9px 12px;font-size:12px;color:var(--tx2);cursor:pointer;transition:background .1s;border-bottom:1px solid var(--bd)}
+.ddi:last-child{border-bottom:none}
+.ddi:hover{background:var(--bg3);color:var(--tx)}
+.ddi.on{color:var(--acc)}
+.ddi-ic{font-size:13px;flex-shrink:0;width:18px;text-align:center}
+.ddi-lb{flex:1}
+.ddi-ck{font-size:10px;color:var(--acc);margin-left:auto;width:12px;text-align:center}
+.overlay{display:none;position:fixed;inset:0;z-index:99}
+.overlay.on{display:block}
+
+/* LAYOUT */
+.wrap{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 45px);align-items:start}
+@media(max-width:767px){.wrap{grid-template-columns:1fr}}
+
+/* SIDEBAR */
+.sb{border-right:1px solid var(--bd);padding:16px 13px;background:var(--bg)}
+@media(min-width:768px){
+  .sb{position:sticky;top:45px;height:calc(100vh - 45px);overflow-y:auto}
+  .sb::-webkit-scrollbar{width:3px}
+  .sb::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+}
+@media(max-width:767px){.sb{border-right:none;border-bottom:1px solid var(--bd)}}
+.slbl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:10px}
+.ssec{margin-bottom:20px}
+.cbadge{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;color:var(--tx2);margin-bottom:16px}
+.cnum{color:var(--acc);font-size:14px;font-weight:500}
+
+/* FILTER CHIPS */
+.fchips,.dchips{display:flex;flex-direction:column;gap:4px}
+@media(max-width:767px){.fchips,.dchips{flex-direction:row;flex-wrap:wrap}}
+.fc,.dc{display:flex;align-items:center;gap:7px;padding:7px 9px;border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;transition:border-color .15s,background .15s;background:var(--inp);user-select:none}
+.dc{padding:6px 9px}
+.fc:hover,.dc:hover{border-color:var(--bd2)}
+.fc.active,.dc.active{border-color:var(--acc-brd);background:var(--acc-dim)}
+.fdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.fl{font-size:11px;line-height:1.3;flex:1}
+.fn{font-family:var(--mono);font-size:9px;color:var(--tx3);margin-left:auto}
+.fc.active .fn,.dc.active .fn{color:var(--acc)}
+.ftog{display:flex;align-items:center;gap:7px;padding:7px 9px;border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;transition:border-color .15s,background .15s;background:var(--inp);user-select:none;font-size:11px}
+.ftog:hover{border-color:var(--bd2)}
+.ftog.active{border-color:var(--fbrd);background:var(--fbg)}
+.ftog .star{color:var(--acc);font-size:12px}
+.rbtn{width:100%;padding:7px;background:transparent;color:var(--tx3);border:1px solid var(--bd);border-radius:var(--rs);font-size:11px;font-family:var(--mono);cursor:pointer;transition:color .15s,border-color .15s;margin-top:6px;letter-spacing:.05em}
+.rbtn:hover{color:var(--tx2);border-color:var(--bd2)}
+
+/* MAIN */
+.main{padding:18px 14px;min-width:0;overflow:hidden}
+@media(min-width:768px){.main{padding:20px 22px}}
+.nores{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:30vh;color:var(--tx3);text-align:center;gap:10px}
+.nores.show{display:flex}
+.nores-ic{font-family:var(--mono);font-size:24px;color:var(--bd2)}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+@media(max-width:480px){.grid{grid-template-columns:1fr}}
+
+/* CARD */
+.card{background:var(--crd);border:1px solid var(--bd);border-radius:var(--r);border-left-width:3px;padding:13px 14px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s,box-shadow .2s,transform .15s;cursor:pointer;animation:fi .22s ease both;overflow:hidden}
+.card:hover{border-color:var(--bd2);box-shadow:var(--shd);transform:translateY(-1px)}
+.card.ehipas-card{border-color:var(--fbrd)!important;background:var(--fbg)}
+.card[data-cat="adapt"]{border-left-color:var(--cat-adapt)}
+.card[data-cat="exotic"]{border-left-color:var(--cat-exotic)}
+.card[data-cat="buddhism"]{border-left-color:var(--cat-buddhism)}
+.card[data-cat="culture"]{border-left-color:var(--cat-culture)}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.card-hdr{display:flex;align-items:flex-start;gap:7px}
+.card-num{font-family:var(--mono);font-size:9px;color:var(--tx3);letter-spacing:.1em;flex-shrink:0;padding-top:2px}
+.card-tit{font-size:13px;font-weight:500;line-height:1.4;flex:1;color:var(--tx)}
+.card-rec{color:var(--acc);font-size:11px;margin-left:3px;flex-shrink:0}
+.card-cat{display:inline-flex;padding:2px 6px;border-radius:3px;font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase;width:fit-content}
+.card[data-cat="adapt"] .card-cat{background:rgba(247,183,74,.12);color:var(--cat-adapt)}
+.card[data-cat="exotic"] .card-cat{background:rgba(247,74,74,.12);color:var(--cat-exotic)}
+.card[data-cat="buddhism"] .card-cat{background:rgba(155,126,247,.12);color:var(--cat-buddhism)}
+.card[data-cat="culture"] .card-cat{background:rgba(74,247,201,.12);color:var(--cat-culture)}
+.card-desc{font-size:12px;color:var(--tx2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-meta{display:flex;flex-wrap:wrap;gap:4px;margin-top:1px}
+.tag{font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:3px;background:var(--bg3);color:var(--tx3);border:1px solid var(--bd);white-space:nowrap}
+.tag.diff{border:none}
+.tag.diff-low{background:rgba(74,247,201,.1);color:var(--diff-low)}
+.tag.diff-med{background:rgba(247,183,74,.1);color:var(--diff-med)}
+.tag.diff-high{background:rgba(247,74,74,.1);color:var(--diff-high)}
+.card-bot{display:flex;align-items:center;justify-content:space-between;padding-top:7px;border-top:1px solid var(--bd);margin-top:auto;gap:6px}
+.card-cr{font-size:10px;color:var(--tx3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.card-sc{font-family:var(--mono);font-size:9px;color:var(--tx3);flex-shrink:0;white-space:nowrap;max-width:88px;overflow:hidden;text-overflow:ellipsis}
+.card-tk{display:flex;align-items:center;gap:2px;font-family:var(--mono);font-size:9px;color:var(--tx3);flex-shrink:0}
+
+/* TEASER CARD */
+.teaser{background:var(--acc-dim);border:1px dashed var(--acc-brd);border-radius:var(--r);border-left:3px solid var(--acc);padding:22px 18px;display:flex;flex-direction:column;justify-content:center;gap:10px;animation:fi .22s ease both}
+.teaser-n{font-family:var(--mono);font-size:28px;font-weight:500;color:var(--acc);letter-spacing:-.02em}
+.teaser-t{font-size:14px;font-weight:400;color:var(--tx);line-height:1.5}
+.teaser-s{font-size:11px;color:var(--tx2);line-height:1.65}
+.teaser-dots{display:flex;gap:5px;margin-top:4px}
+.teaser-dot{width:5px;height:5px;border-radius:50%;background:var(--acc)}
+.teaser-dot:nth-child(1){opacity:.4}
+.teaser-dot:nth-child(2){opacity:.22}
+.teaser-dot:nth-child(3){opacity:.1}
+
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:center;justify-content:center;padding:16px}
+.mo.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--r);max-width:580px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.45);animation:mi .18s ease}
+@keyframes mi{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.modal::-webkit-scrollbar{width:3px}
+.modal::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+.m-hdr{padding:14px 16px 12px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;gap:10px}
+.m-num{font-family:var(--mono);font-size:10px;color:var(--tx3);padding-top:3px;flex-shrink:0}
+.m-tit{font-size:15px;font-weight:400;flex:1;line-height:1.4}
+.m-cls{flex-shrink:0;background:none;border:none;color:var(--tx3);cursor:pointer;font-size:17px;padding:0 0 0 8px;transition:color .15s;line-height:1}
+.m-cls:hover{color:var(--tx)}
+.m-nav{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--bd);background:var(--bg3)}
+.m-nb{display:flex;align-items:center;gap:5px;padding:5px 10px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rs);font-family:var(--mono);font-size:10px;color:var(--tx2);cursor:pointer;transition:border-color .15s,color .15s;letter-spacing:.04em}
+.m-nb:hover:not(:disabled){border-color:var(--bd2);color:var(--tx)}
+.m-nb:disabled{opacity:.3;cursor:not-allowed}
+.m-pos{font-family:var(--mono);font-size:10px;color:var(--tx3)}
+.m-body{padding:16px}
+.m-cr{display:flex;align-items:center;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+.m-cat{display:inline-flex;padding:3px 8px;border-radius:3px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.m-rec-bdg{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:3px;font-family:var(--mono);font-size:9px;background:var(--fbg);color:var(--acc);border:1px solid var(--fbrd)}
+.mrow{margin-bottom:13px}
+.mrow-l{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:5px}
+.mrow-v{font-size:12px;color:var(--tx2);line-height:1.65}
+.mrow-v.prob{font-style:italic;padding:8px 10px;background:var(--bg3);border-radius:var(--rs);border-left:2px solid var(--bd2)}
+.m-mg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:12px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);margin-bottom:13px}
+@media(max-width:400px){.m-mg{grid-template-columns:1fr 1fr}}
+.m-ml{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);margin-bottom:3px}
+.m-mv{font-family:var(--mono);font-size:12px;color:var(--tx)}
+.srow{display:flex;flex-wrap:wrap;gap:4px}
+</style>
+</head>
+
+<body data-theme="dark">
+<div class="overlay" id="ov" onclick="closeDD()"></div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <span class="logo">ehipas</span>
+  <span class="hdr-title" id="htl">Витрина впечатлений</span>
+  <div class="sw">
+    <span class="si">⌕</span>
+    <input type="text" id="qi" placeholder="Поиск впечатлений…" oninput="applyFilters()">
+  </div>
+  <div class="hdr-ctrls">
+
+    <!-- LANG -->
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('lang')">
+        <span id="ll">RU</span><span class="ddarrow">▾</span>
+      </button>
+      <div class="ddmenu" id="lang-dd">
+        <div class="ddi on" id="ld-ru" onclick="setLang('ru')">
+          <span class="ddi-ic">🇷🇺</span><span class="ddi-lb">Русский</span><span class="ddi-ck" id="lc-ru">✓</span>
+        </div>
+        <div class="ddi" id="ld-en" onclick="setLang('en')">
+          <span class="ddi-ic">🇬🇧</span><span class="ddi-lb">English</span><span class="ddi-ck" id="lc-en"></span>
+        </div>
+        <div class="ddi" id="ld-th" onclick="setLang('th')">
+          <span class="ddi-ic">🇹🇭</span><span class="ddi-lb">ภาษาไทย</span><span class="ddi-ck" id="lc-th"></span>
+        </div>
+        <div class="ddi" id="ld-zh" onclick="setLang('zh')">
+          <span class="ddi-ic">🇨🇳</span><span class="ddi-lb">中文</span><span class="ddi-ck" id="lc-zh"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- THEME -->
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('theme')">
+        <span id="tic">☾</span><span class="ddarrow">▾</span>
+      </button>
+      <div class="ddmenu" id="theme-dd">
+        <div class="ddi" id="td-system" onclick="setTheme('system')">
+          <span class="ddi-ic">⊙</span><span class="ddi-lb" data-i="th_sys">Системная</span><span class="ddi-ck" id="tc-system"></span>
+        </div>
+        <div class="ddi" id="td-light" onclick="setTheme('light')">
+          <span class="ddi-ic">☀</span><span class="ddi-lb" data-i="th_light">Светлая</span><span class="ddi-ck" id="tc-light"></span>
+        </div>
+        <div class="ddi on" id="td-dark" onclick="setTheme('dark')">
+          <span class="ddi-ic">☾</span><span class="ddi-lb" data-i="th_dark">Тёмная</span><span class="ddi-ck" id="tc-dark">✓</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sb">
+
+    <div class="ssec">
+      <div class="cbadge">
+        <span class="cnum" id="cnum">49</span>&nbsp;<span id="clbl">впечатлений</span>
+      </div>
+    </div>
+
+    <div class="ssec">
+      <div class="slbl" data-i="sb_cats">Категории</div>
+      <div class="fchips">
+        <div class="fc active" data-cat="all" onclick="setCat('all')">
+          <span class="fdot" style="background:var(--bd2)"></span>
+          <span class="fl" data-i="cat_all">Все</span>
+          <span class="fn" id="cnt-all">49</span>
+        </div>
+        <div class="fc" data-cat="adapt" onclick="setCat('adapt')">
+          <span class="fdot" style="background:var(--cat-adapt)"></span>
+          <span class="fl" data-i="cat_adapt">Адаптация фарангов</span>
+          <span class="fn" id="cnt-adapt"></span>
+        </div>
+        <div class="fc" data-cat="exotic" onclick="setCat('exotic')">
+          <span class="fdot" style="background:var(--cat-exotic)"></span>
+          <span class="fl" data-i="cat_exotic">Экзотика</span>
+          <span class="fn" id="cnt-exotic"></span>
+        </div>
+        <div class="fc" data-cat="buddhism" onclick="setCat('buddhism')">
+          <span class="fdot" style="background:var(--cat-buddhism)"></span>
+          <span class="fl" data-i="cat_buddhism">Буддизм</span>
+          <span class="fn" id="cnt-buddhism"></span>
+        </div>
+        <div class="fc" data-cat="culture" onclick="setCat('culture')">
+          <span class="fdot" style="background:var(--cat-culture)"></span>
+          <span class="fl" data-i="cat_culture">Культура</span>
+          <span class="fn" id="cnt-culture"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ssec">
+      <div class="slbl" data-i="sb_diff">Сложность</div>
+      <div class="dchips">
+        <div class="dc" data-diff="low" onclick="togDiff('low')">
+          <span class="fdot" style="background:var(--diff-low)"></span>
+          <span class="fl" data-i="diff_low">Низкая</span>
+          <span class="fn" id="cnt-dl"></span>
+        </div>
+        <div class="dc" data-diff="med" onclick="togDiff('med')">
+          <span class="fdot" style="background:var(--diff-med)"></span>
+          <span class="fl" data-i="diff_med">Средняя</span>
+          <span class="fn" id="cnt-dm"></span>
+        </div>
+        <div class="dc" data-diff="high" onclick="togDiff('high')">
+          <span class="fdot" style="background:var(--diff-high)"></span>
+          <span class="fl" data-i="diff_high">Высокая</span>
+          <span class="fn" id="cnt-dh"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ssec">
+      <div class="slbl" data-i="sb_rec">Ehipas рекомендует</div>
+      <div class="ftog" id="ftog" onclick="togRec()">
+        <span class="star">★</span>
+        <span class="fl" data-i="rec_lbl">Ehipas рекомендует</span>
+        <span class="fn" id="cnt-r"></span>
+      </div>
+    </div>
+
+    <button class="rbtn" onclick="resetFilters()" data-i="reset_btn">↺ сбросить фильтры</button>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="nores" id="nores">
+      <div class="nores-ic">∅</div>
+      <div id="norlbl">Ничего не найдено</div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+</div>
+
+<!-- MODAL -->
+<div class="mo" id="mo" onclick="moOverlayClick(event)">
+  <div class="modal" id="modal">
+
+    <div class="m-hdr">
+      <span class="m-num" id="m-num"></span>
+      <span class="m-tit" id="m-tit"></span>
+      <button class="m-cls" onclick="closeMo()">✕</button>
+    </div>
+
+    <div class="m-nav">
+      <button class="m-nb" id="m-prev" onclick="navMo(-1)">
+        ← <span data-i="nav_prev">Назад</span>
+      </button>
+      <span class="m-pos" id="m-pos">1 / 49</span>
+      <button class="m-nb" id="m-next" onclick="navMo(1)">
+        <span data-i="nav_next">Далее</span> →
+      </button>
+    </div>
+
+    <div class="m-body" id="m-body"></div>
+
+  </div>
+</div>
+
+
+<script>
+const D=[
+{id:1,f:true,cat:"adapt",sc:["Экономия","Гастрономия"],scale:"10 создателей / провинция",cr:"Любой таец",dur:"До 5 ч",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Еда из пакетов",d:"Самая доступная и вкусная еда в Таиланде часто продаётся в простых пакетах. Вы узнаете, где и как покупать такую еду, научитесь разбираться в уличных лотках и перестанете переплачивать за ресторанные версии тех же блюд.",p:"Фаранги не привыкли кушать из пакетов.",fmt:"Практический мастер-класс с дегустацией и экскурсией по местам продажи еды в пакетах",g:"Фаранги"},
+en:{t:"Food in Bags",d:"The most affordable food in Thailand is often sold in plastic bags. Learn where to buy it, how to navigate street stalls, and stop overpaying for restaurant versions of the same dishes.",p:"Expats are not used to eating food from plastic bags.",fmt:"Practical workshop with tasting and street stall tour",g:"Expats"},
+th:{t:"อาหารในถุง",d:"อาหารที่ราคาถูกและอร่อยที่สุดในไทยมักขายในถุงพลาสติก เรียนรู้ว่าซื้อที่ไหน ดูแผงขายยังไง และหยุดจ่ายแพงเกินไปสำหรับร้านอาหาร",p:"ชาวต่างชาติไม่คุ้นกับการรับประทานอาหารจากถุง",fmt:"เวิร์กชอปพร้อมชิมและทัวร์แผงข้างทาง",g:"ชาวต่างชาติ"},
+zh:{t:"袋装食物",d:"泰国最实惠、最美味的食物往往装在塑料袋里出售。学会在哪里购买、如何逛街边摊，不再为同样的菜肴支付餐厅溢价。",p:"外籍人士不习惯用塑料袋吃食物。",fmt:"品尝与街头摊位参观实践工作坊",g:"外籍人士"}},
+
+{id:2,f:true,cat:"adapt",sc:["Экономия","Гастрономия"],scale:"10 создателей / провинция",cr:"Любой таец",dur:"До 5 ч",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Всё из риса",d:"Рис — это не просто гарнир. Тайцы делают из него десятки дешёвых, питательных и вкусных блюд: от основных до десертов. Вы научитесь готовить несколько блюд и узнаете, как сэкономить на питании.",p:"Фаранги не догадываются о многогранности риса.",fmt:"Мастер-класс с дегустацией и экскурсией по местам продажи блюд из риса",g:"Фаранги"},
+en:{t:"Everything from Rice",d:"Rice isn't just a side dish. Thais make dozens of cheap, nutritious and delicious dishes from it — mains to desserts. Learn to cook several dishes and save on food.",p:"Expats don't realise how versatile rice is.",fmt:"Workshop with tasting and rice vendor tour",g:"Expats"},
+th:{t:"ทุกอย่างจากข้าว",d:"ข้าวไม่ใช่แค่เครื่องเคียง คนไทยทำอาหารอร่อยราคาถูกหลายสิบชนิดจากมัน เรียนทำอาหารและประหยัดค่าอาหาร",p:"ชาวต่างชาติไม่รู้ว่าข้าวมีประโยชน์มากแค่ไหน",fmt:"เวิร์กชอปพร้อมชิมและทัวร์ร้านข้าว",g:"ชาวต่างชาติ"},
+zh:{t:"大米的一切",d:"大米不只是配菜。泰国人用它做出数十种便宜、营养又美味的菜肴，从主食到甜点。学会烹饪几道菜，节省餐饮开销。",p:"外籍人士没意识到大米的多样性。",fmt:"品尝与大米摊位参观工作坊",g:"外籍人士"}},
+
+{id:3,f:true,cat:"adapt",sc:["Экономия"],scale:"10 создателей / провинция",cr:"Любой таец, который умеет",dur:"До суток",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Выжить на 100 бат в день",d:"Практические советы от местного жителя, который реально живёт на 100 бат в день. Узнаете, где покупать самую дешёвую еду, как экономить на транспорте и бытовых мелочах.",p:"Фаранги не знают, как организовать жизнь в Таиланде с минимальными затратами.",fmt:"Таец показывает и рассказывает, как у него это получается",g:"Фаранги"},
+en:{t:"Survive on 100 Baht a Day",d:"Practical advice from a local who actually lives on 100 baht a day. Learn the cheapest food sources, transport savings and daily hacks.",p:"Expats don't know how to live in Thailand on a minimal budget.",fmt:"Thai host shows and explains how they make it work",g:"Expats"},
+th:{t:"รอดชีวิตด้วย 100 บาทต่อวัน",d:"คำแนะนำจากคนท้องถิ่นที่ใช้ชีวิตจริงด้วย 100 บาทต่อวัน เรียนรู้แหล่งอาหารถูก ประหยัดค่าเดินทาง",p:"ชาวต่างชาติไม่รู้วิธีใช้ชีวิตในไทยด้วยงบน้อย",fmt:"ชาวไทยแสดงและอธิบาย",g:"ชาวต่างชาติ"},
+zh:{t:"每天100泰铢生存",d:"来自真实生活在100泰铢/天的当地人的实用建议。了解最便宜的食物来源、交通节省技巧和日常生活妙招。",p:"外籍人士不知道如何在泰国用最少的钱生活。",fmt:"泰国人现场展示和讲解如何做到",g:"外籍人士"}},
+
+{id:4,f:true,cat:"exotic",sc:["Экстрим"],scale:"По спросу",cr:"Монах, крестьянин, отшельник, проводник, лесник",dur:"1–7 дней",tk:"По спросу",di:"high",fr:"По спросу",
+ru:{t:"Выжить в джунглях",d:"Это не постановочное шоу, а реальное погружение в дикую природу. Вы научитесь находить воду и пищу, избегать опасностей, строить укрытие и оказывать первую помощь.",p:"Скука и однообразие туристических маршрутов.",fmt:"Реальное выживание: от ночёвки в джунглях до последней капли пота",g:"Тайцы и фаранги-любители дикой природы"},
+en:{t:"Survive in the Jungle",d:"Not a staged show — real immersion into the wild. Learn to find water and food, avoid animal dangers, build shelter and give first aid.",p:"Boredom and sameness of tourist routes.",fmt:"Real survival from cold jungle nights to the last drop of sweat",g:"Thais and expats who love wild nature"},
+th:{t:"รอดชีวิตในป่า",d:"ไม่ใช่การแสดง — การดำดิ่งสู่ธรรมชาติป่าแท้จริง เรียนรู้การหาน้ำและอาหาร หลีกเลี่ยงอันตราย สร้างที่พัก",p:"ความน่าเบื่อของเส้นทางท่องเที่ยวทั่วไป",fmt:"การอยู่รอดจริงๆ ในป่า",g:"คนไทยและต่างชาติที่รักธรรมชาติ"},
+zh:{t:"丛林生存",d:"这不是舞台表演，而是真实的野外沉浸体验。学会寻找水源和食物、躲避动物危险、搭建庇护所和急救。",p:"千篇一律的旅游路线令人厌倦。",fmt:"真实的丛林生存体验",g:"泰国人和热爱野生自然的外籍人士"}},
+
+{id:5,f:true,cat:"buddhism",sc:["Подлинная практика"],scale:"1–3 создателя / провинция",cr:"Монах, отшельник",dur:"1 час",tk:"10–15",di:"med",fr:"1 раз в месяц",
+ru:{t:"Медитация на кладбище",d:"Ночная медитация на буддийском кладбище под руководством старого монаха. Вы выберете могилу, останетесь наедине с собой перед лицом смерти и тишины. Глубокая практика осознания конечности бытия.",p:"Скука и экзистенциальный кризис на фоне обыденности.",fmt:"Медитация на могильных плитах под руководством монаха",g:"Тайцы и фаранги-практики"},
+en:{t:"Cemetery Meditation",d:"Night meditation at a Buddhist cemetery guided by an old monk. Choose a grave, sit alone facing death and silence — a deep practice of life's impermanence.",p:"Boredom and existential crisis amid daily routine.",fmt:"Meditation on grave slabs guided by a monk",g:"Thais and expat practitioners"},
+th:{t:"นั่งสมาธิที่สุสาน",d:"นั่งสมาธิตอนกลางคืนที่สุสานพุทธโดยพระเฒ่า เลือกหลุมฝังศพ นั่งคนเดียวเผชิญกับความตายและความเงียบ",p:"ความน่าเบื่อและวิกฤตอัตถิภาวะ",fmt:"นั่งสมาธิบนหลุมฝังศพกับพระ",g:"คนไทยและต่างชาติที่ฝึกสมาธิ"},
+zh:{t:"墓地冥想",d:"在年老僧侣的引导下，在佛教墓地进行夜间冥想。选择一座坟墓，独自面对死亡与寂静——深刻体悟生命无常。",p:"日常生活中的无聊和存在主义危机。",fmt:"在僧侣引导下于墓碑上冥想",g:"泰国人和外籍修行者"}},
+
+{id:6,f:true,cat:"adapt",sc:["Экономия","Здоровье"],scale:"3–5 создателей / провинция",cr:"Тайский фармацевт или опытный пользователь аптек",dur:"2–3 ч",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Аптеки и медикаменты",d:"Вы получите ключ к миру дешёвых и эффективных тайских лекарств. Фармацевт объяснит аналоги дорогих импортных препаратов, научит читать инструкции на тайском.",p:"Фаранг боится тайских аптек из-за языкового барьера.",fmt:"Обзорная экскурсия по аптекам с объяснением аналогов препаратов",g:"Фаранги, заботящиеся о здоровье и бюджете"},
+en:{t:"Pharmacies & Medications",d:"The key to cheap and effective Thai medicines. A pharmacist explains generic alternatives, teaches you to read Thai labels and find the best OTC remedies.",p:"Expats fear Thai pharmacies due to the language barrier.",fmt:"Pharmacy tour with explanation of generics and label reading",g:"Budget-conscious expats"},
+th:{t:"ร้านขายยาและยา",d:"กุญแจสู่โลกยาไทยราคาถูกและมีประสิทธิภาพ เภสัชกรอธิบายยาสามัญทดแทน สอนอ่านฉลากภาษาไทย",p:"ชาวต่างชาติกลัวร้านขายยาไทยเพราะภาษา",fmt:"ทัวร์ร้านขายยาพร้อมคำอธิบายยาสามัญ",g:"ชาวต่างชาติที่ใส่ใจสุขภาพและงบประมาณ"},
+zh:{t:"药房与药物",d:"掌握廉价有效的泰国药物之钥。药剂师讲解平价替代药，教你读懂泰文标签，找到最佳非处方药。",p:"外籍人士因语言障碍而惧怕泰国药房。",fmt:"药房参观与药物替代讲解之旅",g:"注重健康和预算的外籍人士"}},
+
+{id:7,f:true,cat:"adapt",sc:["Здоровье","Экономия"],scale:"2–3 создателя / провинция",cr:"Тайский медработник или опытный пациент",dur:"До 4 ч",tk:"5–10",di:"med",fr:"1 раз в месяц",
+ru:{t:"Государственные госпитали",d:"Вы пройдёте по настоящему государственному госпиталю с проводником. Узнаете, как зарегистрироваться, общаться с персоналом без знания языка, получать медицинскую помощь в 10–20 раз дешевле.",p:"Фаранг боится государственных больниц, переплачивая в частных клиниках.",fmt:"Экскурсия-знакомство: запись, документы, очередь, лекарства",g:"Фаранги, планирующие длительное пребывание"},
+en:{t:"Public Hospitals",d:"Walk through a real public hospital with a guide. Learn to register, communicate without Thai language, and get quality care 10–20 times cheaper than private clinics.",p:"Expats avoid public hospitals and overpay at private clinics.",fmt:"Guided hospital tour: registration, documents, queue, prescriptions",g:"Expats planning a long stay"},
+th:{t:"โรงพยาบาลรัฐบาล",d:"เดินผ่านโรงพยาบาลรัฐจริงๆ กับไกด์ เรียนรู้ลงทะเบียน สื่อสารโดยไม่รู้ภาษาไทย รักษาถูกกว่าเอกชน 10–20 เท่า",p:"ชาวต่างชาติกลัวโรงพยาบาลรัฐ จ่ายแพงในเอกชน",fmt:"ทัวร์โรงพยาบาล: ลงทะเบียน เอกสาร คิว ยา",g:"ชาวต่างชาติที่วางแผนอยู่นาน"},
+zh:{t:"公立医院",d:"与向导一起参观真实的公立医院。学会挂号、无需泰语沟通，并以私立诊所1/10至1/20的价格获得优质医疗。",p:"外籍人士回避公立医院，在私立诊所花冤枉钱。",fmt:"医院导览：挂号、证件、排队、取药",g:"计划长期居住的外籍人士"}},
+
+{id:8,f:true,cat:"exotic",sc:["Музыка","Традиции","Транс"],scale:"1–2 создателя / провинция",cr:"Исполнитель молам или знаток жанра",dur:"3–5 ч",tk:"5–15",di:"med",fr:"По спросу",
+ru:{t:"Молам",d:"Вы откроете для себя древний исаанский рэп — молам. Создатель расскажет об истории и стилях, переведёт тексты песен о любви, смерти и политике. Вы научитесь базовым движениям.",p:"Фаранг не понимает суть традиционной музыки Исаан, считая её какофонией.",fmt:"Посещение концерта молам, рассказ об истории, мастер-класс по кхаену",g:"Фаранги, интересующиеся аутентичной музыкой"},
+en:{t:"Molam",d:"Discover ancient Isan rap — molam. Your host explains history and styles, translates song lyrics about love, death and politics. Learn basic dance moves.",p:"Expats find Isan traditional music to be just noise.",fmt:"Molam concert visit, history talk, optional khaen workshop",g:"Expats interested in authentic music"},
+th:{t:"หมอลำ",d:"ค้นพบหมอลำ — แร็พอีสานโบราณ เจ้าของอธิบายประวัติและสไตล์ แปลเนื้อเพลง เรียนท่าเต้น",p:"ชาวต่างชาติคิดว่าดนตรีอีสานเป็นแค่เสียงดัง",fmt:"ชมคอนเสิร์ตหมอลำ บรรยายประวัติ",g:"ชาวต่างชาติที่สนใจดนตรีแท้"},
+zh:{t:"摩拉姆",d:"探索古老的依善说唱——摩拉姆。主人讲解历史和风格，翻译关于爱情、死亡和政治的歌词。学习基本舞步。",p:"外籍人士觉得依善传统音乐只是噪音。",fmt:"摩拉姆音乐会参观、历史讲解、可选卡恩乐器工作坊",g:"对真实音乐感兴趣的外籍人士"}},
+
+{id:9,f:true,cat:"culture",sc:["Досуг","Спорт"],scale:"5–10 создателей / провинция",cr:"Любой таец, играющий в петанк, такрав, бадминтон",dur:"2–3 ч",tk:"5–10",di:"low",fr:"1 раз в неделю",
+ru:{t:"Тайские игры в городских парках",d:"Вы станете частью вечерней жизни тайского парка. Вас научат играть в петанк, такрав или запускать змея. Вы выучите правила и негласный этикет.",p:"Фаранг проходит мимо вечерних игр в парке — главного входа в местное комьюнити.",fmt:"Участие в вечерних играх: петанк, такрав, запуск воздушного змея",g:"Фаранги, ищущие социального взаимодействия"},
+en:{t:"Thai Park Games",d:"Become part of evening Thai park life. Learn petanque, takraw or kite flying. Master the rules and unwritten etiquette, then join games independently.",p:"Expats walk past evening park games — the main entry point to local community.",fmt:"Evening park games: petanque, takraw, kite flying",g:"Expats looking for social interaction"},
+th:{t:"กีฬาสวนสาธารณะไทย",d:"เป็นส่วนหนึ่งของชีวิตยามเย็นในสวนไทย เรียนเปตอง ตะกร้อ หรือว่าว เรียนรู้กฎและมารยาท",p:"ชาวต่างชาติเดินผ่านเกมยามเย็นในสวน",fmt:"เล่นเกมในสวนตอนเย็น: เปตอง ตะกร้อ ว่าว",g:"ชาวต่างชาติที่มองหาการปฏิสัมพันธ์ทางสังคม"},
+zh:{t:"泰国公园游戏",d:"融入泰国公园的傍晚生活。学玩法式滚球、藤球或放风筝。掌握规则和不成文的礼仪，然后自己加入游戏。",p:"外籍人士错过了公园傍晚游戏——融入本地社区的主要途径。",fmt:"傍晚公园游戏：法式滚球、藤球、放风筝",g:"寻求社交互动的外籍人士"}},
+
+{id:10,f:true,cat:"exotic",sc:["Гастрономия","Экстрим"],scale:"По спросу",cr:"Местный житель, знаток лесных продуктов",dur:"4–6 ч",tk:"3–7",di:"high",fr:"По сезону",
+ru:{t:"Набл",d:"Вы отправитесь в лес с местным экспертом по лесным продуктам. Научитесь находить съедобные ягоды, грибы, личинки и побеги, отличать их от ядовитых, а затем приготовите добычу на костре.",p:"Фаранг не знает о мире дикой съедобной пищи вокруг него.",fmt:"Поиск и сбор лесных продуктов с приготовлением на костре",g:"Фаранги-экстремалы и выживальщики"},
+en:{t:"Forest Foraging",d:"Head into the forest with a local wild food expert. Learn to find edible berries, mushrooms, larvae and shoots, tell them from poisonous ones, then cook over fire.",p:"Expats don't know about the world of wild edible food around them.",fmt:"Forest foraging expedition and campfire cooking",g:"Adventurous expats and survivalists"},
+th:{t:"หาของป่า",d:"ออกไปในป่ากับผู้เชี่ยวชาญของป่าท้องถิ่น เรียนรู้การหาผลไม้ป่า เห็ด ตัวอ่อน แล้วปรุงริมไฟ",p:"ชาวต่างชาติไม่รู้เกี่ยวกับอาหารป่ารอบตัว",fmt:"สำรวจหาของป่าและปรุงอาหารริมไฟ",g:"ชาวต่างชาติผู้ชื่นชอบการผจญภัย"},
+zh:{t:"森林觅食",d:"与当地野生食物专家深入森林。学会寻找可食用浆果、蘑菇、幼虫和嫩芽，辨别有毒植物，然后在篝火旁烹饪。",p:"外籍人士不了解身边野生食物的世界。",fmt:"森林觅食探险与篝火烹饪",g:"爱冒险的外籍人士和生存主义者"}},
+
+{id:11,f:false,cat:"adapt",sc:["Экономия"],scale:"10 создателей / провинция",cr:"Любой таец",dur:"До 3 ч",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Уличная прачечная",d:"Вы научитесь пользоваться уличными прачечными как местный житель. Создатель объяснит значения кнопок на тайском, покажет, как выбирать режим, платить и забирать бельё.",p:"Для фаранга уличная прачечная — квест с тайским интерфейсом и стрессом.",fmt:"Мастер-класс с экскурсией по уличным прачечным",g:"Фаранги"},
+en:{t:"Street Laundry",d:"Learn to use street laundromats like a local. Your host explains Thai button labels, the right cycle to pick, how to pay and collect.",p:"For expats, a Thai laundromat is a stressful quest.",fmt:"Workshop with street laundromat tour",g:"Expats"},
+th:{t:"ร้านซักผ้าหยอดเหรียญ",d:"เรียนใช้ร้านซักผ้าหยอดเหรียญแบบคนท้องถิ่น ไกด์อธิบายปุ่มภาษาไทย",p:"สำหรับชาวต่างชาติ ร้านซักผ้าคือปริศนาภาษาไทย",fmt:"เวิร์กชอปและทัวร์ร้านซักผ้า",g:"ชาวต่างชาติ"},
+zh:{t:"街边洗衣店",d:"像当地人一样使用街边自助洗衣机。主人解释泰语按钮标签、如何选择洗涤模式、付款和取衣。",p:"对外籍人士来说，泰国自助洗衣机是充满压力的难题。",fmt:"街边洗衣店参观工作坊",g:"外籍人士"}},
+
+{id:12,f:false,cat:"adapt",sc:["Экономия"],scale:"10 создателей / провинция",cr:"Любой таец и/или монах",dur:"1–3 ч / до суток",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Сон на полу",d:"Вы познакомитесь с традицией сна на полу, распространённой среди тайцев и особенно монахов. Вам покажут, как правильно организовать спальное место. Для смелых — ночёвка на полу.",p:"Фаранги не знают, что спать на полу — это дёшево и просто.",fmt:"Мастер-класс с экскурсией по жилищам тайцев и монахов",g:"Фаранги"},
+en:{t:"Sleeping on the Floor",d:"Discover the Thai and monastic tradition of floor sleeping. Your host shows how to set up a proper floor sleeping space. For the brave — an overnight stay.",p:"Expats don't know floor sleeping is cheap and simple.",fmt:"Workshop with tour of Thai and monastic living spaces",g:"Expats"},
+th:{t:"นอนบนพื้น",d:"ค้นพบประเพณีการนอนบนพื้นของคนไทยและพระ ไกด์แสดงวิธีจัดที่นอนบนพื้น",p:"ชาวต่างชาติไม่รู้ว่าการนอนบนพื้นนั้นถูกและง่าย",fmt:"เวิร์กชอปพร้อมทัวร์ที่พักไทยและวัด",g:"ชาวต่างชาติ"},
+zh:{t:"睡地板",d:"了解泰国人和僧侣睡地板的传统。主人展示如何正确铺设地板睡眠空间。勇敢者可以真正过一夜。",p:"外籍人士不知道睡地板既便宜又简单。",fmt:"泰国民居和寺院参观工作坊",g:"外籍人士"}},
+
+{id:13,f:false,cat:"adapt",sc:["Экономия","Гастрономия"],scale:"10 создателей / провинция",cr:"Любой таец",dur:"До 5 ч",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Местные овощи",d:"Вы отправитесь на рынок, где таец-создатель покажет и даст попробовать десятки видов местных овощей. Вы узнаете их названия, полезные свойства и способы приготовления.",p:"Фаранги не разбираются в огромном разнообразии тайских овощей.",fmt:"Дегустация с экскурсией по рынкам",g:"Фаранги"},
+en:{t:"Local Vegetables",d:"Visit a market where a Thai host shows and lets you taste dozens of local vegetables. Learn their names, health benefits and cooking methods.",p:"Expats can't navigate the huge variety of Thai vegetables.",fmt:"Tasting with market tour",g:"Expats"},
+th:{t:"ผักท้องถิ่น",d:"ไปตลาดที่ไกด์ไทยแสดงและให้ลองชิมผักท้องถิ่นหลายสิบชนิด",p:"ชาวต่างชาติรับมือกับความหลากหลายของผักไทยไม่ได้",fmt:"ชิมพร้อมทัวร์ตลาด",g:"ชาวต่างชาติ"},
+zh:{t:"本地蔬菜",d:"参观市场，泰国主人展示并让你品尝数十种当地蔬菜。了解它们的名称、健康功效和烹饪方法。",p:"外籍人士无法驾驭泰国蔬菜的丰富多样性。",fmt:"品尝与市场参观",g:"外籍人士"}},
+
+{id:14,f:false,cat:"adapt",sc:["Экономия","Гастрономия"],scale:"10 создателей / провинция",cr:"Любой таец",dur:"До 5 ч",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Местные фрукты",d:"Вы откроете для себя мир тайских фруктов за пределами туристических лотков. Создатель проведёт дегустацию сезонных фруктов, объяснит, как их выбирать, чистить и с чем сочетать.",p:"Фаранги ограничиваются манго и арбузом, не подозревая о богатстве экзотических фруктов.",fmt:"Дегустация с экскурсией по фруктовым рынкам",g:"Фаранги"},
+en:{t:"Local Fruits",d:"Explore Thai fruits beyond tourist stalls. Seasonal fruit tasting — how to choose, peel and combine them, and which ones treat which ailments.",p:"Expats stick to mango and watermelon, unaware of exotic fruit diversity.",fmt:"Seasonal fruit tasting with market tour",g:"Expats"},
+th:{t:"ผลไม้ท้องถิ่น",d:"สำรวจผลไม้ไทยนอกเหนือจากแผงนักท่องเที่ยว ชิมผลไม้ตามฤดูกาล",p:"ชาวต่างชาติติดแค่มะม่วงและแตงโม",fmt:"ชิมผลไม้ตามฤดูกาลพร้อมทัวร์ตลาด",g:"ชาวต่างชาติ"},
+zh:{t:"本地水果",d:"探索旅游摊位之外的泰国水果。品尝时令水果——如何挑选、剥皮和搭配，以及哪种水果能治什么病。",p:"外籍人士只知道芒果和西瓜，不了解异国水果的多样性。",fmt:"时令水果品尝与市场参观",g:"外籍人士"}},
+
+{id:15,f:false,cat:"adapt",sc:["Экономия","Гастрономия"],scale:"10 создателей / провинция",cr:"Любой таец",dur:"До 5 ч",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Всё из кокоса",d:"Вы узнаете, почему кокос — основа тайской жизни. Вас ждёт экскурсия по рынку и, возможно, на фабрику. Вы научитесь готовить блюда на кокосовом молоке, делать масло и скрабы.",p:"Фаранги воспринимают кокос только как напиток.",fmt:"Мастер-класс с дегустацией, экскурсией по рынкам и фабрике",g:"Фаранги"},
+en:{t:"Everything from Coconut",d:"Learn why coconut is the backbone of Thai life. Market and factory tour. Cook coconut milk dishes, make oil and scrubs, use shells in everyday life.",p:"Expats see coconut only as a drink.",fmt:"Workshop with tasting, market tour and optional factory visit",g:"Expats"},
+th:{t:"ทุกอย่างจากมะพร้าว",d:"เรียนรู้ว่าทำไมมะพร้าวถึงเป็นรากฐานของชีวิตไทย ทัวร์ตลาดและโรงงาน",p:"ชาวต่างชาติมองมะพร้าวเป็นแค่เครื่องดื่ม",fmt:"เวิร์กชอปพร้อมชิม ทัวร์ตลาดและโรงงาน",g:"ชาวต่างชาติ"},
+zh:{t:"椰子的一切",d:"了解椰子为何是泰国生活的基础。市场和工厂参观。烹饪椰奶菜肴，制作椰油和磨砂膏，在日常生活中使用椰壳。",p:"外籍人士只把椰子当饮料。",fmt:"品尝工作坊、市场参观和可选工厂参观",g:"外籍人士"}},
+
+{id:16,f:false,cat:"adapt",sc:["Экономия","Гастрономия"],scale:"10 создателей / провинция",cr:"Любой таец",dur:"До 5 ч",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Кокос + рис = изобилие",d:"Вы погрузитесь в философию тайской самодостаточности. Сочетание риса и кокоса даёт практически всё необходимое для жизни: еду, материалы, косметику.",p:"Фаранги не понимают концепцию тайского изобилия из двух простых продуктов.",fmt:"Мастер-класс с дегустацией и экскурсией по рынкам",g:"Фаранги"},
+en:{t:"Coconut + Rice = Abundance",d:"Dive into Thai self-sufficiency philosophy. Rice and coconut together provide almost everything needed: food, materials, cosmetics.",p:"Expats don't grasp the Thai abundance concept from two simple products.",fmt:"Workshop with tasting and market tour",g:"Expats"},
+th:{t:"มะพร้าว + ข้าว = ความอุดมสมบูรณ์",d:"ดำดิ่งสู่ปรัชญาความพอเพียงของไทย ข้าวและมะพร้าวให้เกือบทุกอย่างที่จำเป็น",p:"ชาวต่างชาติไม่เข้าใจแนวคิดความอุดมสมบูรณ์จากสองผลิตภัณฑ์",fmt:"เวิร์กชอปพร้อมชิมและทัวร์ตลาด",g:"ชาวต่างชาติ"},
+zh:{t:"椰子+大米=丰饶",d:"深入了解泰国自给自足的哲学。大米和椰子合在一起几乎提供了生活所需的一切：食物、材料、化妆品。",p:"外籍人士不理解来自两种简单产品的泰国丰饶理念。",fmt:"品尝工作坊与市场参观",g:"外籍人士"}},
+
+{id:17,f:false,cat:"adapt",sc:["Гастрономия"],scale:"10 создателей / провинция",cr:"Любой таец, уличный торговец сладостями",dur:"До 4 ч",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Тайские сладости",d:"Вы попробуете настоящие тайские сладости, которые продаются у храмов и на рынках за копейки. Создатель объяснит ингредиенты, историю и способы приготовления десертов из клейкого риса и кокоса.",p:"Фаранг видит в тайских сладостях лишь сахар и красители.",fmt:"Дегустация с экскурсией по точкам продажи тайских сладостей",g:"Фаранги-сладкоежки и гурманы"},
+en:{t:"Thai Sweets",d:"Taste authentic Thai sweets sold near temples and markets for pennies. Learn ingredients, history and how to make desserts from sticky rice and coconut.",p:"Expats see Thai sweets as just sugar and food colouring.",fmt:"Tasting tour of Thai sweet vendors",g:"Expat sweet-lovers and foodies"},
+th:{t:"ขนมไทย",d:"ลิ้มลองขนมไทยแท้ที่ขายหน้าวัดและตลาดในราคาถูก",p:"ชาวต่างชาติมองขนมไทยว่าเป็นแค่น้ำตาลและสีผสมอาหาร",fmt:"ทัวร์ชิมขนมไทย",g:"ชาวต่างชาติสายหวานและนักชิม"},
+zh:{t:"泰国甜点",d:"品尝在寺庙和市场旁以极低价格出售的正宗泰国甜点。了解糯米和椰子甜点的配料、历史和制作方法。",p:"外籍人士认为泰国甜点只是糖和色素。",fmt:"泰国甜点摊位品尝之旅",g:"外籍人士甜食爱好者和美食家"}},
+
+{id:18,f:false,cat:"adapt",sc:["Гастрономия","Экономия"],scale:"10 создателей / провинция",cr:"Любой таец, продавец лапши, уличный повар",dur:"До 5 ч",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Лапша",d:"Вы отправитесь в тур по уличным лоткам с лапшой. Создатель объяснит разницу между видами лапши и бульонов, научит заказывать как гурман. Вселенная за 40 бат.",p:"Фаранг заказывает «noodle soup» и не подозревает о существовании десятков видов лапши.",fmt:"Дегустация разных видов лапши с экскурсией по уличным лоткам",g:"Фаранги, любящие уличную еду"},
+en:{t:"Noodles",d:"Tour street noodle stalls. Your host explains noodle types and broths, teaches you to order like a connoisseur. A whole universe for 40 baht.",p:"Expats order 'noodle soup' without knowing dozens of varieties exist.",fmt:"Noodle tasting with street stall tour",g:"Expats who love street food"},
+th:{t:"ก๋วยเตี๋ยว",d:"ทัวร์แผงก๋วยเตี๋ยวข้างทาง ไกด์อธิบายความแตกต่างของเส้นและน้ำซุป สอนสั่งแบบนักชิม",p:"ชาวต่างชาติสั่ง 'นูดเดิ้ลซุป' โดยไม่รู้ว่ามีหลายสิบชนิด",fmt:"ชิมก๋วยเตี๋ยวพร้อมทัวร์แผงข้างทาง",g:"ชาวต่างชาติที่รักอาหารข้างทาง"},
+zh:{t:"面条",d:"参观街边面条摊。主人讲解面条种类和汤底，教你像行家一样点餐。40泰铢的整个宇宙。",p:"外籍人士点'面条汤'，不知道存在数十种不同品种。",fmt:"面条品尝与街头摊位参观",g:"喜爱街头美食的外籍人士"}},
+
+{id:19,f:false,cat:"exotic",sc:["Гастрономия","Экстрим"],scale:"1–2 создателя / провинция",cr:"Уличный продавец жареных насекомых",dur:"2–3 ч",tk:"5–10",di:"med",fr:"По спросу",
+ru:{t:"Дегустация насекомых",d:"Вы преодолеете внутренние барьеры под руководством местного эксперта. Вам расскажут о высокой пищевой ценности насекомых. Вы попробуете сверчков, шелкопрядов и, возможно, скорпиона.",p:"Фаранг испытывает культурный шок и брезгливость при виде жареных насекомых.",fmt:"Практическая дегустация с рассказом о пищевой ценности насекомых",g:"Фаранги-экстремалы и искатели новых ощущений"},
+en:{t:"Insect Tasting",d:"Overcome your inner barriers guided by a local expert. Learn the high nutritional value of insects. Try crickets, silkworms and perhaps a scorpion.",p:"Expats experience culture shock at the sight of fried insects.",fmt:"Practical tasting with explanation of insect nutrition",g:"Adventurous expats and sensation-seekers"},
+th:{t:"ชิมแมลง",d:"เอาชนะอุปสรรคภายในด้วยผู้เชี่ยวชาญท้องถิ่น เรียนรู้คุณค่าโภชนาการสูงของแมลง ลองจิ้งหรีด ดักแด้ และอาจจะแมงป่อง",p:"ชาวต่างชาติตกใจเมื่อเห็นแมลงทอด",fmt:"การชิมจริงพร้อมอธิบายโภชนาการ",g:"ชาวต่างชาติผู้ชื่นชอบการผจญภัย"},
+zh:{t:"昆虫品尝",d:"在当地专家指导下克服内心障碍。了解昆虫的高营养价值。品尝蟋蟀、蚕蛹，也许还有蝎子。",p:"外籍人士看到油炸昆虫时会产生文化冲击和厌恶感。",fmt:"昆虫营养讲解与实践品尝",g:"爱冒险的外籍人士和感官探索者"}},
+
+{id:20,f:false,cat:"adapt",sc:["Здоровье"],scale:"3–5 создателей / провинция",cr:"Тайский администратор или опытный пациент клиник",dur:"До 4 ч",tk:"5–10",di:"low",fr:"По спросу",
+ru:{t:"Частные госпитали",d:"Вы посетите несколько частных клиник разного ценового сегмента. Создатель объяснит разницу между сетевыми госпиталями и местными клиниками, научит работать со страховкой.",p:"Фаранг теряется в ценах и услугах частных госпиталей.",fmt:"Обзорная экскурсия по нескольким частным госпиталям разного уровня",g:"Фаранги с медицинской страховкой"},
+en:{t:"Private Hospitals",d:"Visit several private clinics at different price points. Learn the difference between international hospital networks and local clinics, how to use insurance and choose a specialist.",p:"Expats are lost in private hospital prices and services.",fmt:"Tour of several private hospitals at different price levels",g:"Expats with health insurance"},
+th:{t:"โรงพยาบาลเอกชน",d:"เยี่ยมชมคลินิกเอกชนหลายแห่งในระดับราคาต่างกัน เรียนรู้ความแตกต่างระหว่างเครือข่ายนานาชาติและคลินิกท้องถิ่น",p:"ชาวต่างชาติสับสนกับราคาและบริการโรงพยาบาลเอกชน",fmt:"ทัวร์โรงพยาบาลเอกชนหลายแห่ง",g:"ชาวต่างชาติที่มีประกันสุขภาพ"},
+zh:{t:"私立医院",d:"参观不同价位的多家私立诊所。了解国际医院网络与本地诊所的区别，如何使用保险和选择专科医生。",p:"外籍人士在私立医院的价格和服务中迷失。",fmt:"不同级别私立医院参观之旅",g:"有医疗保险的外籍人士"}},
+
+{id:21,f:false,cat:"exotic",sc:["Здоровье","Традиции"],scale:"1–2 создателя / провинция",cr:"Народный целитель или его ученик",dur:"2–4 ч",tk:"5–8",di:"med",fr:"1 раз в месяц",
+ru:{t:"Народная медицина",d:"Вы встретитесь с настоящим тайским целителем. Он проведёт диагностику, возможно, приготовит травяной сбор или компресс. Вы увидите, как работают тысячелетние знания джунглей.",p:"Фаранг скептически относится к народной медицине, считая её шарлатанством.",fmt:"Встреча с целителем, демонстрация трав, компрессов, диагностика по пульсу",g:"Фаранги, интересующиеся альтернативной медициной"},
+en:{t:"Folk Medicine",d:"Meet a real Thai folk healer. They'll diagnose you, possibly prepare an herbal brew or compress. See how millennia of jungle knowledge actually work.",p:"Expats dismiss folk medicine as quackery.",fmt:"Meeting a healer, herb and compress demonstration, pulse diagnosis",g:"Expats interested in alternative medicine"},
+th:{t:"การแพทย์พื้นบ้าน",d:"พบกับหมอพื้นบ้านไทยแท้จริง พวกเขาจะวินิจฉัยโรค อาจเตรียมยาสมุนไพรหรือประคบ",p:"ชาวต่างชาติปัดทิ้งการแพทย์พื้นบ้านว่าเป็นการหลอกลวง",fmt:"พบหมอพื้นบ้าน สาธิตสมุนไพร ตรวจชีพจร",g:"ชาวต่างชาติที่สนใจการแพทย์ทางเลือก"},
+zh:{t:"民间医学",d:"与真正的泰国民间医者相遇。他们会为你诊断，可能准备草药或热敷。见证数千年丛林知识的实际效用。",p:"外籍人士斥之为骗术，对民间医学持怀疑态度。",fmt:"与医者会面、草药和热敷演示、脉诊",g:"对替代医学感兴趣的外籍人士"}},
+
+{id:22,f:false,cat:"adapt",sc:["Язык","Культура"],scale:"5 создателей / провинция",cr:"Любой таец с чувством юмора",dur:"2–3 ч",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Тайские ругательства",d:"Вы изучите теневую сторону тайского языка. Создатель объяснит значения ругательств, расскажет о жестах-оскорблениях и эвфемизмах. Вы узнаете, когда можно пошутить, а когда лучше промолчать.",p:"Фаранг не понимает нюансов тайской вежливости и не может распознать оскорбление или шутку.",fmt:"Интерактивный урок тайских ругательств и мата в контексте культуры",g:"Фаранги, живущие в Таиланде долго"},
+en:{t:"Thai Swear Words",d:"Explore the dark side of the Thai language. Your host explains insults, rude gestures and euphemisms. Learn when you can joke and when to stay silent.",p:"Expats can't detect insults or jokes in Thai polite culture.",fmt:"Interactive Thai profanity workshop with cultural context",g:"Long-term expats"},
+th:{t:"คำสบถภาษาไทย",d:"สำรวจด้านมืดของภาษาไทย ไกด์อธิบายคำหยาบ ท่าทางที่หยาบคาย และสุภาษิต",p:"ชาวต่างชาติไม่รู้ความแตกต่างระหว่างการล้อเล่นและการดูถูก",fmt:"เวิร์กชอปคำสบถภาษาไทยพร้อมบริบทวัฒนธรรม",g:"ชาวต่างชาติที่อาศัยอยู่นาน"},
+zh:{t:"泰语骂人话",d:"探索泰语的阴暗面。主人讲解侮辱语、粗鲁手势和委婉说法。了解何时可以开玩笑，何时最好保持沉默。",p:"外籍人士无法识别泰国礼仪文化中的侮辱或玩笑。",fmt:"结合文化背景的泰语俚语互动工作坊",g:"长期居住的外籍人士"}},
+
+{id:23,f:false,cat:"adapt",sc:["Экономия","Транспорт"],scale:"5 создателей / провинция",cr:"Тайский механик или опытный мотоциклист",dur:"3–4 ч",tk:"5–8",di:"med",fr:"1 раз в месяц",
+ru:{t:"Помощь в мотомастерской",d:"Вы проведёте время в настоящей мотомастерской. Механик покажет базовые операции: замена масла, свечи, колодок, подтяжка цепи, ремонт прокола. Вы выучите ключевые слова на тайском.",p:"Фаранг чувствует себя беспомощным при поломке мотоцикла и боится быть обманутым.",fmt:"Практическое занятие в мастерской: диагностика, ремонт, запчасти",g:"Фаранги, владеющие или арендующие мотоциклы"},
+en:{t:"Motorcycle Workshop",d:"Spend time in a real bike garage. A mechanic shows basic ops: oil change, spark plug, brake pads, chain adjustment, puncture repair. Learn key Thai mechanic vocabulary.",p:"Expats feel helpless when the bike breaks down and fear being cheated.",fmt:"Practical garage session: diagnostics, repairs, parts shopping",g:"Expats who own or rent motorcycles"},
+th:{t:"อู่ซ่อมมอเตอร์ไซค์",d:"ใช้เวลาในอู่ซ่อมจริง ช่างแสดงการเปลี่ยนน้ำมัน หัวเทียน ผ้าเบรก ตั้งโซ่ ซ่อมยางแบน",p:"ชาวต่างชาติรู้สึกหมดแรงเมื่อมอเตอร์ไซค์เสีย กลัวโดนโกง",fmt:"เซสชันอู่จริง: วินิจฉัย ซ่อม ซื้อชิ้นส่วน",g:"ชาวต่างชาติที่เป็นเจ้าของหรือเช่ามอเตอร์ไซค์"},
+zh:{t:"摩托车维修工坊",d:"在真正的摩托车车间度过时光。机械师展示基本操作：换油、更换火花塞、刹车片、调整链条、补胎。学习关键的泰语机械词汇。",p:"外籍人士摩托车抛锚时感到无助，害怕被骗。",fmt:"实践车间课程：诊断、维修、购买配件",g:"拥有或租赁摩托车的外籍人士"}},
+
+{id:24,f:false,cat:"buddhism",sc:["Вера","Традиции"],scale:"1–3 создателя / провинция",cr:"Знаток амулетов, коллекционер, монах при храме",dur:"3–4 ч",tk:"5–10",di:"med",fr:"1 раз в месяц",
+ru:{t:"Амулеты",d:"Вы посетите рынок амулетов со знатоком. Вам расскажут о видах, материалах и монахах-создателях. Вы научитесь проверять подлинность и выбирать амулет для защиты, удачи или бизнеса.",p:"Фаранг считает амулеты суеверием, не понимая их сакрального значения.",fmt:"Экскурсия по рынку амулетов, лекция, помощь в выборе первого амулета",g:"Фаранги, интересующиеся буддизмом и тайской магией"},
+en:{t:"Amulets",d:"Visit an amulet market with an expert. Learn about types, materials and the monks who make them. Verify authenticity and choose an amulet for protection, luck or business.",p:"Expats dismiss amulets as superstition, missing their sacred meaning.",fmt:"Amulet market tour, lecture, first-amulet selection help",g:"Expats interested in Buddhism and Thai magic"},
+th:{t:"เครื่องราง",d:"เยี่ยมชมตลาดเครื่องรางกับผู้เชี่ยวชาญ เรียนรู้ประเภท วัสดุ และพระที่สร้าง เรียนรู้การตรวจสอบความแท้",p:"ชาวต่างชาติมองเครื่องรางว่าเป็นความงมงาย",fmt:"ทัวร์ตลาดเครื่องราง บรรยาย ช่วยเลือกเครื่องรางชิ้นแรก",g:"ชาวต่างชาติที่สนใจพุทธศาสนาและเวทมนตร์ไทย"},
+zh:{t:"佛牌",d:"与专家一起参观佛牌市场。了解种类、材料和制作僧侣。学会验证真伪，选择用于保护、好运或商业的佛牌。",p:"外籍人士将佛牌视为迷信，错过了其神圣意义。",fmt:"佛牌市场参观、讲座、帮助选择第一枚佛牌",g:"对佛教和泰国魔法感兴趣的外籍人士"}},
+
+{id:25,f:false,cat:"buddhism",sc:["Мерит","Ритуал"],scale:"По спросу",cr:"Монах или набожный мирянин",dur:"1–2 ч",tk:"5–15",di:"low",fr:"По спросу",
+ru:{t:"Освобождение рыбы",d:"Вы примете участие в буддийском ритуале накопления заслуг. Вместе с проводником купите живую рыбу или птиц на рынке и отпустите их в природу, читая молитвы.",p:"Фаранг не понимает смысла ритуала освобождения существ.",fmt:"Участие в ритуале покупки живых существ и их освобождения с молитвами",g:"Фаранги, ищущие духовности или удачи"},
+en:{t:"Fish Release Ritual",d:"Join a Buddhist merit-making ritual. With a guide, buy live fish or birds at the market and release them into nature while reciting prayers.",p:"Expats don't understand the meaning of the creature-release ritual.",fmt:"Buying live creatures and releasing them with prayers",g:"Expats seeking spirituality or luck"},
+th:{t:"พิธีปล่อยปลา",d:"เข้าร่วมพิธีสะสมบุญทางพุทธศาสนา พร้อมไกด์ ซื้อปลาหรือนกสดที่ตลาดและปล่อยสู่ธรรมชาติพร้อมสวดมนต์",p:"ชาวต่างชาติไม่เข้าใจความหมายของพิธีปล่อยสัตว์",fmt:"ซื้อสัตว์มีชีวิตและปล่อยพร้อมสวดมนต์",g:"ชาวต่างชาติที่มองหาจิตวิญญาณหรือโชคลาภ"},
+zh:{t:"放生仪式",d:"参与佛教积功德仪式。与向导一起在市场购买活鱼或鸟类，诵经祈祷后放归自然。",p:"外籍人士不理解放生仪式的意义。",fmt:"购买生灵并诵经放生",g:"寻求精神寄托或好运的外籍人士"}},
+
+{id:26,f:false,cat:"buddhism",sc:["Ритуал","Уважение"],scale:"В храмах по всей стране",cr:"Монах или мирянин, проводящий ритуал",dur:"1–2 ч",tk:"5–10",di:"med",fr:"По праздникам или спросу",
+ru:{t:"Мойка ног",d:"Вы научитесь проводить ритуал омовения ног монаху. Создатель подготовит вас морально и объяснит все шаги. Это не унижение, а акт очищения собственной гордыни и получения мощного благословения.",p:"Фаранг не знает высшей формы выражения уважения в тайской культуре.",fmt:"Участие в ритуале омовения ног монахам или старшим в знак уважения",g:"Фаранги, ищущие глубокого культурного опыта"},
+en:{t:"Foot Washing Ritual",d:"Learn the ritual of washing a monk's feet. Your host prepares you and explains every step. Not humiliation — purging your own pride and receiving a powerful blessing.",p:"Expats are unaware of the highest form of respect in Thai culture.",fmt:"Foot washing ceremony for monks or elders as an act of respect",g:"Expats seeking deep cultural experience"},
+th:{t:"พิธีล้างเท้า",d:"เรียนรู้พิธีล้างเท้าพระ ไกด์เตรียมจิตใจและอธิบายทุกขั้นตอน ไม่ใช่การดูถูก แต่เป็นการชำระความทะนง",p:"ชาวต่างชาติไม่รู้จักรูปแบบสูงสุดของการแสดงความเคารพในวัฒนธรรมไทย",fmt:"พิธีล้างเท้าพระหรือผู้อาวุโส",g:"ชาวต่างชาติที่ต้องการประสบการณ์ทางวัฒนธรรมลึกซึ้ง"},
+zh:{t:"洗脚仪式",d:"学习为僧侣洗脚的仪式。主人做好精神准备并讲解每个步骤。这不是屈辱——而是净化自身傲慢，获得强大祝福。",p:"外籍人士不了解泰国文化中最高形式的尊重。",fmt:"为僧侣或长辈举行的洗脚敬重仪式",g:"寻求深度文化体验的外籍人士"}},
+
+{id:27,f:false,cat:"adapt",sc:["Экономия","Погружение в быт"],scale:"1–2 создателя / крупный рынок",cr:"Рыночный торговец, готовый взять помощника",dur:"6–8 ч",tk:"1–2",di:"med",fr:"1 раз в месяц",
+ru:{t:"Помощь торговцу на рынке",d:"Вы наденете фартук и станете помощником рыночного торговца. Будете резать папайю, взвешивать чили, учить названия продуктов на тайском в реальных условиях.",p:"Фаранг боится рынков из-за языкового барьера и незнания реальных цен.",fmt:"Работа помощником на рынке: раскладка товара, общение с покупателями",g:"Фаранги, желающие глубоко погрузиться в местную жизнь"},
+en:{t:"Market Stall Assistant",d:"Put on an apron and become a market trader's assistant. Cut papaya, weigh chilli, learn product names in Thai on the spot. Understand how prices form and make real friends.",p:"Expats fear markets due to the language barrier and not knowing real prices.",fmt:"Working as a market stall assistant: stock, serving customers",g:"Expats who want deep local immersion"},
+th:{t:"ช่วยพ่อค้าในตลาด",d:"สวมผ้ากันเปื้อนและเป็นผู้ช่วยพ่อค้าในตลาด หั่นมะละกอ ชั่งพริก เรียนชื่อสินค้าภาษาไทย",p:"ชาวต่างชาติกลัวตลาดเพราะภาษาและไม่รู้ราคาจริง",fmt:"ทำงานเป็นผู้ช่วยแผงตลาด: จัดสินค้า บริการลูกค้า",g:"ชาวต่างชาติที่ต้องการดำดิ่งในชีวิตท้องถิ่น"},
+zh:{t:"市场摊位助手",d:"穿上围裙，成为市场摊主的助手。切番木瓜、称辣椒，现场学习泰语产品名称。了解价格形成机制，结交真正的朋友。",p:"外籍人士因语言障碍和不了解实际价格而惧怕市场。",fmt:"担任市场摊位助手：备货、服务顾客",g:"希望深度融入当地生活的外籍人士"}},
+
+{id:28,f:false,cat:"culture",sc:["Традиции","Антропология"],scale:"По спросу",cr:"Любой таец, приглашающий на событие",dur:"3 ч – сутки",tk:"1–5",di:"med",fr:"По случаю события",
+ru:{t:"Значимые события жизни",d:"Вы пойдёте на тайскую свадьбу, похороны, новоселье или монашескую ординацию в сопровождении знающего проводника. Вам объяснят, сколько класть в конверт, как себя вести, что означают ритуалы.",p:"Фаранг, приглашённый на тайское событие, не знает ритуалов и боится совершить ошибку.",fmt:"Посещение тайского события с объяснением ритуалов и этикета",g:"Фаранги, имеющие тайских знакомых"},
+en:{t:"Life Milestone Events",d:"Attend a Thai wedding, funeral, housewarming or ordination with a knowledgeable guide. Learn how much to put in the envelope, how to behave and what every ritual means.",p:"Expats invited to Thai events don't know the rituals and fear making mistakes.",fmt:"Attending a Thai life event with ritual and etiquette explanation",g:"Expats with Thai acquaintances"},
+th:{t:"งานสำคัญในชีวิต",d:"เข้าร่วมงานแต่งงาน งานศพ ขึ้นบ้านใหม่ หรืองานบวชไทยกับไกด์ที่รอบรู้ เรียนรู้ใส่ซองเท่าไหร่ วางตัวอย่างไร",p:"ชาวต่างชาติที่ได้รับเชิญไปงานไทยไม่รู้พิธีและกลัวทำผิด",fmt:"เข้าร่วมงานชีวิตไทยพร้อมคำอธิบายพิธีและมารยาท",g:"ชาวต่างชาติที่มีคนรู้จักชาวไทย"},
+zh:{t:"人生重要时刻",d:"与知识丰富的向导一起参加泰国婚礼、葬礼、乔迁或受戒仪式。了解红包金额、如何表现，以及每个仪式的含义。",p:"受邀参加泰国活动的外籍人士不懂礼仪，害怕出错。",fmt:"参加泰国人生活动，附礼仪和仪式讲解",g:"有泰国熟人的外籍人士"}},
+
+{id:29,f:false,cat:"buddhism",sc:["Служение","Мерит"],scale:"При каждом храме",cr:"Монах или мирянин-помощник",dur:"2–3 ч (раннее утро)",tk:"1–3",di:"low",fr:"Ежедневно",
+ru:{t:"Носитель сумки монаха",d:"Ранним утром вы станете помощником монаха. Вы понесёте его сумку или чашу, пока он собирает подаяния от мирян. Создатель объяснит правила монашеского кодекса. Вы накопите мощный мерит.",p:"Фаранг не знает, как правильно взаимодействовать с монахами во время сбора подаяний.",fmt:"Сопровождение монаха во время утреннего сбора подаяний (биндабат)",g:"Фаранги, ищущие духовный опыт и мерит"},
+en:{t:"Monk's Bag Bearer",d:"Early morning: become a monk's helper, carrying his bag or bowl during alms collection. Your host explains the monastic code. You'll accumulate serious merit and receive a blessing.",p:"Expats don't know how to properly interact with monks during alms rounds.",fmt:"Accompanying a monk during morning alms rounds (bindabat)",g:"Expats seeking spiritual experience and merit"},
+th:{t:"ผู้แบกกระเป๋าพระ",d:"เช้าตรู่: เป็นผู้ช่วยพระ แบกกระเป๋าหรือบาตรระหว่างบิณฑบาต ไกด์อธิบายพระวินัย คุณสะสมบุญมากมาย",p:"ชาวต่างชาติไม่รู้วิธีปฏิสัมพันธ์กับพระระหว่างบิณฑบาต",fmt:"ร่วมเดินกับพระระหว่างบิณฑบาตตอนเช้า",g:"ชาวต่างชาติที่มองหาประสบการณ์จิตวิญญาณและบุญ"},
+zh:{t:"僧侣托钵随行者",d:"清晨：成为僧侣的助手，在化缘时携带他的袋子或钵。主人讲解僧律。你将积累强大的功德并获得祝福。",p:"外籍人士不知道如何在化缘时与僧侣正确互动。",fmt:"陪伴僧侣进行晨间化缘（宾达巴特）",g:"寻求精神体验和功德的外籍人士"}},
+
+{id:30,f:false,cat:"adapt",sc:["Здоровье","Культура"],scale:"3–5 создателей / провинция",cr:"Любой таец, знакомый с кратомом",dur:"2–3 ч",tk:"10–15",di:"low",fr:"1 раз в месяц",
+ru:{t:"Листья бодрости",d:"Вы прослушаете лекцию о кратоме — традиционном стимуляторе тайских рабочих. Создатель расскажет об истории, легальном статусе, способах употребления и этике использования.",p:"Фаранг либо демонизирует кратом как наркотик, либо ищет нелегальный кайф.",fmt:"Лекция о кратоме: история, легальность, способы употребления",g:"Фаранги, интересующиеся антропологией и фармакологией растений"},
+en:{t:"Kratom Leaves",d:"A lecture on kratom — the traditional stimulant of Thai workers. Your host covers history, legal status, consumption methods and the ethics of use.",p:"Expats either demonise kratom or seek an illegal high, missing its traditional role.",fmt:"Overview lecture on kratom: history, legality, consumption methods",g:"Expats interested in ethnobotany"},
+th:{t:"ใบกระท่อม",d:"บรรยายเกี่ยวกับกระท่อม — สารกระตุ้นดั้งเดิมของคนงานไทย ไกด์ครอบคลุมประวัติ สถานะทางกฎหมาย วิธีบริโภค",p:"ชาวต่างชาติมองกระท่อมว่าเป็นยาเสพติดหรือมองหาความมึนเมาผิดกฎหมาย",fmt:"บรรยายภาพรวมกระท่อม: ประวัติ กฎหมาย วิธีใช้",g:"ชาวต่างชาติที่สนใจพฤกษศาสตร์ชาติพันธุ์"},
+zh:{t:"活力叶",d:"关于卡痛叶的讲座——泰国工人的传统兴奋剂。主人介绍历史、法律状态、使用方法和使用伦理。",p:"外籍人士要么将卡痛妖魔化为毒品，要么寻求非法兴奋，忽视了其传统角色。",fmt:"卡痛叶概述讲座：历史、合法性、使用方法",g:"对民族植物学感兴趣的外籍人士"}},
+
+{id:31,f:false,cat:"exotic",sc:["Природа","Народная медицина"],scale:"1–3 создателя / провинция",cr:"Народный целитель или знаток трав",dur:"4–8 ч",tk:"3–7",di:"high",fr:"По сезону",
+ru:{t:"Сбор лечебного сырья",d:"Вы отправитесь в лес с травником. Он покажет растения, которые лечат боль в животе, давление, бессонницу. Вы научитесь отличать их и правильно заготавливать. Вернётесь с рюкзаком бесплатных лекарств.",p:"Фаранг видит в джунглях просто зелёный хаос, не замечая природной аптеки.",fmt:"Поход в лес для сбора лекарственных растений с объяснением свойств",g:"Фаранги, увлекающиеся травами и альтернативной медициной"},
+en:{t:"Medicinal Herb Foraging",d:"Head into the forest with a herbalist. They point out plants that treat stomach pain, blood pressure, insomnia. Learn to identify and harvest them properly. Return with a backpack of free medicine.",p:"Expats see jungle as green chaos, missing the natural pharmacy around them.",fmt:"Forest trek to gather medicinal plants with explanation of properties",g:"Expats into herbs and alternative medicine"},
+th:{t:"เก็บสมุนไพรยา",d:"เข้าป่ากับนักสมุนไพร พวกเขาชี้ชนิดพืชที่รักษาปวดท้อง ความดัน นอนไม่หลับ เรียนรู้การระบุและเก็บอย่างถูกต้อง",p:"ชาวต่างชาติมองป่าว่าเป็นความสับสนสีเขียว",fmt:"เดินป่าเก็บพืชยาพร้อมอธิบายสรรพคุณ",g:"ชาวต่างชาติที่ชื่นชอบสมุนไพรและการแพทย์ทางเลือก"},
+zh:{t:"采集草药",d:"与草药师深入森林。他们指出治疗胃痛、血压、失眠的植物。学会正确识别和采集。背着一包免费药物回来。",p:"外籍人士把丛林看作绿色混沌，错过了身边的天然药房。",fmt:"森林徒步采集药用植物并讲解其功效",g:"对草药和替代医学感兴趣的外籍人士"}},
+
+{id:32,f:false,cat:"exotic",sc:["Гастрономия","Природа"],scale:"1–3 создателя / провинция",cr:"Сельский житель, собиратель, охотник",dur:"4–6 ч",tk:"3–7",di:"med",fr:"По сезону",
+ru:{t:"Сбор гастрономического сырья",d:"С корзиной и мачете вы пойдёте по окрестностям, собирая дикие овощи, ягоды, грибы и даже муравьиные яйца. Вечером приготовите ужин из собранного — стоимость 0 бат.",p:"Фаранг не умеет отличать съедобные дикоросы от несъедобных.",fmt:"Сбор диких овощей, грибов, насекомых для приготовления ужина",g:"Фаранги-гурманы и любители природы"},
+en:{t:"Wild Food Gathering",d:"Basket and machete in hand, gather wild vegetables, berries, mushrooms and ant eggs. In the evening cook a dinner from your catch — cost: 0 baht.",p:"Expats can't tell edible wild plants from inedible ones.",fmt:"Collecting wild vegetables, mushrooms and insects for dinner",g:"Foodie expats and nature lovers"},
+th:{t:"เก็บวัตถุดิบป่า",d:"ถือตะกร้าและมีดพร้า เก็บผักป่า ผลไม้ เห็ด และไข่มดแดง ตอนเย็นปรุงอาหาร — ค่าใช้จ่าย 0 บาท",p:"ชาวต่างชาติบอกไม่ได้ว่าพืชป่าอะไรกินได้และไม่ได้",fmt:"เก็บผักป่า เห็ด และแมลงสำหรับอาหารค่ำ",g:"ชาวต่างชาติสายฟู้ดดี้และคนรักธรรมชาติ"},
+zh:{t:"野生食材采集",d:"手持篮子和砍刀，采集野生蔬菜、浆果、蘑菇甚至蚂蚁卵。傍晚用采集的食材烹饪晚餐——成本：0泰铢。",p:"外籍人士无法分辨可食用和不可食用的野生植物。",fmt:"采集野生蔬菜、蘑菇和昆虫用于晚餐",g:"美食家外籍人士和自然爱好者"}},
+
+{id:33,f:false,cat:"exotic",sc:["Народная медицина","Алхимия"],scale:"1–2 создателя / провинция",cr:"Народный целитель, травник",dur:"3–4 ч",tk:"3–7",di:"med",fr:"1 раз в месяц",
+ru:{t:"Приготовление медицины",d:"Вы сядете перед глиняным горшком вместе с целителем и научитесь готовить лечебные мази, бальзамы и настойки. Сможете сделать собственный бальзам от комаров или средство для пищеварения.",p:"Фаранг привык покупать готовые лекарства и не верит в эффективность средств ручного приготовления.",fmt:"Мастер-класс по приготовлению мазей, настоек, компрессов из трав",g:"Фаранги, увлекающиеся натуральной медициной"},
+en:{t:"Making Traditional Medicine",d:"Sit before a clay pot with a healer and learn to make healing ointments, balms and tinctures. Leave with your own mosquito balm or digestive remedy.",p:"Expats only trust pharmacy products and don't believe handmade remedies work.",fmt:"Workshop making herbal ointments, tinctures and compresses",g:"Expats into natural medicine"},
+th:{t:"การทำยาสมุนไพร",d:"นั่งหน้าหม้อดินเหนียวกับหมอพื้นบ้าน เรียนทำขี้ผึ้งยา ยาบาล์ม และยาต้ม ออกไปพร้อมยากันยุงที่ทำเอง",p:"ชาวต่างชาติเชื่อแต่ยาจากร้านและไม่เชื่อยาทำมือ",fmt:"เวิร์กชอปทำขี้ผึ้งสมุนไพร ยาต้ม และประคบ",g:"ชาวต่างชาติที่ชื่นชอบยาธรรมชาติ"},
+zh:{t:"制作传统药物",d:"与医者坐在陶罐前，学习制作治愈软膏、药膏和酊剂。带着自制的防蚊膏或助消化药离开。",p:"外籍人士只信任药店产品，不相信手工制作的药物有效。",fmt:"草药软膏、酊剂和热敷制作工作坊",g:"热爱自然医学的外籍人士"}},
+
+{id:34,f:false,cat:"exotic",sc:["Народная медицина","Диагностика"],scale:"1–2 создателя / провинция",cr:"Народный целитель",dur:"1–3 ч",tk:"1–5",di:"med",fr:"По записи",
+ru:{t:"Народный целитель",d:"Вы встретитесь с народным целителем, который проведёт диагностику по пульсу, глазам или другим признакам. Создатель поможет перевести не только слова, но и культурный контекст.",p:"Фаранг с неясными симптомами не находит помощи в западной медицине.",fmt:"Индивидуальная встреча с целителем, диагностика, консультация по травам",g:"Фаранги с хроническими заболеваниями"},
+en:{t:"Village Healer",d:"Meet a village healer who diagnoses by pulse, eyes or other signs. Your guide translates words and cultural context. The healer prescribes herbs and lifestyle advice.",p:"Expats with unclear symptoms find no help in Western medicine.",fmt:"Individual meeting with healer, diagnosis, herbal consultation",g:"Expats with chronic conditions"},
+th:{t:"หมอพื้นบ้าน",d:"พบกับหมอพื้นบ้านที่วินิจฉัยโรคจากชีพจร ดวงตา หรือสัญญาณอื่น ไกด์แปลคำและบริบทวัฒนธรรม",p:"ชาวต่างชาติที่มีอาการไม่ชัดเจนหาความช่วยเหลือจากแพทย์ตะวันตกไม่ได้",fmt:"พบหมอพื้นบ้านแบบส่วนตัว วินิจฉัย ปรึกษาสมุนไพร",g:"ชาวต่างชาติที่มีโรคเรื้อรัง"},
+zh:{t:"乡村医者",d:"与通过脉象、眼神或其他体征诊断的乡村医者相遇。向导翻译语言和文化背景。医者开具草药处方和生活方式建议。",p:"症状不明确的外籍人士在西医那里找不到帮助。",fmt:"与医者个人会面、诊断、草药咨询",g:"有慢性病的外籍人士"}},
+
+{id:35,f:false,cat:"exotic",sc:["Магия","Духи","Ритуал"],scale:"1–2 создателя / провинция",cr:"Шаман (медиум)",dur:"1–2 ч",tk:"1–3",di:"high",fr:"По записи",
+ru:{t:"Встреча с шаманом",d:"Вы попадёте на сеанс к тайскому шаману. Он войдёт в транс, пообщается с духами и даст совет или ритуал для решения вашей проблемы. Вы либо укрепитесь в скептицизме, либо откроете дверь в новый мир.",p:"Фаранг, столкнувшись с полосой неудач, не понимает, что в тайском контексте это может быть связано с духами.",fmt:"Сеанс у шамана для решения личной проблемы с использованием ритуалов",g:"Фаранги с проблемами, открытые к эзотерике"},
+en:{t:"Meeting a Shaman",d:"Attend a session with a Thai shaman. They enter a trance, communicate with spirits and give advice or a ritual for your problem. You'll either deepen your scepticism or open a new door.",p:"Expats going through a rough patch don't know that in Thai context spirits may be involved.",fmt:"Session with a shaman to address a personal problem using rituals",g:"Expats open to esoterica"},
+th:{t:"พบหมอผี",d:"เข้าร่วมเซสชันกับหมอผีไทย เขาเข้าสู่ภวังค์ สื่อสารกับวิญญาณและให้คำแนะนำหรือพิธีสำหรับปัญหาของคุณ",p:"ชาวต่างชาติที่เจอช่วงเวลาแย่ไม่รู้ว่าในบริบทไทยอาจเกี่ยวกับวิญญาณ",fmt:"เซสชันกับหมอผีเพื่อแก้ปัญหาส่วนตัวโดยใช้พิธีกรรม",g:"ชาวต่างชาติที่เปิดใจต่อไสยศาสตร์"},
+zh:{t:"会见萨满",d:"参加泰国萨满的仪式。他们进入恍惚状态，与灵魂沟通，为你的问题提供建议或仪式。你要么加深怀疑，要么打开新世界的门。",p:"遭遇坏运气的外籍人士不知道在泰国背景下这可能与灵魂有关。",fmt:"与萨满会面，通过仪式解决个人问题",g:"对神秘学持开放态度的外籍人士"}},
+
+{id:36,f:false,cat:"exotic",sc:["Гастрономия","Экономия"],scale:"По спросу в сельских районах",cr:"Сельский житель, собиратель",dur:"2–4 ч (вечер)",tk:"3–7",di:"med",fr:"Сезон дождей",
+ru:{t:"Сбор улиток",d:"После дождя вы отправитесь с налобным фонарём на рисовые поля собирать улиток. Создатель научит отличать съедобные виды и правильно их готовить. Вечером попробуете пряный салат из собственной добычи.",p:"Фаранг брезгует улитками, не зная, что это бесплатный и вкусный деликатес.",fmt:"Вечерний сбор улиток на рисовых полях после дождя с приготовлением",g:"Фаранги, готовые к гастрономическим приключениям"},
+en:{t:"Snail Harvest",d:"After rain, head to rice fields with a headlamp to gather snails. Your host teaches you to identify edible species and cook them. That evening: a spicy snail salad from your own catch.",p:"Expats are squeamish about snails, not knowing they're a free delicacy.",fmt:"Evening snail gathering on rice fields after rain, then cooking",g:"Expats ready for food adventures"},
+th:{t:"เก็บหอย",d:"หลังฝนตก ออกไปนาข้าวพร้อมไฟหน้าผากเก็บหอย ไกด์สอนระบุสายพันธุ์กินได้และปรุงอาหาร ตอนเย็น: สลัดหอยเผ็ดจากที่จับเอง",p:"ชาวต่างชาติรังเกียจหอย ไม่รู้ว่ามันเป็นของอร่อยฟรี",fmt:"เก็บหอยตอนเย็นในนาข้าวหลังฝนตก แล้วปรุงอาหาร",g:"ชาวต่างชาติที่พร้อมสำหรับการผจญภัยทางอาหาร"},
+zh:{t:"采集蜗牛",d:"雨后戴着头灯去稻田采集蜗牛。主人教你识别可食用品种并烹饪。当晚：用自己采集的蜗牛做一份辛辣沙拉。",p:"外籍人士对蜗牛感到恶心，不知道那是免费的美味。",fmt:"雨后傍晚在稻田采集蜗牛，然后烹饪",g:"准备好进行美食冒险的外籍人士"}},
+
+{id:37,f:false,cat:"exotic",sc:["Навыки","Инструменты"],scale:"5 создателей / провинция",cr:"Фермер, лесник, рабочий",dur:"2–3 ч",tk:"5–8",di:"low",fr:"1 раз в месяц",
+ru:{t:"Мачете",d:"Вы научитесь выбирать, точить и безопасно использовать мачете. Создатель покажет, как рубить бамбук, открывать кокосы, расчищать тропу. Вы перестанете быть беспомощным в джунглях.",p:"Фаранг не умеет обращаться с мачете — универсальным инструментом выживания в тропиках.",fmt:"Мастер-класс по выбору, заточке и использованию мачете",g:"Фаранги, живущие в сельской местности или любящие походы"},
+en:{t:"Machete",d:"Learn to choose, sharpen and safely use a machete. Your host demonstrates how to cut bamboo, open coconuts, clear a path. You'll stop being helpless in the jungle.",p:"Expats can't handle a machete — the universal tropical survival tool.",fmt:"Workshop on choosing, sharpening and using a machete",g:"Expats in rural areas or trekking enthusiasts"},
+th:{t:"มีดพร้า",d:"เรียนรู้การเลือก ลับ และใช้มีดพร้าอย่างปลอดภัย ไกด์สาธิตการตัดไม้ไผ่ เปิดมะพร้าว ถางเส้นทาง",p:"ชาวต่างชาติไม่รู้จักมีดพร้า — เครื่องมือเอาตัวรอดในเขตร้อน",fmt:"เวิร์กชอปการเลือก ลับ และใช้มีดพร้า",g:"ชาวต่างชาติในพื้นที่ชนบทหรือนักเดินป่า"},
+zh:{t:"砍刀",d:"学会选择、磨砺和安全使用砍刀。主人演示如何砍竹子、开椰子、清理小径。你将不再在丛林中束手无策。",p:"外籍人士不会使用砍刀——热带丛林的万能生存工具。",fmt:"砍刀选择、磨砺和使用工作坊",g:"居住在农村或喜爱徒步的外籍人士"}},
+
+{id:38,f:false,cat:"adapt",sc:["Азарт","Культура"],scale:"5 создателей / провинция",cr:"Любой таец, играющий в лотерею",dur:"2–3 ч",tk:"10–15",di:"low",fr:"1 и 16 числа месяца",
+ru:{t:"Лотереи",d:"Вы погрузитесь в мир тайской надежды на чудо. Создатель проведёт по рынку лотерейных билетов, объяснит разные виды розыгрышей, научит искать «счастливые» номера в снах и номерах машин.",p:"Фаранг слышит крики разносчиков лотерей, но не понимает значения этого феномена.",fmt:"Экскурсия по точкам продажи лотерей, объяснение видов и суеверий",g:"Фаранги, любящие наблюдать за людьми"},
+en:{t:"Lotteries",d:"Dive into the world of Thai hope for a miracle. Your host walks you through the lottery market, explains different draws and teaches you to find 'lucky' numbers in dreams and car plates.",p:"Expats hear lottery vendors shouting but don't understand this cultural phenomenon.",fmt:"Tour of lottery stalls, explanation of types and superstitions",g:"Expats who enjoy people-watching"},
+th:{t:"ล็อตเตอรี่",d:"ดำดิ่งสู่โลกแห่งความหวังปาฏิหาริย์ไทย ไกด์พาทัวร์ตลาดตั๋วล็อตเตอรี่ อธิบายการจับรางวัลประเภทต่างๆ",p:"ชาวต่างชาติได้ยินพ่อค้าล็อตเตอรี่ร้องแต่ไม่เข้าใจปรากฏการณ์ทางวัฒนธรรมนี้",fmt:"ทัวร์แผงล็อตเตอรี่ อธิบายประเภทและความเชื่อ",g:"ชาวต่างชาติที่ชอบดูผู้คน"},
+zh:{t:"彩票",d:"深入泰国奇迹希望的世界。主人带你参观彩票市场，讲解不同的抽奖类型，教你在梦境和车牌中寻找'幸运'数字。",p:"外籍人士听到彩票小贩的叫喊声，却不理解这种文化现象。",fmt:"彩票摊位参观，讲解种类和迷信",g:"喜欢观察人群的外籍人士"}},
+
+{id:39,f:false,cat:"buddhism",sc:["Практика","Ретрит"],scale:"Многие лесные монастыри",cr:"Монах или послушник, организующий пребывание",dur:"1–3 дня",tk:"1–10",di:"high",fr:"Постоянно",
+ru:{t:"1, 2, 3 дня в монастыре",d:"Вы проведёте от 1 до 3 дней в буддийском монастыре, живя по строгому расписанию монахов. Будете вставать в 4 утра, медитировать, есть один раз в день и спать на полу.",p:"Фаранг ищет духовности в дорогих ретритах, боясь дискомфорта и не зная, как попасть в настоящий монастырь.",fmt:"Краткосрочное проживание в монастыре по расписанию с медитацией и обетами",g:"Фаранги, ищущие духовного опыта"},
+en:{t:"1, 2, 3 Days in a Monastery",d:"Spend 1–3 days in a Buddhist monastery living by the monks' strict schedule. Wake at 4 am, meditate, eat once a day, sleep on the floor.",p:"Expats seek spirituality at expensive retreats, not knowing how to enter a real monastery.",fmt:"Short-term monastery stay following the monastic schedule with precepts",g:"Expats seeking spiritual experience"},
+th:{t:"1, 2, 3 วันในวัด",d:"ใช้เวลา 1–3 วันในวัดพุทธ ใช้ชีวิตตามตารางเวลาเข้มงวดของพระสงฆ์ ตื่นตี 4 นั่งสมาธิ ทานข้าวมื้อเดียว นอนพื้น",p:"ชาวต่างชาติมองหาจิตวิญญาณในรีทรีตราคาแพง กลัวความไม่สะดวก",fmt:"พักในวัดระยะสั้นตามตารางสงฆ์ พร้อมสมาธิและศีล",g:"ชาวต่างชาติที่มองหาประสบการณ์จิตวิญญาณ"},
+zh:{t:"在寺院住1、2、3天",d:"在佛教寺院度过1-3天，按照僧侣严格的日程生活。凌晨4点起床、冥想、每天只吃一顿饭、睡地板。",p:"外籍人士在昂贵的静修中寻求精神性，不知道如何进入真正的寺院。",fmt:"按照寺院日程短期住寺，含冥想和戒律",g:"寻求精神体验的外籍人士"}},
+
+{id:40,f:false,cat:"exotic",sc:["Ритуал","Духи","Исаан"],scale:"В деревнях Исаана",cr:"Шаман или старейшина, проводящий ритуал",dur:"3–5 ч",tk:"3–10",di:"med",fr:"По календарю",
+ru:{t:"Ритуал пхи-бан",d:"Вы станете свидетелем или участником древнего ритуала почитания духов предков в Исаане. Создатель объяснит, что такое духи-пхи, как медиумы входят в транс и почему это важно для общины.",p:"Рациональный ум фаранга блокирует возможность увидеть в ритуале одержимости нечто большее.",fmt:"Наблюдение и участие в ритуале пхи-бан с подношениями и одержимостью духами",g:"Фаранги, интересующиеся антропологией и мистикой"},
+en:{t:"Phi Ban Ritual",d:"Witness or participate in an ancient Isan ancestor-spirit ritual. Your host explains what 'phi' spirits are, how mediums enter trance and why this matters for the community.",p:"The expat's rational mind blocks them from seeing possession rituals as anything meaningful.",fmt:"Observing and participating in phi ban ritual with offerings and spirit possession",g:"Expats interested in anthropology and mysticism"},
+th:{t:"พิธีผีบ้าน",d:"เป็นพยานหรือมีส่วนร่วมในพิธีบูชาวิญญาณบรรพบุรุษอีสานโบราณ ไกด์อธิบายว่าผีคืออะไร ร่างทรงเข้าสู่ภวังค์ได้อย่างไร",p:"จิตใจเหตุผลนิยมของชาวต่างชาติบล็อกพวกเขาจากการเห็นพิธีสิงร่างในฐานะสิ่งที่มีความหมาย",fmt:"ชมและมีส่วนร่วมในพิธีผีบ้านพร้อมเครื่องบวงสรวง",g:"ชาวต่างชาติที่สนใจมานุษยวิทยาและลึกลับ"},
+zh:{t:"披班仪式",d:"目睹或参与依善古老的祖先灵魂仪式。主人解释什么是'披'灵魂，灵媒如何进入恍惚状态，以及为何对社区如此重要。",p:"外籍人士的理性思维阻止他们在附身仪式中看到更深层的意义。",fmt:"观察和参与披班仪式，包括供品和灵魂附身",g:"对人类学和神秘主义感兴趣的外籍人士"}},
+
+{id:41,f:false,cat:"buddhism",sc:["Ритуал","Быт"],scale:"По спросу",cr:"Монахи, проводящие церемонию",dur:"2–3 ч",tk:"1–5",di:"low",fr:"По запросу домовладельца",
+ru:{t:"Церемония благословения нового дома",d:"Вы организуете (или поучаствуете) в церемонии благословения дома монахами. Создатель поможет с подношениями и объяснит ход ритуала. Вы будете сидеть на полу с ниткой в руках, пока монахи поют и окропляют дом святой водой.",p:"Фаранг, въезжая в новый дом, не знает, как очистить пространство по-тайски.",fmt:"Участие в буддийской церемонии освящения дома с подношениями монахам",g:"Фаранги, арендующие или покупающие жильё в Таиланде"},
+en:{t:"House Blessing Ceremony",d:"Organise or join a monk house-blessing ceremony. Your host helps with offerings and explains the ritual. You'll sit on the floor holding thread while monks chant and sprinkle holy water.",p:"Expats moving into a new home don't know how to cleanse the space the Thai way.",fmt:"Buddhist house blessing ceremony with monk offerings",g:"Expats renting or buying property in Thailand"},
+th:{t:"พิธีทำบุญบ้านใหม่",d:"จัดงานหรือร่วมพิธีพระอวยพรบ้าน ไกด์ช่วยด้านเครื่องไหว้และอธิบายพิธี คุณนั่งบนพื้นถือด้ายขณะพระสวดมนต์และประพรมน้ำมนต์",p:"ชาวต่างชาติที่ย้ายเข้าบ้านใหม่ไม่รู้วิธีชำระพื้นที่แบบไทย",fmt:"พิธีทำบุญบ้านแบบพุทธพร้อมถวายพระ",g:"ชาวต่างชาติที่เช่าหรือซื้ออสังหาริมทรัพย์ในไทย"},
+zh:{t:"新房祈福仪式",d:"组织或参加僧侣的新房祈福仪式。主人帮助准备供品并讲解仪式流程。你将坐在地板上手持线绳，僧侣诵经并洒圣水。",p:"外籍人士搬入新居时不知道如何以泰国方式净化空间。",fmt:"佛教新房祈福仪式，含向僧侣供养",g:"在泰国租房或买房的外籍人士"}},
+
+{id:42,f:false,cat:"exotic",sc:["Танец","Северный Таиланд"],scale:"2–3 создателя / северная провинция",cr:"Танцовщица или учитель танцев Ланна",dur:"2–3 ч",tk:"5–10",di:"med",fr:"1 раз в месяц",
+ru:{t:"Танец фонг леп",d:"Вы наденете накладные медные ногти и попробуете освоить базовые движения древнего танца королевства Ланна. Учительница расскажет о символике каждого жеста и истории этого искусства.",p:"Фаранг видит танец с длинными ногтями как красивую, но непонятную картинку.",fmt:"Мастер-класс по танцу фонг леп с объяснением символики движений",g:"Фаранги, интересующиеся искусством и танцем"},
+en:{t:"Fong Leb Dance",d:"Put on brass fingernail extensions and learn the basics of this ancient Lanna kingdom dance. The teacher explains the symbolism of each gesture and the history of this art.",p:"Expats see the fingernail dance as a pretty but meaningless picture.",fmt:"Fong leb fingernail dance workshop with symbolism explanation",g:"Expats interested in art and dance"},
+th:{t:"ฟ้อนเล็บ",d:"สวมเล็บทองเหลืองและเรียนพื้นฐานการเต้นรำอาณาจักรล้านนาโบราณนี้ ครูอธิบายสัญลักษณ์ของท่าทางแต่ละท่า",p:"ชาวต่างชาติมองการฟ้อนเล็บว่าสวยงามแต่ไม่มีความหมาย",fmt:"เวิร์กชอปฟ้อนเล็บพร้อมอธิบายสัญลักษณ์",g:"ชาวต่างชาติที่สนใจศิลปะและการเต้น"},
+zh:{t:"凤腊舞",d:"戴上黄铜假指甲，学习这种古老兰纳王国舞蹈的基本动作。老师讲解每个手势的象征意义和这门艺术的历史。",p:"外籍人士将指甲舞视为美丽却无意义的图画。",fmt:"凤腊指甲舞工作坊，含动作象征意义讲解",g:"对艺术和舞蹈感兴趣的外籍人士"}},
+
+{id:43,f:false,cat:"adapt",sc:["Ремесло","Экономия"],scale:"3–5 создателей / провинция",cr:"Деревенский ремесленник, мастерица",dur:"3–4 ч",tk:"5–10",di:"med",fr:"1 раз в месяц",
+ru:{t:"Плетение корзин из пальмовых листьев",d:"Вы сядете на пол рядом с тайской мастерицей и научитесь плести корзину или циновку из пальмовых листьев. Вы уйдёте с собственноручно сделанной вещью и поймёте, что созидание — это медитация.",p:"Фаранг покупает одноразовый пластик, не умея создавать долговечные вещи из природных материалов.",fmt:"Мастер-класс по плетению корзин, циновок и шляп из пальмовых листьев",g:"Фаранги, любящие рукоделие и экологию"},
+en:{t:"Palm Leaf Basket Weaving",d:"Sit on the floor beside a Thai craftswoman and learn to weave a basket or mat from palm leaves. Leave with something you made yourself and the understanding that making things is meditation.",p:"Expats buy disposable plastic, unable to create durable objects from natural materials.",fmt:"Workshop weaving baskets, mats and hats from palm leaves",g:"Craft-loving and eco-conscious expats"},
+th:{t:"สานตะกร้าจากใบปาล์ม",d:"นั่งบนพื้นข้างช่างฝีมือหญิงชาวไทย เรียนสานตะกร้าหรือเสื่อจากใบปาล์ม ออกไปพร้อมของที่ทำเอง",p:"ชาวต่างชาติซื้อพลาสติกใช้แล้วทิ้ง ไม่สามารถสร้างของใช้ทนทานจากวัสดุธรรมชาติ",fmt:"เวิร์กชอปสานตะกร้า เสื่อ หมวกจากใบปาล์ม",g:"ชาวต่างชาติที่รักงานฝีมือและสิ่งแวดล้อม"},
+zh:{t:"棕榈叶编篮",d:"坐在泰国女工匠身旁，学习用棕榈叶编织篮子或垫子。带着亲手制作的东西离开，并理解制作就是冥想。",p:"外籍人士购买一次性塑料制品，不会用天然材料制作耐用物品。",fmt:"棕榈叶编篮、垫子和帽子工作坊",g:"热爱手工艺和环保的外籍人士"}},
+
+{id:44,f:false,cat:"buddhism",sc:["Служение","Мерит","Физический труд"],scale:"На строящихся объектах",cr:"Строитель храма или монах-прораб",dur:"4–8 ч",tk:"1–10",di:"high",fr:"По мере стройки",
+ru:{t:"День на стройке храма",d:"Вы проведёте день на стройке буддийского храма, помогая таскать кирпичи, месить цемент или красить. Вы устанете физически, но очиститесь ментально, ощутив радость бескорыстного служения.",p:"Фаранг хочет лёгкой кармы, не связывая физический труд с духовным ростом.",fmt:"Участие в строительстве или ремонте храма: кирпичи, цемент, покраска",g:"Фаранги, ищущие активного мерита"},
+en:{t:"Temple Construction Day",d:"Spend a day at a Buddhist temple building site hauling bricks, mixing cement or painting. You'll be physically exhausted but mentally cleansed, feeling the joy of selfless service.",p:"Expats want easy karma without connecting physical labour to spiritual growth.",fmt:"Working at a temple construction or repair site: bricks, cement, painting",g:"Expats seeking active merit-making"},
+th:{t:"วันก่อสร้างวัด",d:"ใช้เวลาหนึ่งวันที่สถานที่ก่อสร้างวัดพุทธ แบกอิฐ ผสมปูน หรือทาสี คุณจะล้าทางกาย แต่สะอาดทางจิตใจ",p:"ชาวต่างชาติต้องการกรรมดีง่ายๆ โดยไม่เชื่อมโยงแรงงานกับการเติบโตทางจิตวิญญาณ",fmt:"ทำงานที่สถานที่ก่อสร้างหรือบูรณะวัด: อิฐ ปูน ทาสี",g:"ชาวต่างชาติที่มองหาการทำบุญเชิงรุก"},
+zh:{t:"寺庙建设日",d:"在佛教寺庙建设工地度过一天，搬砖、搅拌水泥或粉刷。你的身体会疲惫，但内心会得到净化，感受到无私服务的喜悦。",p:"外籍人士想要轻松的业力，却不将体力劳动与精神成长联系起来。",fmt:"在寺庙建设或修缮工地工作：砖块、水泥、粉刷",g:"寻求积极功德的外籍人士"}},
+
+{id:45,f:false,cat:"adapt",sc:["Сельское хозяйство","Экономия"],scale:"5 создателей / рисоводческая провинция",cr:"Фермер, выращивающий рис",dur:"4–6 ч",tk:"5–15",di:"high",fr:"Сезон дождей",
+ru:{t:"Посадка риса",d:"Вы зайдёте босиком в грязь рисового поля и под руководством фермера будете высаживать рассаду. Вы прочувствуете на своей спине, чего стоит каждая рисинка. Урок смирения и благодарности.",p:"Фаранг не осознаёт тяжесть труда, стоящего за дешёвым рисом.",fmt:"Участие в посадке риса: подготовка рассады, высадка в грязь",g:"Фаранги, желающие понять сельскую жизнь"},
+en:{t:"Rice Planting",d:"Wade barefoot into the mud of a rice paddy and plant seedlings under a farmer's guidance. You'll feel in your own back what every grain of rice costs. A lesson in humility and gratitude.",p:"Expats don't realise the labour behind cheap rice.",fmt:"Participating in rice planting: seedling preparation, planting in mud",g:"Expats who want to understand rural life"},
+th:{t:"ดำนา",d:"ลุยโคลนนาข้าวเท้าเปล่าและปลูกต้นกล้าภายใต้คำแนะนำของเกษตรกร คุณจะรู้สึกด้วยหลังของตัวเองว่าข้าวแต่ละเมล็ดมีราคาเท่าไหร่",p:"ชาวต่างชาติไม่ตระหนักถึงแรงงานที่อยู่เบื้องหลังข้าวราคาถูก",fmt:"มีส่วนร่วมในการดำนา: เตรียมต้นกล้า ปักดำในโคลน",g:"ชาวต่างชาติที่ต้องการเข้าใจชีวิตชนบท"},
+zh:{t:"插秧",d:"赤脚踏入稻田泥泞，在农民指导下插秧。你将用自己的背感受每粒米的代价。这是一堂关于谦逊和感恩的课。",p:"外籍人士没意识到廉价大米背后的劳动付出。",fmt:"参与插秧：准备秧苗、在泥中插秧",g:"希望了解农村生活的外籍人士"}},
+
+{id:46,f:false,cat:"buddhism",sc:["Традиция","Ритуал"],scale:"В каждом храме периодически",cr:"Организатор церемонии или монах",dur:"3–5 ч",tk:"1–10",di:"low",fr:"Перед Вассой (июль)",
+ru:{t:"Монашеское посвящение",d:"Вы станете гостем на церемонии, где обычного парня посвящают в монахи. Создатель объяснит смысл каждого этапа: бритьё головы, прощание с семьёй, облачение. Вы увидите слёзы матери.",p:"Фаранг поверхностно воспринимает монашество, не видя за оранжевой робой личной жертвы.",fmt:"Участие в качестве гостя в церемонии посвящения в монахи",g:"Фаранги, интересующиеся буддизмом глубоко"},
+en:{t:"Monastic Ordination",d:"Be a guest at the ceremony ordaining an ordinary young man as a monk. Your host explains each stage: head shaving, farewell to family, robing. You'll see a mother's tears.",p:"Expats see monasticism superficially, missing the personal sacrifice behind the orange robe.",fmt:"Attending a monk ordination ceremony as a guest",g:"Expats with deep interest in Buddhism"},
+th:{t:"พิธีอุปสมบท",d:"เป็นแขกในพิธีอุปสมบทที่บวชชายหนุ่มธรรมดาเป็นพระ ไกด์อธิบายแต่ละขั้นตอน: โกนหัว อำลาครอบครัว ครองจีวร",p:"ชาวต่างชาติมองพระสงฆ์อย่างผิวเผิน ไม่เห็นการเสียสละส่วนตัวเบื้องหลังจีวรสีส้ม",fmt:"เป็นแขกในพิธีอุปสมบท",g:"ชาวต่างชาติที่สนใจพุทธศาสนาอย่างลึกซึ้ง"},
+zh:{t:"受戒仪式",d:"作为嘉宾参加将普通年轻人剃度为僧侣的仪式。主人讲解每个阶段：剃头、告别家人、着袈裟。你将看到母亲的泪水。",p:"外籍人士对僧侣制度的认识流于表面，看不到橙色袈裟背后的个人牺牲。",fmt:"作为嘉宾参加受戒仪式",g:"对佛教有深度兴趣的外籍人士"}},
+
+{id:47,f:false,cat:"buddhism",sc:["Служение","Мерит","Кулинария"],scale:"При любом крупном храме",cr:"Повар или помощник на храмовой кухне",dur:"3–5 ч",tk:"1–5",di:"med",fr:"Ежедневно, в праздники",
+ru:{t:"Помощь в храмовой кухне",d:"Вы наденете фартук и встанете к котлам на храмовой кухне. Под руководством местных тётушек будете чистить овощи, мешать карри и мыть горы посуды. Когда монахи будут есть — вы ощутите чистую радость служения.",p:"Фаранг хочет мерита, не прилагая физических усилий.",fmt:"Работа на кухне при храме: чистка овощей, приготовление, мытьё посуды",g:"Фаранги, ищущие немедитативной практики"},
+en:{t:"Temple Kitchen Helper",d:"Put on an apron and stand at the pots in a temple kitchen. Guided by local aunties, peel vegetables, stir curry and wash mountains of dishes. When the monks eat your food, you'll feel pure joy.",p:"Expats want merit without physical effort.",fmt:"Working in a temple kitchen: peeling, cooking, washing up",g:"Expats seeking non-meditative practice"},
+th:{t:"ช่วยครัววัด",d:"สวมผ้ากันเปื้อนและยืนที่หม้อในครัววัด ภายใต้การแนะนำของป้าๆ ท้องถิ่น ปอกผัก คนแกง ล้างถ้วยชาม",p:"ชาวต่างชาติต้องการบุญโดยไม่ต้องออกแรง",fmt:"ทำงานในครัววัด: ปอก ปรุง ล้างจาน",g:"ชาวต่างชาติที่มองหาการปฏิบัติที่ไม่ใช่สมาธิ"},
+zh:{t:"寺庙厨房帮手",d:"穿上围裙站在寺庙厨房的锅旁。在当地阿姨指导下剥蔬菜、搅拌咖喱、洗刷成山的碗碟。当僧侣吃你做的饭时，你会感受到纯粹的喜悦。",p:"外籍人士想要功德却不愿付出体力。",fmt:"在寺庙厨房工作：剥菜、烹饪、洗碗",g:"寻求非冥想修行的外籍人士"}},
+
+{id:48,f:false,cat:"culture",sc:["Искусство","Язык"],scale:"1–3 создателя / провинция",cr:"Художник-каллиграф или монах",dur:"2–3 ч",tk:"5–10",di:"low",fr:"1 раз в месяц",
+ru:{t:"Тайская каллиграфия",d:"Вы возьмёте в руки кисть и тушь, чтобы под руководством мастера вывести несколько тайских букв. Вам расскажут о значении письменности как янтры. Вы создадите свой талисман с надписью.",p:"Фаранг видит в тайских буквах лишь закорючки, не понимая их сакральной красоты.",fmt:"Мастер-класс по тайской каллиграфии: буквы, кисть, создание талисмана",g:"Фаранги, интересующиеся искусством и языком"},
+en:{t:"Thai Calligraphy",d:"Pick up a brush and ink to trace Thai letters under a master's guidance. Learn about writing as a yantra. You'll create your own talisman with an inscription.",p:"Expats see Thai letters as squiggles, missing their sacred beauty.",fmt:"Thai calligraphy workshop: letters, brush, talisman creation",g:"Expats interested in art and language"},
+th:{t:"การเขียนอักษรไทย",d:"หยิบพู่กันและหมึกเพื่อวาดตัวอักษรไทยภายใต้การแนะนำของอาจารย์ เรียนรู้เกี่ยวกับการเขียนในฐานะยันต์",p:"ชาวต่างชาติมองตัวอักษรไทยว่าเป็นขีดเขียน ไม่เห็นความงามที่ศักดิ์สิทธิ์",fmt:"เวิร์กชอปอักษรไทย: ตัวอักษร พู่กัน สร้างเครื่องราง",g:"ชาวต่างชาติที่สนใจศิลปะและภาษา"},
+zh:{t:"泰国书法",d:"拿起毛笔和墨水，在大师指导下描绘泰国字母。了解文字作为扬特拉的意义。你将创作自己的铭文护身符。",p:"外籍人士将泰国字母视为涂鸦，错过了其神圣之美。",fmt:"泰国书法工作坊：字母、毛笔、护身符创作",g:"对艺术和语言感兴趣的外籍人士"}},
+
+{id:49,f:false,cat:"buddhism",sc:["Ремесло","Мерит","Цветы"],scale:"5–10 создателей / провинция",cr:"Цветочница или мирянка, делающая подношения",dur:"2–3 ч",tk:"5–10",di:"low",fr:"1 раз в месяц",
+ru:{t:"Плетение гирлянд для храма",d:"Вы научитесь нанизывать нежные цветы жасмина и бархатцев на нитку, создавая пхуанг малай — традиционное подношение. Создав свою гирлянду, вы поднесёте её Будде.",p:"Фаранг покупает готовые гирлянды, не ценя энергию ручной работы.",fmt:"Мастер-класс по плетению пхуанг малай из жасмина, бархатцев, роз для подношения",g:"Фаранги, желающие делать красивые подношения"},
+en:{t:"Temple Flower Garland Weaving",d:"Learn to thread delicate jasmine and marigold flowers onto string, creating phuan malai — a traditional offering. Weave your garland, then offer it to the Buddha.",p:"Expats buy ready-made garlands, not appreciating the energy of handwork.",fmt:"Workshop weaving phuan malai from jasmine, marigolds and roses",g:"Expats who want to make beautiful offerings"},
+th:{t:"ร้อยพวงมาลัยถวายวัด",d:"เรียนร้อยดอกมะลิและดาวเรืองบนด้าย สร้างพวงมาลัย — เครื่องบูชาดั้งเดิม ร้อยพวงมาลัยของคุณแล้วถวายพระพุทธรูป",p:"ชาวต่างชาติซื้อพวงมาลัยสำเร็จรูป ไม่ซาบซึ้งพลังงานของงานมือ",fmt:"เวิร์กชอปร้อยพวงมาลัยจากมะลิ ดาวเรือง กุหลาบ",g:"ชาวต่างชาติที่ต้องการทำเครื่องบูชาสวยงาม"},
+zh:{t:"寺庙花环编织",d:"学习将精致的茉莉花和金盏花串在线上，创作帕恩马莱——传统供品。编好你的花环，然后供奉给佛陀。",p:"外籍人士购买现成花环，不懂得珍视手工制作的心血。",fmt:"茉莉花、金盏花和玫瑰帕恩马莱编织工作坊",g:"希望做美丽供品的外籍人士"}}
+];
+
+
+// ────────────────────────────────
+// I18N
+// ────────────────────────────────
+const L={
+  ru:{
+    hdr_title:'Витрина впечатлений',
+    sb_cats:'Категории',sb_diff:'Сложность',sb_rec:'Ehipas рекомендует',
+    cat_all:'Все',cat_adapt:'Адаптация фарангов',cat_exotic:'Экзотика',
+    cat_buddhism:'Буддизм',cat_culture:'Культура',
+    diff_low:'Низкая',diff_med:'Средняя',diff_high:'Высокая',
+    rec_lbl:'Ehipas рекомендует',reset_btn:'↺ сбросить фильтры',
+    count_label:'впечатлений',no_results:'Ничего не найдено',
+    search_ph:'Поиск впечатлений…',
+    m_desc:'Описание',m_problem:'Проблема',m_format:'Формат',
+    m_creator:'Создатель',m_guest:'Гость',m_freq:'Периодичность',
+    m_duration:'Длительность',m_tickets:'Билетов',m_diff:'Сложность',
+    m_subcats:'Подкатегории',m_scale:'Масштаб',
+    nav_prev:'Назад',nav_next:'Далее',
+    th_sys:'Системная',th_light:'Светлая',th_dark:'Тёмная',
+    diff_labels:{low:'Низкая',med:'Средняя',high:'Высокая'},
+    cat_labels:{adapt:'Адаптация фарангов',exotic:'Экзотика',buddhism:'Буддизм',culture:'Погружение в культуру'},
+    teaser_num:'1000+',
+    teaser_title:'впечатлений ждут тебя',
+    teaser_sub:'Эти 49 — лишь примеры. Когда Ehipas запустится, каждое впечатление будет создано живым человеком — с характером, историей и подлинным опытом. Местные тоже покупают.',
+    rec_badge:'★ Ehipas рекомендует',
+  },
+  en:{
+    hdr_title:'Experience Showcase',
+    sb_cats:'Categories',sb_diff:'Difficulty',sb_rec:'Ehipas recommends',
+    cat_all:'All',cat_adapt:'Farang Adaptation',cat_exotic:'Exotic',
+    cat_buddhism:'Buddhism',cat_culture:'Culture',
+    diff_low:'Easy',diff_med:'Moderate',diff_high:'Hard',
+    rec_lbl:'Ehipas recommends',reset_btn:'↺ reset filters',
+    count_label:'experiences',no_results:'No results found',
+    search_ph:'Search experiences…',
+    m_desc:'Description',m_problem:'Problem',m_format:'Format',
+    m_creator:'Creator',m_guest:'Guest',m_freq:'Frequency',
+    m_duration:'Duration',m_tickets:'Tickets',m_diff:'Difficulty',
+    m_subcats:'Tags',m_scale:'Scale',
+    nav_prev:'Prev',nav_next:'Next',
+    th_sys:'System',th_light:'Light',th_dark:'Dark',
+    diff_labels:{low:'Easy',med:'Moderate',high:'Hard'},
+    cat_labels:{adapt:'Farang Adaptation',exotic:'Exotic',buddhism:'Buddhism',culture:'Cultural Immersion'},
+    teaser_num:'1000+',
+    teaser_title:'experiences await you',
+    teaser_sub:'These 49 are just examples. When Ehipas launches, every experience will be crafted by a real person — with character, story and genuine expertise. Locals buy too.',
+    rec_badge:'★ Ehipas recommends',
+  },
+  th:{
+    hdr_title:'ตลาดประสบการณ์',
+    sb_cats:'หมวดหมู่',sb_diff:'ความยาก',sb_rec:'Ehipas แนะนำ',
+    cat_all:'ทั้งหมด',cat_adapt:'การปรับตัวของฝรั่ง',cat_exotic:'ธรรมชาติแท้จริง',
+    cat_buddhism:'พุทธศาสนา',cat_culture:'วัฒนธรรม',
+    diff_low:'ง่าย',diff_med:'ปานกลาง',diff_high:'ยาก',
+    rec_lbl:'Ehipas แนะนำ',reset_btn:'↺ รีเซ็ตตัวกรอง',
+    count_label:'ประสบการณ์',no_results:'ไม่พบผลลัพธ์',
+    search_ph:'ค้นหาประสบการณ์…',
+    m_desc:'คำอธิบาย',m_problem:'ปัญหา',m_format:'รูปแบบ',
+    m_creator:'ผู้สร้าง',m_guest:'แขก',m_freq:'ความถี่',
+    m_duration:'ระยะเวลา',m_tickets:'ตั๋ว',m_diff:'ความยาก',
+    m_subcats:'แท็ก',m_scale:'ขนาด',
+    nav_prev:'ก่อนหน้า',nav_next:'ถัดไป',
+    th_sys:'ระบบ',th_light:'สว่าง',th_dark:'มืด',
+    diff_labels:{low:'ง่าย',med:'ปานกลาง',high:'ยาก'},
+    cat_labels:{adapt:'การปรับตัวของฝรั่ง',exotic:'ธรรมชาติแท้จริง',buddhism:'พุทธศาสนา',culture:'การดำดิ่งวัฒนธรรม'},
+    teaser_num:'1000+',
+    teaser_title:'ประสบการณ์รอคุณอยู่',
+    teaser_sub:'49 นี้เป็นเพียงตัวอย่าง เมื่อ Ehipas เปิดตัว ทุกประสบการณ์จะถูกสร้างโดยคนจริงๆ — มีบุคลิก ประวัติ และความเชี่ยวชาญแท้จริง คนท้องถิ่นก็ซื้อด้วย',
+    rec_badge:'★ Ehipas แนะนำ',
+  },
+  zh:{
+    hdr_title:'体验展示厅',
+    sb_cats:'分类',sb_diff:'难度',sb_rec:'Ehipas推荐',
+    cat_all:'全部',cat_adapt:'外籍人士适应',cat_exotic:'异域体验',
+    cat_buddhism:'佛教',cat_culture:'文化',
+    diff_low:'简单',diff_med:'中等',diff_high:'困难',
+    rec_lbl:'Ehipas推荐',reset_btn:'↺ 重置筛选',
+    count_label:'个体验',no_results:'未找到结果',
+    search_ph:'搜索体验…',
+    m_desc:'描述',m_problem:'问题',m_format:'形式',
+    m_creator:'创作者',m_guest:'参与者',m_freq:'频率',
+    m_duration:'时长',m_tickets:'票数',m_diff:'难度',
+    m_subcats:'标签',m_scale:'规模',
+    nav_prev:'上一个',nav_next:'下一个',
+    th_sys:'跟随系统',th_light:'浅色',th_dark:'深色',
+    diff_labels:{low:'简单',med:'中等',high:'困难'},
+    cat_labels:{adapt:'外籍人士适应',exotic:'异域体验',buddhism:'佛教',culture:'文化沉浸'},
+    teaser_num:'1000+',
+    teaser_title:'个体验等待着你',
+    teaser_sub:'这49个只是示例。Ehipas上线后，每个体验都将由真实的人创造——有个性、有故事、有真正的专业知识。本地人也购买。',
+    rec_badge:'★ Ehipas推荐',
+  }
+};
+
+let lang = localStorage.getItem('ehipas-lang') || 'ru';
+const tx = k => (L[lang] && L[lang][k] !== undefined) ? L[lang][k] : (L.ru[k] || k);
+
+// ────────────────────────────────
+// THEME
+// ────────────────────────────────
+let theme = 'dark';
+
+function resolveTheme(t) {
+  if (t === 'system') return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return t;
+}
+
+function applyTheme(t) {
+  theme = t;
+  localStorage.setItem('ehipas-theme', t);
+  document.body.setAttribute('data-theme', resolveTheme(t));
+  const icons = { dark: '☾', light: '☀', system: '⊙' };
+  document.getElementById('tic').textContent = icons[t] || '☾';
+  ['system','light','dark'].forEach(v => {
+    const ck = document.getElementById('tc-' + v);
+    if (ck) ck.textContent = (v === t) ? '✓' : '';
+    const di = document.getElementById('td-' + v);
+    if (di) di.classList.toggle('on', v === t);
+  });
+}
+
+function setTheme(t) { applyTheme(t); closeDD(); }
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (theme === 'system') applyTheme('system');
+});
+
+// ────────────────────────────────
+// LANG
+// ────────────────────────────────
+function applyLang() {
+  localStorage.setItem('ehipas-lang', lang);
+  document.getElementById('ll').textContent = lang.toUpperCase();
+  ['ru','en','th','zh'].forEach(l => {
+    const ck = document.getElementById('lc-' + l);
+    if (ck) ck.textContent = (l === lang) ? '✓' : '';
+    const di = document.getElementById('ld-' + l);
+    if (di) di.classList.toggle('on', l === lang);
+  });
+  // update data-i elements
+  document.querySelectorAll('[data-i]').forEach(el => {
+    const v = tx(el.getAttribute('data-i'));
+    if (v && v !== el.getAttribute('data-i')) el.textContent = v;
+  });
+  document.getElementById('htl').textContent = tx('hdr_title');
+  document.getElementById('qi').placeholder = tx('search_ph');
+  document.getElementById('clbl').textContent = tx('count_label');
+  document.getElementById('norlbl').textContent = tx('no_results');
+  renderGrid();
+}
+
+function setLang(l) { lang = l; applyLang(); closeDD(); }
+
+// ────────────────────────────────
+// DROPDOWNS
+// ────────────────────────────────
+function togDD(id) {
+  const el = document.getElementById(id + '-dd');
+  const ov = document.getElementById('ov');
+  const was = el.classList.contains('open');
+  document.querySelectorAll('.ddmenu').forEach(m => m.classList.remove('open'));
+  if (!was) { el.classList.add('open'); ov.classList.add('on'); }
+  else ov.classList.remove('on');
+}
+
+function closeDD() {
+  document.querySelectorAll('.ddmenu').forEach(m => m.classList.remove('open'));
+  document.getElementById('ov').classList.remove('on');
+}
+
+// ────────────────────────────────
+// FILTERS
+// ────────────────────────────────
+let activeCat = 'all';
+let activeDiffs = new Set();
+let recOnly = false;
+
+function setCat(cat) {
+  activeCat = cat;
+  document.querySelectorAll('.fc').forEach(c => c.classList.toggle('active', c.dataset.cat === cat));
+  applyFilters();
+}
+
+function togDiff(diff) {
+  activeDiffs.has(diff) ? activeDiffs.delete(diff) : activeDiffs.add(diff);
+  const chip = document.querySelector(`.dc[data-diff="${diff}"]`);
+  if (chip) chip.classList.toggle('active', activeDiffs.has(diff));
+  applyFilters();
+}
+
+function togRec() {
+  recOnly = !recOnly;
+  document.getElementById('ftog').classList.toggle('active', recOnly);
+  applyFilters();
+}
+
+function resetFilters() {
+  activeCat = 'all'; activeDiffs.clear(); recOnly = false;
+  document.getElementById('qi').value = '';
+  document.querySelectorAll('.fc').forEach(c => c.classList.toggle('active', c.dataset.cat === 'all'));
+  document.querySelectorAll('.dc').forEach(c => c.classList.remove('active'));
+  document.getElementById('ftog').classList.remove('active');
+  applyFilters();
+}
+
+function getFiltered() {
+  const q = document.getElementById('qi').value.toLowerCase().trim();
+  return D.filter(d => {
+    if (activeCat !== 'all' && d.cat !== activeCat) return false;
+    if (activeDiffs.size > 0 && !activeDiffs.has(d.di)) return false;
+    if (recOnly && !d.f) return false;
+    if (q) {
+      const loc = d[lang] || d.ru;
+      const hay = [loc.t, loc.d, loc.p, loc.fmt, d.cr, ...d.sc].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function applyFilters() {
+  const filtered = getFiltered();
+  document.getElementById('cnum').textContent = filtered.length;
+  const nores = document.getElementById('nores');
+  const grid  = document.getElementById('grid');
+  if (filtered.length === 0) { nores.classList.add('show'); grid.innerHTML = ''; }
+  else { nores.classList.remove('show'); renderCards(filtered); }
+}
+
+// ────────────────────────────────
+// HELPERS
+// ────────────────────────────────
+function diffCls(d) { return { low:'diff-low', med:'diff-med', high:'diff-high' }[d] || 'diff-low'; }
+function diffLbl(d) { return tx('diff_labels')[d] || d; }
+function catLbl(c)  { return tx('cat_labels')[c] || c; }
+function itemL(d)   { return d[lang] || d.ru; }
+
+// ────────────────────────────────
+// RENDER CARDS
+// ────────────────────────────────
+function renderCards(items) {
+  const grid = document.getElementById('grid');
+  const cards = items.map((d, i) => {
+    const loc = itemL(d);
+    return `<div class="card${d.f ? ' ehipas-card' : ''}" data-cat="${d.cat}" data-id="${d.id}"
+      style="animation-delay:${Math.min(i,24)*16}ms" onclick="openModal(${d.id})">
+      <div class="card-hdr">
+        <span class="card-num">#${String(d.id).padStart(2,'0')}</span>
+        <span class="card-tit">${loc.t}${d.f ? '<span class="card-rec">★</span>' : ''}</span>
+      </div>
+      <span class="card-cat">${catLbl(d.cat)}</span>
+      <p class="card-desc">${loc.d}</p>
+      <div class="card-meta">
+        <span class="tag diff ${diffCls(d.di)}">${diffLbl(d.di)}</span>
+        <span class="tag">⏱ ${d.dur}</span>
+        ${d.sc.slice(0,2).map(s => `<span class="tag">${s}</span>`).join('')}
+      </div>
+      <div class="card-bot">
+        <span class="card-cr">${d.cr}</span>
+        <span class="card-sc">${d.scale}</span>
+        <span class="card-tk">🎫 ${d.tk}</span>
+      </div>
+    </div>`;
+  });
+
+  // teaser card
+  cards.push(`<div class="teaser">
+    <div class="teaser-n">${tx('teaser_num')}</div>
+    <div class="teaser-t">${tx('teaser_title')}</div>
+    <div class="teaser-s">${tx('teaser_sub')}</div>
+    <div class="teaser-dots">
+      <div class="teaser-dot"></div>
+      <div class="teaser-dot"></div>
+      <div class="teaser-dot"></div>
+    </div>
+  </div>`);
+
+  grid.innerHTML = cards.join('');
+}
+
+function updateCounts() {
+  ['adapt','exotic','buddhism','culture'].forEach(c => {
+    const el = document.getElementById('cnt-' + c);
+    if (el) el.textContent = D.filter(d => d.cat === c).length;
+  });
+  document.getElementById('cnt-all').textContent = D.length;
+  document.getElementById('cnt-r').textContent   = D.filter(d => d.f).length;
+  const dmap = { low:'cnt-dl', med:'cnt-dm', high:'cnt-dh' };
+  Object.entries(dmap).forEach(([k,id]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = D.filter(d => d.di === k).length;
+  });
+}
+
+function renderGrid() {
+  renderCards(getFiltered());
+  updateCounts();
+}
+
+
+// ────────────────────────────────
+// MODAL
+// ────────────────────────────────
+let currentIds = [];
+let currentIdx = 0;
+
+function openModal(id) {
+  currentIds = getFiltered().map(d => d.id);
+  currentIdx = currentIds.indexOf(id);
+  renderModal(currentIdx);
+  document.getElementById('mo').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderModal(idx) {
+  if (idx < 0 || idx >= currentIds.length) return;
+  currentIdx = idx;
+  const d = D.find(x => x.id === currentIds[idx]);
+  if (!d) return;
+  const loc = itemL(d);
+
+  const catColors = {
+    adapt:   'var(--cat-adapt)',
+    exotic:  'var(--cat-exotic)',
+    buddhism:'var(--cat-buddhism)',
+    culture: 'var(--cat-culture)'
+  };
+  const catBg = {
+    adapt:   'rgba(247,183,74,.12)',
+    exotic:  'rgba(247,74,74,.12)',
+    buddhism:'rgba(155,126,247,.12)',
+    culture: 'rgba(74,247,201,.12)'
+  };
+
+  document.getElementById('m-num').textContent = '#' + String(d.id).padStart(2, '0');
+  document.getElementById('m-tit').textContent = loc.t;
+  document.getElementById('m-pos').textContent = `${idx + 1} / ${currentIds.length}`;
+  document.getElementById('m-prev').disabled = (idx === 0);
+  document.getElementById('m-next').disabled = (idx === currentIds.length - 1);
+
+  document.getElementById('m-body').innerHTML = `
+    <div class="m-cr">
+      <span class="m-cat" style="background:${catBg[d.cat]};color:${catColors[d.cat]}">${catLbl(d.cat)}</span>
+      ${d.f ? `<span class="m-rec-bdg">${tx('rec_badge')}</span>` : ''}
+    </div>
+
+    <div class="mrow">
+      <div class="mrow-l">${tx('m_desc')}</div>
+      <div class="mrow-v">${loc.d}</div>
+    </div>
+
+    <div class="mrow">
+      <div class="mrow-l">${tx('m_problem')}</div>
+      <div class="mrow-v prob">${loc.p}</div>
+    </div>
+
+    <div class="mrow">
+      <div class="mrow-l">${tx('m_format')}</div>
+      <div class="mrow-v">${loc.fmt}</div>
+    </div>
+
+    <div class="m-mg">
+      <div>
+        <div class="m-ml">${tx('m_duration')}</div>
+        <div class="m-mv">${d.dur}</div>
+      </div>
+      <div>
+        <div class="m-ml">${tx('m_tickets')}</div>
+        <div class="m-mv">${d.tk}</div>
+      </div>
+      <div>
+        <div class="m-ml">${tx('m_diff')}</div>
+        <div class="m-mv" style="color:var(--diff-${d.di})">${diffLbl(d.di)}</div>
+      </div>
+    </div>
+
+    <div class="mrow">
+      <div class="mrow-l">${tx('m_scale')}</div>
+      <div class="mrow-v">${d.scale}</div>
+    </div>
+
+    <div class="mrow">
+      <div class="mrow-l">${tx('m_creator')}</div>
+      <div class="mrow-v">${d.cr}</div>
+    </div>
+
+    <div class="mrow">
+      <div class="mrow-l">${tx('m_guest')}</div>
+      <div class="mrow-v">${loc.g}</div>
+    </div>
+
+    <div class="mrow">
+      <div class="mrow-l">${tx('m_freq')}</div>
+      <div class="mrow-v">${d.fr}</div>
+    </div>
+
+    <div class="mrow">
+      <div class="mrow-l">${tx('m_subcats')}</div>
+      <div class="srow">
+        ${d.sc.map(s => `<span class="tag">${s}</span>`).join('')}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('modal').scrollTop = 0;
+}
+
+function navMo(dir) {
+  const next = currentIdx + dir;
+  if (next >= 0 && next < currentIds.length) renderModal(next);
+}
+
+function closeMo() {
+  document.getElementById('mo').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function moOverlayClick(e) {
+  if (e.target === document.getElementById('mo')) closeMo();
+}
+
+// ────────────────────────────────
+// KEYBOARD NAVIGATION
+// ────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('mo').classList.contains('open')) return;
+  if (e.key === 'Escape')      closeMo();
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  navMo(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')    navMo(-1);
+});
+
+// ────────────────────────────────
+// TOUCH SWIPE ON MODAL
+// ────────────────────────────────
+let touchX0 = 0;
+const modalEl = document.getElementById('modal');
+
+modalEl.addEventListener('touchstart', e => {
+  touchX0 = e.touches[0].clientX;
+}, { passive: true });
+
+modalEl.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchX0;
+  if (Math.abs(dx) > 50) navMo(dx < 0 ? 1 : -1);
+}, { passive: true });
+
+// ────────────────────────────────
+// INIT
+// ────────────────────────────────
+(function init() {
+  const savedTheme = localStorage.getItem('ehipas-theme') || 'dark';
+  const savedLang  = localStorage.getItem('ehipas-lang')  || 'ru';
+  lang = savedLang;
+  applyTheme(savedTheme);
+  applyLang();   // calls renderGrid() internally
+  updateCounts();
+})();
+
+</script>
+</body>
+</html>
