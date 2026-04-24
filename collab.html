@@ -172,10 +172,10 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;backgroun
 <div class="sh fi"><span id="s_venue"></span></div>
 <div class="fi"><p class="prose" id="vp1"></p><p class="prose" id="vp2"></p></div>
 <div class="flow fi">
-  <div class="fs"><div class="fn">Step 1</div><div class="ft" id="fl1t"></div><div class="fd" id="fl1d"></div><div class="fa">&#8250;</div></div>
-  <div class="fs"><div class="fn">Step 2</div><div class="ft" id="fl2t"></div><div class="fd" id="fl2d"></div><div class="fa">&#8250;</div></div>
-  <div class="fs"><div class="fn">Step 3</div><div class="ft" id="fl3t"></div><div class="fd" id="fl3d"></div><div class="fa">&#8250;</div></div>
-  <div class="fs"><div class="fn">Step 4</div><div class="ft" id="fl4t"></div><div class="fd" id="fl4d"></div></div>
+  <div class="fs"><div class="fn" id="step1"></div><div class="ft" id="fl1t"></div><div class="fd" id="fl1d"></div><div class="fa">&#8250;</div></div>
+  <div class="fs"><div class="fn" id="step2"></div><div class="ft" id="fl2t"></div><div class="fd" id="fl2d"></div><div class="fa">&#8250;</div></div>
+  <div class="fs"><div class="fn" id="step3"></div><div class="ft" id="fl3t"></div><div class="fd" id="fl3d"></div><div class="fa">&#8250;</div></div>
+  <div class="fs"><div class="fn" id="step4"></div><div class="ft" id="fl4t"></div><div class="fd" id="fl4d"></div></div>
 </div>
 <div class="hbox fi" style="border-left-color:var(--teal)"><div class="hbox-l" style="color:var(--teal)" id="hr_l"></div><div class="hbox-t" id="hr_t"></div></div>
 <div class="sh fi"><span id="s_c1"></span></div>
@@ -230,6 +230,7 @@ input[type=range]::-moz-range-thumb{width:15px;height:15px;border:none;backgroun
 </div>
 <script>const T={
 en:{
+  step1:"Step 1",step2:"Step 2",step3:"Step 3",step4:"Step 4",
   hdrSub:"Collaborative Experience · Crafts Fair Case Study",
   ht:"Case Study · Collaborative Experience",
   hh:"Annual Crafts &amp;<br><b>Folklore Fair</b>",
@@ -317,6 +318,7 @@ en:{
   ]
 },
 th:{
+  step1:"ขั้นตอนที่ 1",step2:"ขั้นตอนที่ 2",step3:"ขั้นตอนที่ 3",step4:"ขั้นตอนที่ 4",
   hdrSub:"ประสบการณ์ร่วมสร้าง · กรณีศึกษา",
   ht:"กรณีศึกษา · ประสบการณ์ร่วมสร้าง",
   hh:"งานหัตถกรรมและ<br><b>วัฒนธรรมพื้นบ้าน</b>",
@@ -397,6 +399,7 @@ th:{
     ]}
   ]
 },zh:{
+  step1:"第一步",step2:"第二步",step3:"第三步",step4:"第四步",
   hdrSub:"协作体验 · 案例研究",
   ht:"案例研究 · 协作体验",
   hh:"年度手工艺与<br><b>民俗文化集市</b>",
@@ -478,6 +481,7 @@ th:{
   ]
 },
 ru:{
+  step1:"Шаг 1",step2:"Шаг 2",step3:"Шаг 3",step4:"Шаг 4",
   hdrSub:"Коллаборационное впечатление · Кейс",
   ht:"Кейс · Коллаборационное впечатление",
   hh:"Ежегодная ярмарка<br><b>ремёсел и фольклора</b>",
@@ -712,7 +716,8 @@ function applyLang(){
     's_c2','c2_intro','c2_title','p_food','p_craft','p_other','p_days',
     's_prov','pv_l','s_eff','eff_intro','s_why','why_p',
     'w1t','w1d','w2t','w2d','w3t','w3d','w4t','w4d','w5t','w5d','w6t','w6d',
-    'ths_l','ths_t'];
+    'ths_l','ths_t',
+    'step1','step2','step3','step4'];
   ids.forEach(k=>{
     const el=document.getElementById(k);
     if(el && tt[k]!==undefined) el.innerHTML=tt[k];
