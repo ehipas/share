@@ -206,9 +206,6 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
         <span id="ll">RU</span><span class="ddarrow">▾</span>
       </button>
       <div class="ddmenu" id="lang-dd">
-        <div class="ddi on" id="ld-ru" onclick="setLang('ru')">
-          <span class="ddi-ic">🇷🇺</span><span class="ddi-lb">Русский</span><span class="ddi-ck" id="lc-ru">✓</span>
-        </div>
         <div class="ddi" id="ld-en" onclick="setLang('en')">
           <span class="ddi-ic">🇬🇧</span><span class="ddi-lb">English</span><span class="ddi-ck" id="lc-en"></span>
         </div>
@@ -217,6 +214,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
         </div>
         <div class="ddi" id="ld-zh" onclick="setLang('zh')">
           <span class="ddi-ic">🇨🇳</span><span class="ddi-lb">中文</span><span class="ddi-ck" id="lc-zh"></span>
+        </div>
+        <div class="ddi" id="ld-ru" onclick="setLang('ru')">
+          <span class="ddi-ic">🇷🇺</span><span class="ddi-lb">Русский</span><span class="ddi-ck" id="lc-ru"></span>
         </div>
       </div>
     </div>
@@ -227,14 +227,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
         <span id="tic">☾</span><span class="ddarrow">▾</span>
       </button>
       <div class="ddmenu" id="theme-dd">
-        <div class="ddi" id="td-system" onclick="setTheme('system')">
-          <span class="ddi-ic">⊙</span><span class="ddi-lb" data-i="th_sys">Системная</span><span class="ddi-ck" id="tc-system"></span>
+        <div class="ddi on" id="td-system" onclick="setTheme('system')">
+          <span class="ddi-ic">⊙</span><span class="ddi-lb" data-i="th_sys">Системная</span><span class="ddi-ck" id="tc-system">✓</span>
         </div>
         <div class="ddi" id="td-light" onclick="setTheme('light')">
           <span class="ddi-ic">☀</span><span class="ddi-lb" data-i="th_light">Светлая</span><span class="ddi-ck" id="tc-light"></span>
         </div>
-        <div class="ddi on" id="td-dark" onclick="setTheme('dark')">
-          <span class="ddi-ic">☾</span><span class="ddi-lb" data-i="th_dark">Тёмная</span><span class="ddi-ck" id="tc-dark">✓</span>
+        <div class="ddi" id="td-dark" onclick="setTheme('dark')">
+          <span class="ddi-ic">☾</span><span class="ddi-lb" data-i="th_dark">Тёмная</span><span class="ddi-ck" id="tc-dark"></span>
         </div>
       </div>
     </div>
@@ -663,7 +663,7 @@ const L={
   th:{hdr_title:'ตลาดประสบการณ์',sb_cats:'หมวดหมู่',sb_diff:'ความยาก',sb_rec:'Ehipas แนะนำ',cat_all:'ทั้งหมด',cat_adapt:'การปรับตัวของฝรั่ง',cat_exotic:'ธรรมชาติแท้จริง',cat_buddhism:'พุทธศาสนา',cat_culture:'วัฒนธรรม',diff_low:'ง่าย',diff_med:'ปานกลาง',diff_high:'ยาก',rec_lbl:'Ehipas แนะนำ',reset_btn:'↺ รีเซ็ตตัวกรอง',count_label:'ประสบการณ์',no_results:'ไม่พบผลลัพธ์',search_ph:'ค้นหาประสบการณ์…',m_desc:'คำอธิบาย',m_problem:'ปัญหา',m_format:'รูปแบบ',m_creator:'ผู้สร้าง',m_guest:'แขก',m_freq:'ความถี่',m_duration:'ระยะเวลา',m_tickets:'ตั๋ว',m_diff:'ความยาก',m_subcats:'แท็ก',m_scale:'ขนาด',nav_prev:'ก่อนหน้า',nav_next:'ถัดไป',th_sys:'ระบบ',th_light:'สว่าง',th_dark:'มืด',diff_labels:{low:'ง่าย',med:'ปานกลาง',high:'ยาก'},cat_labels:{adapt:'การปรับตัวของฝรั่ง',exotic:'ธรรมชาติแท้จริง',buddhism:'พุทธศาสนา',culture:'การดำดิ่งวัฒนธรรม'},teaser_num:'1000+',teaser_title:'ประสบการณ์รอคุณอยู่',teaser_sub:'49 นี้เป็นเพียงตัวอย่าง เมื่อ Ehipas เปิดตัว ทุกประสบการณ์จะถูกสร้างโดยคนจริงๆ คนท้องถิ่นก็ซื้อด้วย',rec_badge:'★ Ehipas แนะนำ'},
   zh:{hdr_title:'体验展示厅',sb_cats:'分类',sb_diff:'难度',sb_rec:'Ehipas推荐',cat_all:'全部',cat_adapt:'外籍人士适应',cat_exotic:'异域体验',cat_buddhism:'佛教',cat_culture:'文化',diff_low:'简单',diff_med:'中等',diff_high:'困难',rec_lbl:'Ehipas推荐',reset_btn:'↺ 重置筛选',count_label:'个体验',no_results:'未找到结果',search_ph:'搜索体验…',m_desc:'描述',m_problem:'问题',m_format:'形式',m_creator:'创作者',m_guest:'参与者',m_freq:'频率',m_duration:'时长',m_tickets:'票数',m_diff:'难度',m_subcats:'标签',m_scale:'规模',nav_prev:'上一个',nav_next:'下一个',th_sys:'跟随系统',th_light:'浅色',th_dark:'深色',diff_labels:{low:'简单',med:'中等',high:'困难'},cat_labels:{adapt:'外籍人士适应',exotic:'异域体验',buddhism:'佛教',culture:'文化沉浸'},teaser_num:'1000+',teaser_title:'个体验等待着你',teaser_sub:'这49个只是示例。Ehipas上线后，每个体验都将由真实的人创造。本地人也购买。',rec_badge:'★ Ehipas推荐'}
 };
-let lang=localStorage.getItem('ehipas-lang')||'ru';
+let lang=localStorage.getItem('ehipas-lang')||'en';
 const tx=k=>(L[lang]&&L[lang][k]!==undefined)?L[lang][k]:(L.ru[k]||k);
 
 const TVAL={
@@ -900,8 +900,8 @@ modalEl.addEventListener('touchend', e => {
 // INIT
 // ────────────────────────────────
 (function init() {
-  const savedTheme = localStorage.getItem('ehipas-theme') || 'dark';
-  const savedLang  = localStorage.getItem('ehipas-lang')  || 'ru';
+  const savedTheme = localStorage.getItem('ehipas-theme') || 'system';
+  const savedLang  = localStorage.getItem('ehipas-lang')  || 'en';
   lang = savedLang;
   applyTheme(savedTheme);
   applyLang();
