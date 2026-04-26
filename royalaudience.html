@@ -1,0 +1,2568 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ehipas — Royal Audience for Thailand · Illustrative Case</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+Thai:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════════════
+   RESET
+═════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;overflow-x:hidden}
+img,svg{display:block;max-width:100%}
+button{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+
+/* ════════════════════════════════════════════════
+   TOKENS (canonical Ehipas tokens, source: auction.html)
+═════════════════════════════════════════════════ */
+:root{
+  --mono:'DM Mono',monospace;
+  --sans:'DM Sans','Noto Sans Thai','Noto Sans SC',sans-serif;
+  --r:10px; --rs:6px;
+  /* phase indicator dots */
+  --c-1:#b8f73a; --c-2:#4af7c9; --c-3:#f7b74a; --c-4:#9b7ef7; --c-5:#f74a4a; --c-6:#4ab8f7;
+}
+
+[data-theme="dark"]{
+  --bg:#0d0d0b; --bg2:#141412; --bg3:#1c1c19;
+  --bd:#2a2a26; --bd2:#3a3a36;
+  --tx:#e8e6dc; --tx2:#88887e; --tx3:#555550;
+  --crd:#141412; --inp:#1c1c19;
+  --acc:#b8f73a;
+  --acc-btn:#b8f73a;
+  --acc-btn-tx:#0d0d0b;
+  --acc-dim:rgba(184,247,58,.09);
+  --acc-brd:rgba(184,247,58,.35);
+  --shd:0 2px 16px rgba(0,0,0,.55);
+}
+
+[data-theme="light"]{
+  --bg:#f4f3ee; --bg2:#ffffff; --bg3:#eceae2;
+  --bd:#dbd9d0; --bd2:#c8c5bc;
+  --tx:#1a1a17; --tx2:#5c5c58; --tx3:#99998f;
+  --crd:#ffffff; --inp:#eceae2;
+  --acc:#2e7d0e;
+  --acc-btn:#5cb82a;
+  --acc-btn-tx:#ffffff;
+  --acc-dim:rgba(46,125,14,.07);
+  --acc-brd:rgba(46,125,14,.30);
+  --shd:0 2px 16px rgba(0,0,0,.09);
+}
+
+/* ════════════════════════════════════════════════
+   BASE
+═════════════════════════════════════════════════ */
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--tx);
+  min-height:100vh;
+  font-size:14px;
+  line-height:1.55;
+  transition:background .2s,color .2s;
+  font-weight:400;
+}
+
+/* ════════════════════════════════════════════════
+   HEADER
+═════════════════════════════════════════════════ */
+.hdr{
+  border-bottom:1px solid var(--bd);
+  padding:11px 14px;
+  display:flex; align-items:center; gap:10px;
+  position:sticky; top:0; z-index:100;
+  background:var(--bg);
+}
+.logo{
+  font-family:var(--mono); font-size:13px; font-weight:500;
+  letter-spacing:.1em; color:var(--acc); text-transform:uppercase;
+  flex-shrink:0;
+}
+.hdr-title{
+  font-size:11px; color:var(--tx3);
+  flex:1; min-width:0; overflow:hidden;
+  text-overflow:ellipsis; white-space:nowrap;
+  font-family:var(--mono); letter-spacing:.06em; text-transform:uppercase;
+}
+.hdr-ctrls{display:flex;gap:5px;align-items:center;flex-shrink:0}
+
+/* ════════════════════════════════════════════════
+   DROPDOWN SYSTEM
+═════════════════════════════════════════════════ */
+.ddwrap{position:relative;display:inline-block}
+.ddtrig{
+  background:var(--bg3); border:1px solid var(--bd);
+  border-radius:var(--rs); color:var(--tx2);
+  font-family:var(--mono); font-size:11px;
+  padding:5px 8px; cursor:pointer;
+  display:flex; align-items:center; gap:4px;
+  white-space:nowrap; transition:border-color .15s,color .15s;
+}
+.ddtrig:hover{border-color:var(--bd2);color:var(--tx)}
+.ddarrow{font-size:9px;opacity:.5}
+.ddmenu{
+  display:none; position:absolute; right:0; top:calc(100% + 4px);
+  background:var(--bg2); border:1px solid var(--bd2);
+  border-radius:var(--rs); min-width:140px;
+  box-shadow:var(--shd); z-index:300; overflow:hidden;
+}
+.ddmenu.open{display:block}
+.ddi{
+  display:flex; align-items:center; gap:8px;
+  padding:9px 12px; font-size:12px; color:var(--tx2);
+  cursor:pointer; transition:background .1s;
+  border-bottom:1px solid var(--bd);
+  user-select:none;
+}
+.ddi:last-child{border-bottom:none}
+.ddi:hover{background:var(--bg3);color:var(--tx)}
+.ddi.on{color:var(--acc)}
+.ddi .ck{font-size:10px;margin-left:auto;color:var(--acc)}
+.overlay{display:none;position:fixed;inset:0;z-index:99}
+.overlay.on{display:block}
+
+/* ════════════════════════════════════════════════
+   LAYOUT — single-column article container
+═════════════════════════════════════════════════ */
+.page{
+  max-width:1080px;
+  margin:0 auto;
+  padding:32px 20px 64px;
+}
+@media(max-width:767px){
+  .page{padding:24px 14px 48px}
+}
+
+.section{margin-bottom:56px}
+@media(max-width:767px){.section{margin-bottom:40px}}
+
+.slabel{
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--tx3); margin-bottom:14px;
+  display:flex; align-items:center; gap:8px;
+}
+.slabel::before{
+  content:''; width:8px; height:8px; border-radius:50%;
+  background:var(--acc); flex-shrink:0;
+}
+.slabel.muted::before{background:var(--bd2)}
+
+.stitle{
+  font-size:30px; font-weight:300;
+  letter-spacing:-.02em; line-height:1.2;
+  margin-bottom:14px; color:var(--tx);
+}
+@media(max-width:767px){.stitle{font-size:24px}}
+.slead{
+  font-size:15px; color:var(--tx2); font-weight:300;
+  max-width:760px; line-height:1.6; margin-bottom:24px;
+}
+
+/* ════════════════════════════════════════════════
+   HERO
+═════════════════════════════════════════════════ */
+.hero{
+  padding:48px 0 32px;
+  border-bottom:1px solid var(--bd);
+  margin-bottom:48px;
+}
+@media(max-width:767px){.hero{padding:24px 0 24px;margin-bottom:32px}}
+
+.hero-eyebrow{
+  font-family:var(--mono); font-size:10px;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--acc); margin-bottom:18px;
+  display:flex; align-items:center; gap:10px;
+}
+.hero-eyebrow::after{
+  content:''; flex:1; height:1px; background:var(--bd);
+}
+.hero-title{
+  font-size:46px; font-weight:300;
+  letter-spacing:-.03em; line-height:1.05;
+  margin-bottom:18px; color:var(--tx);
+}
+@media(max-width:767px){.hero-title{font-size:32px}}
+.hero-sub{
+  font-size:17px; color:var(--tx2); font-weight:300;
+  max-width:720px; line-height:1.55;
+}
+
+/* feature chips strip */
+.chipstrip{
+  display:flex; flex-wrap:wrap; gap:6px;
+  margin-top:24px; padding-top:20px;
+  border-top:1px dashed var(--bd);
+}
+.chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:5px 10px; border:1px solid var(--bd);
+  border-radius:20px; background:var(--bg2);
+  font-family:var(--mono); font-size:10px;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:var(--tx2);
+}
+.chip-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);flex-shrink:0}
+
+/* ════════════════════════════════════════════════
+   TICKET CATEGORIES
+═════════════════════════════════════════════════ */
+.tickets{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+@media(max-width:899px){.tickets{grid-template-columns:1fr}}
+
+.tcard{
+  border:1px solid var(--bd);
+  border-radius:var(--r);
+  padding:22px 20px;
+  background:var(--crd);
+  position:relative;
+  transition:border-color .2s;
+}
+.tcard:hover{border-color:var(--bd2)}
+.tcard-tier{
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--tx3); margin-bottom:10px;
+}
+.tcard-name{
+  font-size:20px; font-weight:400;
+  margin-bottom:14px; letter-spacing:-.01em;
+}
+.tcard-meta{
+  display:flex; flex-wrap:wrap; gap:14px;
+  padding:12px 0; margin-bottom:14px;
+  border-top:1px solid var(--bd);
+  border-bottom:1px solid var(--bd);
+}
+.tcard-mi{flex:1; min-width:90px}
+.tcard-mlbl{
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.1em; text-transform:uppercase;
+  color:var(--tx3); margin-bottom:4px;
+}
+.tcard-mval{
+  font-family:var(--mono); font-size:14px;
+  color:var(--acc); font-weight:500;
+}
+.tcard-right{
+  font-size:13px; color:var(--tx2);
+  line-height:1.5;
+}
+
+/* ════════════════════════════════════════════════
+   BENEFITS — three columns "what participant gets"
+═════════════════════════════════════════════════ */
+.benefits{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+@media(max-width:899px){.benefits{grid-template-columns:1fr}}
+
+.bcol{
+  border:1px solid var(--bd);
+  border-radius:var(--r);
+  padding:22px 20px;
+  background:var(--crd);
+}
+.bcol-tier{
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--acc); margin-bottom:10px;
+}
+.bcol-name{
+  font-size:18px; font-weight:400;
+  margin-bottom:18px; letter-spacing:-.01em;
+}
+.bsubhead{
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:var(--tx3); margin:18px 0 10px;
+  padding-bottom:6px; border-bottom:1px solid var(--bd);
+}
+.bsubhead:first-of-type{margin-top:0}
+.blist{list-style:none; padding:0; margin:0}
+.blist li{
+  position:relative; padding:6px 0 6px 16px;
+  font-size:13px; color:var(--tx); line-height:1.5;
+  border-bottom:1px dashed var(--bd);
+}
+.blist li:last-child{border-bottom:none}
+.blist li::before{
+  content:''; position:absolute; left:0; top:13px;
+  width:4px; height:4px; border-radius:50%;
+  background:var(--acc);
+}
+
+/* ════════════════════════════════════════════════
+   DEFINITION BLOCK — "people of god-level"
+═════════════════════════════════════════════════ */
+.defbox{
+  border:1px solid var(--bd);
+  border-left:3px solid var(--acc);
+  border-radius:var(--r);
+  padding:26px 26px;
+  background:var(--acc-dim);
+  margin-bottom:20px;
+}
+@media(max-width:767px){.defbox{padding:20px 18px}}
+.defbox-h{
+  font-family:var(--mono); font-size:10px;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--acc); margin-bottom:12px;
+}
+.defbox-body{
+  font-size:15px; line-height:1.6; color:var(--tx);
+}
+.defbox-body strong{font-weight:500; color:var(--tx)}
+
+.sources{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px; margin-top:18px;
+}
+@media(max-width:899px){.sources{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:479px){.sources{grid-template-columns:1fr}}
+
+.src{
+  border:1px solid var(--bd);
+  border-radius:var(--rs);
+  padding:14px 14px;
+  background:var(--crd);
+}
+.src-num{
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.14em; color:var(--tx3);
+  margin-bottom:6px;
+}
+.src-h{
+  font-size:13px; font-weight:500;
+  margin-bottom:6px; color:var(--tx);
+}
+.src-d{font-size:12px; color:var(--tx2); line-height:1.45}
+
+/* two-column "who creates / who buys" */
+.whocols{
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:14px; margin-top:18px;
+}
+@media(max-width:767px){.whocols{grid-template-columns:1fr}}
+.whocol{
+  border:1px solid var(--bd);
+  border-radius:var(--r);
+  padding:20px;
+  background:var(--crd);
+}
+.whocol-h{
+  font-family:var(--mono); font-size:10px;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--acc); margin-bottom:12px;
+  padding-bottom:8px; border-bottom:1px solid var(--bd);
+}
+.whocol ul{list-style:none; padding:0; margin:0}
+.whocol li{
+  font-size:13px; color:var(--tx); line-height:1.5;
+  padding:6px 0 6px 14px; position:relative;
+}
+.whocol li::before{
+  content:'·'; position:absolute; left:0; color:var(--acc);
+  font-weight:700; font-size:14px;
+}
+
+/* ════════════════════════════════════════════════
+   TIMELINE (8 phases)
+═════════════════════════════════════════════════ */
+.tl{position:relative; padding-left:28px}
+.tl::before{
+  content:''; position:absolute; left:7px; top:6px; bottom:6px;
+  width:1px; background:var(--bd);
+}
+.tlph{position:relative; padding-bottom:24px}
+.tlph:last-child{padding-bottom:0}
+.tlph::before{
+  content:''; position:absolute; left:-26px; top:5px;
+  width:14px; height:14px; border-radius:50%;
+  background:var(--bg); border:2px solid var(--acc);
+}
+.tlph-time{
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:var(--tx3); margin-bottom:4px;
+}
+.tlph-h{
+  font-size:16px; font-weight:500;
+  margin-bottom:8px; letter-spacing:-.005em;
+}
+.tlph-body{
+  font-size:13px; color:var(--tx2);
+  line-height:1.6;
+}
+.tlph-body ul{list-style:none; padding:0; margin:6px 0 0}
+.tlph-body li{
+  padding:3px 0 3px 14px; position:relative;
+}
+.tlph-body li::before{
+  content:'—'; position:absolute; left:0; color:var(--tx3);
+}
+
+/* ════════════════════════════════════════════════
+   EFFECTS MATRIX
+═════════════════════════════════════════════════ */
+.efftabs{
+  display:flex; flex-wrap:wrap; gap:4px;
+  margin-bottom:14px;
+  padding-bottom:12px; border-bottom:1px solid var(--bd);
+}
+.efftab{
+  padding:7px 12px; border:1px solid var(--bd);
+  border-radius:var(--rs); background:var(--bg2);
+  font-family:var(--mono); font-size:10px;
+  letter-spacing:.08em; text-transform:uppercase;
+  color:var(--tx2); cursor:pointer;
+  transition:all .15s;
+}
+.efftab:hover{border-color:var(--bd2); color:var(--tx)}
+.efftab.on{
+  border-color:var(--acc-brd); background:var(--acc-dim);
+  color:var(--acc);
+}
+
+.effgrid{
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+@media(max-width:767px){.effgrid{grid-template-columns:1fr}}
+.effc{
+  border:1px solid var(--bd);
+  border-radius:var(--r);
+  padding:18px 18px;
+  background:var(--crd);
+}
+.effc-h{
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--tx3); margin-bottom:10px;
+}
+.effc-b{font-size:13px; line-height:1.55; color:var(--tx)}
+
+/* ════════════════════════════════════════════════
+   PROBLEMS GRID
+═════════════════════════════════════════════════ */
+.probs{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+}
+@media(max-width:767px){.probs{grid-template-columns:1fr}}
+
+.prob{
+  border:1px solid var(--bd);
+  border-radius:var(--r);
+  padding:18px 18px;
+  background:var(--crd);
+  display:flex; flex-direction:column; gap:10px;
+}
+.prob-num{
+  font-family:var(--mono); font-size:11px;
+  color:var(--acc); font-weight:500;
+  letter-spacing:.08em;
+}
+.prob-h{
+  font-size:15px; font-weight:500; line-height:1.3;
+}
+.prob-d{font-size:12px; color:var(--tx2); line-height:1.5}
+.prob-cost{
+  font-family:var(--mono); font-size:10px;
+  color:var(--tx3); padding-top:8px;
+  border-top:1px solid var(--bd);
+  letter-spacing:.04em;
+}
+.prob-cost b{color:var(--acc); font-weight:500}
+
+/* ════════════════════════════════════════════════
+   GENRE GRID — repeatable cases
+═════════════════════════════════════════════════ */
+.genre{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+@media(max-width:899px){.genre{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:599px){.genre{grid-template-columns:1fr}}
+
+.gcase{
+  border:1px solid var(--bd);
+  border-radius:var(--r);
+  padding:18px 16px;
+  background:var(--crd);
+  position:relative;
+}
+.gcase-src{
+  position:absolute; top:14px; right:14px;
+  font-family:var(--mono); font-size:8px;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:var(--tx3);
+  padding:2px 6px; border:1px solid var(--bd);
+  border-radius:3px;
+}
+.gcase-where{
+  font-family:var(--mono); font-size:10px;
+  color:var(--acc); letter-spacing:.06em;
+  text-transform:uppercase; margin-bottom:6px;
+}
+.gcase-who{
+  font-size:14px; font-weight:500;
+  margin-bottom:8px; line-height:1.3;
+  padding-right:60px;
+}
+.gcase-what{font-size:12px; color:var(--tx2); line-height:1.5; margin-bottom:8px}
+.gcase-where-money{
+  font-family:var(--mono); font-size:10px;
+  color:var(--tx3); padding-top:8px;
+  border-top:1px dashed var(--bd);
+  line-height:1.5;
+}
+
+.genre-coda{
+  margin-top:18px; padding:18px 22px;
+  border-left:3px solid var(--acc);
+  background:var(--acc-dim);
+  border-radius:0 var(--rs) var(--rs) 0;
+  font-size:14px; line-height:1.6; color:var(--tx);
+  font-style:italic;
+}
+
+/* ════════════════════════════════════════════════
+   CALCULATOR
+═════════════════════════════════════════════════ */
+.calc{
+  border:1px solid var(--bd);
+  border-radius:var(--r);
+  background:var(--crd);
+  overflow:hidden;
+}
+.calc-grid{
+  display:grid;
+  grid-template-columns:340px 1fr;
+}
+@media(max-width:899px){.calc-grid{grid-template-columns:1fr}}
+
+.calc-ctrls{
+  padding:24px 22px;
+  border-right:1px solid var(--bd);
+  background:var(--bg2);
+}
+@media(max-width:899px){
+  .calc-ctrls{border-right:none;border-bottom:1px solid var(--bd)}
+}
+.calc-out{padding:24px 22px; min-width:0}
+
+.calc-ssec{margin-bottom:22px}
+.calc-ssec:last-child{margin-bottom:0}
+.calc-slbl{
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--tx3); margin-bottom:11px;
+}
+
+.cpr{margin-bottom:13px}
+.cph{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px}
+.cpn{font-size:11px; color:var(--tx2); font-weight:300}
+.cpv{font-family:var(--mono); font-size:11px; color:var(--acc); font-weight:500}
+
+input[type=range]{
+  -webkit-appearance:none; appearance:none;
+  width:100%; height:2px;
+  background:var(--bd2); border-radius:1px;
+  outline:none; cursor:pointer; display:block;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:16px; height:16px;
+  background:var(--acc-btn); border-radius:50%;
+  cursor:pointer; transition:transform .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+input[type=range]::-moz-range-thumb{
+  width:16px; height:16px; border:none;
+  background:var(--acc-btn); border-radius:50%; cursor:pointer;
+}
+
+.btn{
+  width:100%; padding:11px;
+  background:var(--acc-btn); color:var(--acc-btn-tx);
+  border:none; border-radius:var(--rs);
+  font-size:13px; font-weight:500; font-family:var(--sans);
+  cursor:pointer; letter-spacing:.02em;
+  transition:opacity .2s,transform .1s;
+}
+.btn:hover{opacity:.88}
+.btn:active{transform:scale(.98)}
+.btn-ghost{
+  background:transparent; color:var(--tx2);
+  border:1px solid var(--bd);
+}
+.btn-ghost:hover{border-color:var(--bd2); color:var(--tx); opacity:1}
+
+/* big totals */
+.bigtotal{
+  margin-bottom:18px; padding:18px 18px;
+  border:1px solid var(--acc-brd);
+  border-radius:var(--r);
+  background:var(--acc-dim);
+}
+.bigtotal-lbl{
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--acc); margin-bottom:6px;
+}
+.bigtotal-val{
+  font-family:var(--mono); font-size:32px;
+  color:var(--acc); font-weight:500;
+  letter-spacing:-.01em; line-height:1.1;
+}
+@media(max-width:599px){.bigtotal-val{font-size:24px}}
+.bigtotal-sub{
+  font-size:11px; color:var(--tx2);
+  margin-top:6px; line-height:1.5;
+}
+
+/* breakdown table */
+.brk{
+  width:100%; border-collapse:collapse;
+  font-size:12px;
+}
+.brk th, .brk td{
+  padding:9px 11px; text-align:left;
+  border-bottom:1px solid var(--bd);
+}
+.brk th{
+  font-family:var(--mono); font-size:9px;
+  letter-spacing:.1em; text-transform:uppercase;
+  color:var(--tx3); font-weight:400;
+  background:var(--bg3);
+}
+.brk td.num, .brk th.num{text-align:right; font-family:var(--mono)}
+.brk tr:last-child td{border-bottom:none; font-weight:500}
+.brk tr.total td{
+  background:var(--acc-dim); color:var(--acc); font-weight:500;
+}
+
+/* impact list */
+.impact{
+  margin-top:14px;
+  border:1px solid var(--bd);
+  border-radius:var(--r);
+  overflow:hidden;
+  background:var(--crd);
+}
+.impact-row{
+  display:grid; grid-template-columns:1fr auto;
+  gap:12px; padding:12px 14px;
+  border-bottom:1px solid var(--bd);
+  font-size:12px;
+}
+.impact-row:last-child{border-bottom:none}
+.impact-name{color:var(--tx); line-height:1.4}
+.impact-val{
+  font-family:var(--mono); color:var(--acc); font-weight:500;
+  white-space:nowrap; text-align:right;
+}
+.impact-val small{color:var(--tx3); font-weight:400; display:block; font-size:9px}
+
+/* ════════════════════════════════════════════════
+   WHY EHIPAS — 6 cards
+═════════════════════════════════════════════════ */
+.why{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+@media(max-width:899px){.why{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:599px){.why{grid-template-columns:1fr}}
+
+.wcard{
+  border:1px solid var(--bd);
+  border-radius:var(--r);
+  padding:20px 18px;
+  background:var(--crd);
+  display:flex; flex-direction:column; gap:10px;
+}
+.wcard-num{
+  font-family:var(--mono); font-size:18px;
+  color:var(--acc); font-weight:500;
+  letter-spacing:-.01em;
+}
+.wcard-h{
+  font-size:14px; font-weight:500; line-height:1.3;
+}
+.wcard-b{font-size:12px; color:var(--tx2); line-height:1.55}
+.wcard-b strong{color:var(--tx); font-weight:500}
+
+/* creator block */
+.creator{
+  border:1px solid var(--bd);
+  border-radius:var(--r);
+  padding:24px 24px;
+  background:var(--crd);
+}
+@media(max-width:599px){.creator{padding:20px 18px}}
+.creator-list{
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:14px 22px; margin-top:14px;
+}
+@media(max-width:599px){.creator-list{grid-template-columns:1fr}}
+.creator-item{
+  padding:12px 0 12px 16px; position:relative;
+  border-bottom:1px dashed var(--bd);
+}
+.creator-item:nth-last-child(-n+2){border-bottom:none}
+@media(max-width:599px){
+  .creator-item:nth-last-child(-n+2){border-bottom:1px dashed var(--bd)}
+  .creator-item:last-child{border-bottom:none}
+}
+.creator-item::before{
+  content:'→'; position:absolute; left:0; top:13px;
+  color:var(--acc); font-family:var(--mono); font-size:10px;
+}
+.creator-h{font-size:13px; font-weight:500; margin-bottom:3px}
+.creator-d{font-size:12px; color:var(--tx2); line-height:1.5}
+
+/* ════════════════════════════════════════════════
+   FOOTER
+═════════════════════════════════════════════════ */
+.ftr{
+  border-top:1px solid var(--bd);
+  padding:28px 0 0;
+  margin-top:48px;
+  font-size:11px; color:var(--tx3);
+  line-height:1.6;
+}
+.ftr-row{
+  display:flex; flex-wrap:wrap; gap:16px;
+  align-items:baseline; justify-content:space-between;
+}
+.ftr-l{font-family:var(--mono); letter-spacing:.06em; text-transform:uppercase}
+.ftr-r{font-style:italic}
+
+/* ════════════════════════════════════════════════
+   ACCESSIBILITY HELPERS
+═════════════════════════════════════════════════ */
+.sr{
+  position:absolute; width:1px; height:1px;
+  padding:0; margin:-1px; overflow:hidden;
+  clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    transition-duration:.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════
+     HEADER (logo + dropdowns)
+═════════════════════════════════════════════════ -->
+<header class="hdr">
+  <div class="logo">EHIPAS</div>
+  <div class="hdr-title" data-i="hdr_title">Royal Audience for Thailand · Illustrative Case</div>
+  <div class="hdr-ctrls">
+
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('lang')" aria-haspopup="true">
+        <span id="ll">EN</span><span class="ddarrow">▾</span>
+      </button>
+      <div class="ddmenu" id="lang-dd" role="menu">
+        <div class="ddi" data-l="en" onclick="setLang('en')">English<span class="ck" id="lc-en">✓</span></div>
+        <div class="ddi" data-l="th" onclick="setLang('th')">ภาษาไทย<span class="ck" id="lc-th"></span></div>
+        <div class="ddi" data-l="zh" onclick="setLang('zh')">中文<span class="ck" id="lc-zh"></span></div>
+        <div class="ddi" data-l="ru" onclick="setLang('ru')">Русский<span class="ck" id="lc-ru"></span></div>
+      </div>
+    </div>
+
+    <div class="ddwrap">
+      <button class="ddtrig" onclick="togDD('thm')" aria-haspopup="true">
+        <span id="ticon">⊙</span><span class="ddarrow">▾</span>
+      </button>
+      <div class="ddmenu" id="thm-dd" role="menu">
+        <div class="ddi" onclick="setTheme('system')"><span data-i="th_sys">System</span><span class="ck" id="tc-system">✓</span></div>
+        <div class="ddi" onclick="setTheme('light')"><span data-i="th_light">Light</span><span class="ck" id="tc-light"></span></div>
+        <div class="ddi" onclick="setTheme('dark')"><span data-i="th_dark">Dark</span><span class="ck" id="tc-dark"></span></div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<div class="overlay" id="ov" onclick="closeDD()"></div>
+
+<main class="page">
+
+<!-- Body content begins in part 02 (hero) -->
+
+<!-- ════════════════════════════════════════════════
+     HERO
+═════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-eyebrow" data-i="hero_eyebrow">Live experiences exchange · Illustrative case</div>
+  <h1 class="hero-title" data-i="hero_title">A royal audience that funds the causes Thailand cannot postpone.</h1>
+  <p class="hero-sub" data-i="hero_sub">One ceremony. 150 seats. Every baht raised passes through public escrow into pre-declared charitable initiatives. The participant receives an experience not for sale anywhere else; the country receives the funds it is waiting for.</p>
+
+  <div class="chipstrip" aria-label="Powered by Ehipas">
+    <span class="chip"><span class="chip-dot"></span><span data-i="chip_kyc">Verification</span></span>
+    <span class="chip"><span class="chip-dot"></span><span data-i="chip_auc">Auction</span></span>
+    <span class="chip"><span class="chip-dot"></span><span data-i="chip_esc">Escrow</span></span>
+    <span class="chip"><span class="chip-dot"></span><span data-i="chip_alc">Allocation</span></span>
+    <span class="chip"><span class="chip-dot"></span><span data-i="chip_rep">Reporting</span></span>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     TICKET CATEGORIES
+═════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="slabel"><span data-i="lbl_tickets">Ticket categories · 150 seats total</span></div>
+  <h2 class="stitle" data-i="ttl_tickets">Three tiers of access</h2>
+  <p class="slead" data-i="led_tickets">Every ticket is a verified contribution to charitable initiatives plus a seat in the hall. Starting prices below; the final price is set by the simultaneous flash auction held on Ehipas.</p>
+
+  <div class="tickets">
+    <article class="tcard">
+      <div class="tcard-tier"><span data-i="tier_inner">Tier I · Inner Circle</span></div>
+      <div class="tcard-name" data-i="t1_name">Inner Circle</div>
+      <div class="tcard-meta">
+        <div class="tcard-mi">
+          <div class="tcard-mlbl" data-i="lbl_seats">Seats</div>
+          <div class="tcard-mval">20</div>
+        </div>
+        <div class="tcard-mi">
+          <div class="tcard-mlbl" data-i="lbl_start">Starting price</div>
+          <div class="tcard-mval">10,000,000 ฿</div>
+        </div>
+      </div>
+      <div class="tcard-right" data-i="t1_right">A personal audience with the reigning monarch, 5–10 minutes. Direct, by name, on a topic of the participant's choosing.</div>
+    </article>
+
+    <article class="tcard">
+      <div class="tcard-tier"><span data-i="tier_core">Tier II · Core</span></div>
+      <div class="tcard-name" data-i="t2_name">Core</div>
+      <div class="tcard-meta">
+        <div class="tcard-mi">
+          <div class="tcard-mlbl" data-i="lbl_seats">Seats</div>
+          <div class="tcard-mval">80</div>
+        </div>
+        <div class="tcard-mi">
+          <div class="tcard-mlbl" data-i="lbl_start">Starting price</div>
+          <div class="tcard-mval">1,000,000 ฿</div>
+        </div>
+      </div>
+      <div class="tcard-right" data-i="t2_right">A short personal audience with the monarch, 1–3 minutes. A real, face-to-face meeting recorded into the official chronicles of the event.</div>
+    </article>
+
+    <article class="tcard">
+      <div class="tcard-tier"><span data-i="tier_obs">Tier III · Observers</span></div>
+      <div class="tcard-name" data-i="t3_name">Observers</div>
+      <div class="tcard-meta">
+        <div class="tcard-mi">
+          <div class="tcard-mlbl" data-i="lbl_seats">Seats</div>
+          <div class="tcard-mval">50</div>
+        </div>
+        <div class="tcard-mi">
+          <div class="tcard-mlbl" data-i="lbl_start">Starting price</div>
+          <div class="tcard-mval">500,000 ฿</div>
+        </div>
+      </div>
+      <div class="tcard-right" data-i="t3_right">Physical presence in the throne hall and the right to submit a brief written proposal. Selected proposals are read aloud before the monarch.</div>
+    </article>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     BENEFITS — what the participant receives
+═════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="slabel"><span data-i="lbl_benefits">What the participant receives</span></div>
+  <h2 class="stitle" data-i="ttl_benefits">A double benefit, exactly</h2>
+  <p class="slead" data-i="led_benefits">This is not philanthropy with a moral premium. It is an opportunity that cannot be purchased anywhere else in the world, paired with direct influence on the country's path. The guest receives what cannot be bought; the country receives the resources it lacks. Both sides win.</p>
+
+  <div class="benefits">
+
+    <article class="bcol">
+      <div class="bcol-tier"><span data-i="tier_inner">Tier I · Inner Circle</span></div>
+      <div class="bcol-name" data-i="b1_name">What no money buys elsewhere</div>
+
+      <div class="bsubhead" data-i="b_irreplaceable">Irreplaceable</div>
+      <ul class="blist">
+        <li data-i="b1_a1">Personal audience with the reigning monarch, 5–10 minutes — direct, no intermediaries.</li>
+        <li data-i="b1_a2">The right to ask a personally chosen question and hear the answer.</li>
+        <li data-i="b1_a3">Lifetime belonging to a closed circle of twenty equals.</li>
+        <li data-i="b1_a4">A direct channel to ministers and experts shaping the initiative.</li>
+        <li data-i="b1_a5">A family heirloom — the invitation, photograph and royal blessing pass to children and grandchildren.</li>
+        <li data-i="b1_a6">By-name inclusion in the historical chronicles of the ceremony.</li>
+        <li data-i="b1_a7">First voice in choosing the initiative to be funded.</li>
+      </ul>
+
+      <div class="bsubhead" data-i="b_convertible">Convertible value</div>
+      <ul class="blist">
+        <li data-i="b1_c1">A network of twenty — recurring partnerships across the next decade.</li>
+        <li data-i="b1_c2">Reputation moved from "wealthy person" to "person who changed Thailand".</li>
+        <li data-i="b1_c3">Capital that acquires a name — protection against the erosion of fortune.</li>
+      </ul>
+    </article>
+
+    <article class="bcol">
+      <div class="bcol-tier"><span data-i="tier_core">Tier II · Core</span></div>
+      <div class="bcol-name" data-i="b2_name">A short, real meeting</div>
+
+      <div class="bsubhead" data-i="b_irreplaceable">Irreplaceable</div>
+      <ul class="blist">
+        <li data-i="b2_a1">Short but real meeting with the monarch — 1–3 minutes face to face.</li>
+        <li data-i="b2_a2">Belonging to the nationally recognised circle of eighty.</li>
+        <li data-i="b2_a3">A family heirloom — the invitation document and group photograph.</li>
+        <li data-i="b2_a4">A voice within the small group shaping the initiative.</li>
+        <li data-i="b2_a5">By-name inclusion in the annual report of results.</li>
+        <li data-i="b2_a6">Full participant rights across all protocol sections of the ceremony.</li>
+      </ul>
+
+      <div class="bsubhead" data-i="b_convertible">Convertible value</div>
+      <ul class="blist">
+        <li data-i="b2_c1">A circle of eighty for the next decade — relationships denser than any conference can produce.</li>
+        <li data-i="b2_c2">A public-facing record of meaningful participation in a national act.</li>
+      </ul>
+    </article>
+
+    <article class="bcol">
+      <div class="bcol-tier"><span data-i="tier_obs">Tier III · Observers</span></div>
+      <div class="bcol-name" data-i="b3_name">Presence at history</div>
+
+      <div class="bsubhead" data-i="b_irreplaceable">Irreplaceable</div>
+      <ul class="blist">
+        <li data-i="b3_a1">Physical presence in the hall during the audience — an experience available to a handful per generation.</li>
+        <li data-i="b3_a2">The right to submit a written proposal to the monarch — 5–10 selected proposals are read aloud at the ceremony, with the author's name announced.</li>
+        <li data-i="b3_a3">Participant certificate, group photograph.</li>
+        <li data-i="b3_a4">Regular updates on the funded projects.</li>
+      </ul>
+
+      <div class="bsubhead" data-i="b_convertible">Convertible value</div>
+      <ul class="blist">
+        <li data-i="b3_c1">For those whose proposal is read aloud — a turning life event with national audibility.</li>
+        <li data-i="b3_c2">Story currency that stays with the family for generations.</li>
+      </ul>
+    </article>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     DEFINITION — people of god-level
+═════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="slabel"><span data-i="lbl_godlevel">Genre · access to people of god-level</span></div>
+  <h2 class="stitle" data-i="ttl_godlevel">Who are the people of god-level</h2>
+
+  <div class="defbox">
+    <div class="defbox-h" data-i="def_h">Definition</div>
+    <div class="defbox-body" data-i="def_body"><strong>Those whose time cannot be bought retail at any price.</strong> The category is not defined by a single trait. It is defined by the absence of an ordinary channel of access.</div>
+  </div>
+
+  <p class="slead" data-i="led_sources">Four sources of such status — the Thai case is the first source applied, the format extends to the other three.</p>
+
+  <div class="sources">
+    <div class="src">
+      <div class="src-num">01</div>
+      <div class="src-h" data-i="src1_h">Inherited or ritual power</div>
+      <div class="src-d" data-i="src1_d">Reigning monarchs. Heads of closed dynasties. Leaders of traditional religious schools.</div>
+    </div>
+    <div class="src">
+      <div class="src-num">02</div>
+      <div class="src-h" data-i="src2_h">Wealth at world scale</div>
+      <div class="src-d" data-i="src2_d">Forbes top-10 and top-50. Founders of global corporations. Old-capital family foundations whose time is either bound to a public role or insulated from outsiders.</div>
+    </div>
+    <div class="src">
+      <div class="src-num">03</div>
+      <div class="src-h" data-i="src3_h">Living cultural greatness</div>
+      <div class="src-d" data-i="src3_d">Nobel laureates and equivalents whose names became common nouns. Living legends of art, science and sport.</div>
+    </div>
+    <div class="src">
+      <div class="src-num">04</div>
+      <div class="src-h" data-i="src4_h">Concentration of knowledge</div>
+      <div class="src-d" data-i="src4_d">Keepers of unique traditions — the last living master of a craft, the sole speaker of a language, the heads of closed schools.</div>
+    </div>
+  </div>
+
+  <div class="whocols">
+    <div class="whocol">
+      <div class="whocol-h" data-i="who_creators">Who creates the experience</div>
+      <ul>
+        <li data-i="cr1">Royal household, monarch's protocol service</li>
+        <li data-i="cr2">Monastic community, spiritual order, religious institution</li>
+        <li data-i="cr3">Family office or chief of staff of a billionaire</li>
+        <li data-i="cr4">Charitable foundation, cultural institution</li>
+        <li data-i="cr5">Auction house in partnership</li>
+        <li data-i="cr6">Personal access broker, trusted intermediary of the figure</li>
+        <li data-i="cr7">Diplomatic mission, embassy</li>
+      </ul>
+    </div>
+    <div class="whocol">
+      <div class="whocol-h" data-i="who_buyers">Who buys the ticket</div>
+      <ul>
+        <li data-i="bu1">Wealthy individuals seeking experience unavailable otherwise</li>
+        <li data-i="bu2">Family offices building a dynastic narrative</li>
+        <li data-i="bu3">Corporate principals needing soft diplomacy and elite access</li>
+        <li data-i="bu4">Diaspora seeking a connection to the home country</li>
+        <li data-i="bu5">Devoted patrons of religious and cultural movements</li>
+        <li data-i="bu6">New capital — technology, digital — integrating into established circles</li>
+        <li data-i="bu7">Dynastic families at generational handover moments</li>
+        <li data-i="bu8">Representatives of sovereign wealth funds</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     TIMELINE — 8 phases
+═════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="slabel"><span data-i="lbl_dram">Dramaturgy · 8 phases</span></div>
+  <h2 class="stitle" data-i="ttl_dram">Anatomy of the ceremony</h2>
+  <p class="slead" data-i="led_dram">From the briefing one month before to the closing benediction. Durations are indicative. The key scene is the royal walkthrough — five small groups, a long audience for the Inner Circle, a short one for the Core, a ritual reading-aloud of the strongest written proposals from Observers.</p>
+
+  <div class="tl">
+
+    <div class="tlph">
+      <div class="tlph-time" data-i="ph1_t">PHASE 1 · T−30…T+45 MIN</div>
+      <div class="tlph-h" data-i="ph1_h">Preparation & arrival</div>
+      <div class="tlph-body">
+        <span data-i="ph1_b">In advance of the ceremony all 150 receive a protocol briefing — dress code, forms of address, posture. Each gets a dossier of 4–6 candidate initiatives with metrics. Observers prepare a written proposal, one page. On the day, separate registration desks for the three tiers — visible to one another, so the structure is plain. Tea, ceremonial greeting. Observers deposit their proposals.</span>
+      </div>
+    </div>
+
+    <div class="tlph">
+      <div class="tlph-time" data-i="ph2_t">PHASE 2 · T+45 MIN…T+1H 15</div>
+      <div class="tlph-h" data-i="ph2_h">Opening</div>
+      <div class="tlph-body">
+        <span data-i="ph2_b">A procession. The monarch enters in full regalia. The royal anthem. An opening address by His Majesty — 8 to 12 minutes, the year's frame and priorities. The shortlist of initiatives is announced, each defended briefly by a minister or expert.</span>
+      </div>
+    </div>
+
+    <div class="tlph">
+      <div class="tlph-time" data-i="ph3_t">PHASE 3 · T+1H 15…T+1H 30</div>
+      <div class="tlph-h" data-i="ph3_h">Group formation</div>
+      <div class="tlph-body">
+        <span data-i="ph3_b">Five small groups of approximately thirty people each, deliberately mixed — every group contains Inner Circle, Core and Observers. No segregation by tier. Each group is matched to one shortlisted initiative and given an expert moderator, two notaries to record decisions, and a translator.</span>
+      </div>
+    </div>
+
+    <div class="tlph">
+      <div class="tlph-time" data-i="ph4_t">PHASE 4 · T+1H 30…T+3H</div>
+      <div class="tlph-h" data-i="ph4_h">Council</div>
+      <div class="tlph-body">
+        <span data-i="ph4_b">Ninety minutes of structured discussion: problem · scale · concrete plan · budget · success metrics over twelve months. In parallel, royal aides triage Observer proposals and prepare thematic summaries for the monarch — one page per theme. Each group elects a spokesperson — most often, but not always, an Inner Circle member.</span>
+      </div>
+    </div>
+
+    <div class="tlph">
+      <div class="tlph-time" data-i="ph5_t">PHASE 5 · T+3H…T+5H · KEY SCENE</div>
+      <div class="tlph-h" data-i="ph5_h">Royal walkthrough</div>
+      <div class="tlph-body">
+        <span data-i="ph5_b">The monarch visits each of the five groups in sequence. Within each:</span>
+        <ul>
+          <li data-i="ph5_l1">Inner Circle (4 per group) — individual audience of 5–10 minutes in a separate niche of the group. Deep dialogue: what will you personally do beyond the contribution.</li>
+          <li data-i="ph5_l2">Core (16 per group) — short address, 1–3 minutes, in clusters of 4–5.</li>
+          <li data-i="ph5_l3">Observers (10 per group) — collective blessing. 3–5 strongest proposals from this group are read aloud by the royal aide while the monarch is present; the author rises. This is ritual recognition.</li>
+          <li data-i="ph5_l4">Between groups, summarised proposals are handed to the monarch in transitions.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tlph">
+      <div class="tlph-time" data-i="ph6_t">PHASE 6 · T+5H…T+5H 30</div>
+      <div class="tlph-h" data-i="ph6_h">Assembly</div>
+      <div class="tlph-body">
+        <span data-i="ph6_b">All return to the main hall. The five spokespersons present the final plan of their initiative — three minutes each. The monarch offers a brief comment and blessing for each.</span>
+      </div>
+    </div>
+
+    <div class="tlph">
+      <div class="tlph-time" data-i="ph7_t">PHASE 7 · T+5H 30…T+6H</div>
+      <div class="tlph-h" data-i="ph7_h">Announcement</div>
+      <div class="tlph-body">
+        <span data-i="ph7_b">The Royal Charitable Council — advisors plus independent experts — announces the final allocation of funds. On the main screen: total raised, breakdown by initiative, committed KPIs and timelines. Donor names are listed, by participant choice — public or anonymous. A closing benediction.</span>
+      </div>
+    </div>
+
+    <div class="tlph">
+      <div class="tlph-time" data-i="ph8_t">PHASE 8 · T+6H…NIGHT</div>
+      <div class="tlph-h" data-i="ph8_h">Continuation</div>
+      <div class="tlph-body">
+        <span data-i="ph8_b">Reception — Thai cuisine, classical music, traditional dance. Each participant receives a commemorative folio: personal invitation, photograph, and the Ehipas commitment to a twelve-month report on the funded initiatives.</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     EFFECTS MATRIX — 6 levels × 3 horizons
+═════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="slabel"><span data-i="lbl_eff">Effects · 6 levels × 3 horizons</span></div>
+  <h2 class="stitle" data-i="ttl_eff">What this experience leaves behind</h2>
+  <p class="slead" data-i="led_eff">The ceremony's effects scale by horizon — hours, months, decades — and reach far beyond the 150 in the hall. Switch the level to see what each audience receives.</p>
+
+  <div class="efftabs" role="tablist">
+    <button class="efftab on" onclick="setEff(0,this)" data-i="eff_l1">Inner Circle guest</button>
+    <button class="efftab" onclick="setEff(1,this)" data-i="eff_l2">Core guest</button>
+    <button class="efftab" onclick="setEff(2,this)" data-i="eff_l3">Observer</button>
+    <button class="efftab" onclick="setEff(3,this)" data-i="eff_l4">Charity recipients</button>
+    <button class="efftab" onclick="setEff(4,this)" data-i="eff_l5">Thai society</button>
+    <button class="efftab" onclick="setEff(5,this)" data-i="eff_l6">Monarchy & nation</button>
+  </div>
+
+  <div class="effpanel" id="eff-0" style="display:block">
+    <div class="effgrid">
+      <div class="effc">
+        <div class="effc-h" data-i="hor_short">Short · hours to weeks</div>
+        <div class="effc-b" data-i="e1s">A perceptual shift. A personal dialogue with the sovereign reorders the participant's relation to their own money. A sharp reputation gain inside the business community.</div>
+      </div>
+      <div class="effc">
+        <div class="effc-h" data-i="hor_mid">Mid · months to a year</div>
+        <div class="effc-b" data-i="e1m">The network of twenty becomes a half-closed club. Tangible engagement with the chosen initiative converts into new partnerships and ventures.</div>
+      </div>
+      <div class="effc">
+        <div class="effc-h" data-i="hor_long">Long · years to decades</div>
+        <div class="effc-b" data-i="e1l">Often a catalyst for a "second life" — a turn into philanthropy or public service. The family mythology is passed to grandchildren as a foundational story.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="effpanel" id="eff-1" style="display:none">
+    <div class="effgrid">
+      <div class="effc">
+        <div class="effc-h" data-i="hor_short">Short · hours to weeks</div>
+        <div class="effc-b" data-i="e2s">A short but real meeting with the monarch. The sense of being seen as a citizen with weight, not a statistic.</div>
+      </div>
+      <div class="effc">
+        <div class="effc-h" data-i="hor_mid">Mid · months to a year</div>
+        <div class="effc-b" data-i="e2m">Inclusion in the informal community of the eighty. Continued ability to track the progress of the initiative one helped shape.</div>
+      </div>
+      <div class="effc">
+        <div class="effc-h" data-i="hor_long">Long · years to decades</div>
+        <div class="effc-b" data-i="e2l">A family heirloom — the invitation document and the photograph. In fifty years grandchildren show it to guests.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="effpanel" id="eff-2" style="display:none">
+    <div class="effgrid">
+      <div class="effc">
+        <div class="effc-h" data-i="hor_short">Short · hours to weeks</div>
+        <div class="effc-b" data-i="e3s">For those whose proposal is read aloud — a turning life event. For the rest — presence at history.</div>
+      </div>
+      <div class="effc">
+        <div class="effc-h" data-i="hor_mid">Mid · months to a year</div>
+        <div class="effc-b" data-i="e3m">Written proposals enter real channels. Some become projects on the platform's project register.</div>
+      </div>
+      <div class="effc">
+        <div class="effc-h" data-i="hor_long">Long · years to decades</div>
+        <div class="effc-b" data-i="e3l">Modest social mobility, but the story of having been there serves the family for generations.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="effpanel" id="eff-3" style="display:none">
+    <div class="effgrid">
+      <div class="effc">
+        <div class="effc-h" data-i="hor_short">Short · hours to weeks</div>
+        <div class="effc-b" data-i="e4s">A one-time inflow on the order of three hundred and fifty million baht into the chosen initiatives. A sharp visibility boost for partner organisations.</div>
+      </div>
+      <div class="effc">
+        <div class="effc-h" data-i="hor_mid">Mid · months to a year</div>
+        <div class="effc-b" data-i="e4m">Programmes operate one to three years with measurable outcomes and quarterly reporting. Tens of thousands of direct beneficiaries.</div>
+      </div>
+      <div class="effc">
+        <div class="effc-h" data-i="hor_long">Long · years to decades</div>
+        <div class="effc-b" data-i="e4l">If the format is institutionalised as annual — a recurring flow of billions of baht over a decade. Real possibility of resolving specific national problems.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="effpanel" id="eff-4" style="display:none">
+    <div class="effgrid">
+      <div class="effc">
+        <div class="effc-h" data-i="hor_short">Short · hours to weeks</div>
+        <div class="effc-b" data-i="e5s">The information agenda is dominated for one to two weeks. The ceremony is discussed everywhere.</div>
+      </div>
+      <div class="effc">
+        <div class="effc-h" data-i="hor_mid">Mid · months to a year</div>
+        <div class="effc-b" data-i="e5m">A shift in civic discourse. The narrative "the wealthy can be useful" is reinforced with a concrete model.</div>
+      </div>
+      <div class="effc">
+        <div class="effc-h" data-i="hor_long">Long · years to decades</div>
+        <div class="effc-b" data-i="e5l">A cultural pattern: high status becomes attached to public philanthropy rather than to consumption.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="effpanel" id="eff-5" style="display:none">
+    <div class="effgrid">
+      <div class="effc">
+        <div class="effc-h" data-i="hor_short">Short · hours to weeks</div>
+        <div class="effc-b" data-i="e6s">A fresh demonstration of relevance. International press of high quality.</div>
+      </div>
+      <div class="effc">
+        <div class="effc-h" data-i="hor_mid">Mid · months to a year</div>
+        <div class="effc-b" data-i="e6m">The monarchy as a convening force, beyond the ceremonial role. Thai soft power abroad rises.</div>
+      </div>
+      <div class="effc">
+        <div class="effc-h" data-i="hor_long">Long · years to decades</div>
+        <div class="effc-b" data-i="e6l">A precedent of "moral economy". The format may be studied and adapted outside Thailand, by other royal houses and dynasties.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     PROBLEMS — six critical Thai issues
+═════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="slabel"><span data-i="lbl_prob">Where the funds go · 6 initiatives</span></div>
+  <h2 class="stitle" data-i="ttl_prob">Six problems that cannot be postponed</h2>
+  <p class="slead" data-i="led_prob">Selected by acute severity, chronic underfunding and convertibility of money into measurable outcome. The participant chooses, before bidding, how the contribution is allocated across the six.</p>
+
+  <div class="probs">
+
+    <article class="prob">
+      <div class="prob-num">01</div>
+      <div class="prob-h" data-i="p1_h">PM2.5 smoke in the north</div>
+      <div class="prob-d" data-i="p1_d">Thousands of premature deaths each year in Chiang Mai, Mae Hong Son and the upper provinces — driven by agricultural burning. Children's lungs take the worst of it.</div>
+      <div class="prob-cost"><span data-i="p1_what">What we fund:</span> <span data-i="p1_what2">subsidies for farmers who stop burning, satellite monitoring, school-grade air purifiers.</span><br><span data-i="p1_unit">Approximately</span> <b>50,000 ฿ <span data-i="unit_school">per protected school</span></b></div>
+    </article>
+
+    <article class="prob">
+      <div class="prob-num">02</div>
+      <div class="prob-h" data-i="p2_h">Child drowning</div>
+      <div class="prob-d" data-i="p2_d">The leading cause of death for Thai children aged 1 to 14 — roughly one thousand children every year. Invisible in headlines, unmistakable in mortality statistics.</div>
+      <div class="prob-cost"><span data-i="p2_what">What we fund:</span> <span data-i="p2_what2">free swimming courses through schools, fencing of unsafe water bodies, life jackets in fishing villages.</span><br><span data-i="p2_unit">Approximately</span> <b>1,500 ฿ <span data-i="unit_child">per child trained</span></b></div>
+    </article>
+
+    <article class="prob">
+      <div class="prob-num">03</div>
+      <div class="prob-h" data-i="p3_h">Stateless people</div>
+      <div class="prob-d" data-i="p3_d">Over four hundred and eighty thousand residents — mostly hill tribe communities — without the right to legally work, receive healthcare or travel beyond their district.</div>
+      <div class="prob-cost"><span data-i="p3_what">What we fund:</span> <span data-i="p3_what2">legal clinics, document workflows, naturalisation programmes.</span><br><span data-i="p3_unit">Approximately</span> <b>8,000 ฿ <span data-i="unit_case">per citizenship case</span></b></div>
+    </article>
+
+    <article class="prob">
+      <div class="prob-num">04</div>
+      <div class="prob-h" data-i="p4_h">An ageing population without infrastructure</div>
+      <div class="prob-d" data-i="p4_d">By 2030 every fourth Thai citizen will be over sixty. The country is ageing faster than its care infrastructure is being built. Loneliness and untreated chronic conditions are the silent epidemic.</div>
+      <div class="prob-cost"><span data-i="p4_what">What we fund:</span> <span data-i="p4_what2">day centres for the elderly across one hundred districts, mobile medical screening teams.</span><br><span data-i="p4_unit">Approximately</span> <b>1,200,000 ฿ <span data-i="unit_center">per centre per year</span></b></div>
+    </article>
+
+    <article class="prob">
+      <div class="prob-num">05</div>
+      <div class="prob-h" data-i="p5_h">Marine plastic</div>
+      <div class="prob-d" data-i="p5_d">Thailand sits among the ten worst sources of ocean plastic in the world. Coastal fishing communities — the country's culinary identity — pay first.</div>
+      <div class="prob-cost"><span data-i="p5_what">What we fund:</span> <span data-i="p5_what2">river-mouth waste interceptors, recycling infrastructure for fishing villages.</span><br><span data-i="p5_unit">Approximately</span> <b>15,000,000 ฿ <span data-i="unit_inter">per interceptor</span></b></div>
+    </article>
+
+    <article class="prob">
+      <div class="prob-num">06</div>
+      <div class="prob-h" data-i="p6_h">Youth mental health</div>
+      <div class="prob-d" data-i="p6_d">A rising rate of suicide among Thais aged fifteen to twenty-nine. Stigma keeps almost all of it underground. A generation is being lost in plain sight.</div>
+      <div class="prob-cost"><span data-i="p6_what">What we fund:</span> <span data-i="p6_what2">school psychologists, a national helpline, accessible therapy.</span><br><span data-i="p6_unit">Approximately</span> <b>360,000 ฿ <span data-i="unit_psy">per school psychologist per year</span></b></div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     GENRE REPEATABLE — 6 cases
+═════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="slabel"><span data-i="lbl_genre">Genre is repeatable · beyond Thailand</span></div>
+  <h2 class="stitle" data-i="ttl_genre">The Thai case is the first, not the only one</h2>
+  <p class="slead" data-i="led_genre">Six candidate formats from the four sources of god-level status. Each is a real possibility — a meeting with a figure to whom there is no ordinary access channel, paired with a cause worth the funds raised.</p>
+
+  <div class="genre">
+
+    <article class="gcase">
+      <div class="gcase-src" data-i="src_power">Power</div>
+      <div class="gcase-where" data-i="g1_w">Bhutan</div>
+      <div class="gcase-who" data-i="g1_who">King Jigme Khesar</div>
+      <div class="gcase-what" data-i="g1_what">An audience in Tashichho Dzong in Thimphu, in the format of the Druk Gyalpo's annual royal council.</div>
+      <div class="gcase-where-money" data-i="g1_money">→ Gross National Happiness programme · rural schools and healthcare</div>
+    </article>
+
+    <article class="gcase">
+      <div class="gcase-src" data-i="src_power">Power</div>
+      <div class="gcase-where" data-i="g2_w">Vatican</div>
+      <div class="gcase-who" data-i="g2_who">Pope</div>
+      <div class="gcase-what" data-i="g2_what">A small-group personal audience in the Apostolic Palace, with a private blessing.</div>
+      <div class="gcase-where-money" data-i="g2_money">→ Caritas Internationalis · global refugee assistance</div>
+    </article>
+
+    <article class="gcase">
+      <div class="gcase-src" data-i="src_wealth">Wealth</div>
+      <div class="gcase-where" data-i="g3_w">United States</div>
+      <div class="gcase-who" data-i="g3_who">Warren Buffett</div>
+      <div class="gcase-what" data-i="g3_what">A dinner in the spirit of the Glide auction tradition, in an extended public format with strategic dialogue.</div>
+      <div class="gcase-where-money" data-i="g3_money">→ School meals for children in low-income districts of Southeast Asia</div>
+    </article>
+
+    <article class="gcase">
+      <div class="gcase-src" data-i="src_wealth">Wealth</div>
+      <div class="gcase-where" data-i="g4_w">India</div>
+      <div class="gcase-who" data-i="g4_who">Mukesh Ambani</div>
+      <div class="gcase-what" data-i="g4_what">A reception at Antilia with a view on the long-term strategic vision of an industrial dynasty.</div>
+      <div class="gcase-where-money" data-i="g4_money">→ Maternal health in rural states of India</div>
+    </article>
+
+    <article class="gcase">
+      <div class="gcase-src" data-i="src_knowledge">Knowledge</div>
+      <div class="gcase-where" data-i="g5_w">Japan</div>
+      <div class="gcase-who" data-i="g5_who">Living National Treasures</div>
+      <div class="gcase-what" data-i="g5_what">A tea ceremony with personal mentoring from Ningen Kokuhō — masters of crafts that exist in a single lineage.</div>
+      <div class="gcase-where-money" data-i="g5_money">→ Foundation for the preservation of intangible heritage</div>
+    </article>
+
+    <article class="gcase">
+      <div class="gcase-src" data-i="src_greatness">Greatness</div>
+      <div class="gcase-where" data-i="g6_w">India</div>
+      <div class="gcase-who" data-i="g6_who">Dalai Lama</div>
+      <div class="gcase-what" data-i="g6_what">A teaching and audience in Dharamsala, in the lineage tradition of the Gelug school.</div>
+      <div class="gcase-where-money" data-i="g6_money">→ Medical assistance for Tibetan refugees</div>
+    </article>
+
+  </div>
+
+  <div class="genre-coda" data-i="genre_coda">Any format in which the holder of unique status takes a step forward and receives, in exchange, a direct contribution to a cause bound to their fate — can be assembled through Ehipas. The Thai case is one illustration of the mechanism.</div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     CALCULATOR
+═════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="slabel"><span data-i="lbl_calc">Calculator · scale of impact</span></div>
+  <h2 class="stitle" data-i="ttl_calc">What 150 seats can fund</h2>
+  <p class="slead" data-i="led_calc">Adjust seats per tier, the auction premium, and how the funds are allocated across the six initiatives. Every baht is translated into a unit of impact.</p>
+
+  <div class="calc">
+    <div class="calc-grid">
+
+      <div class="calc-ctrls">
+
+        <div class="calc-ssec">
+          <div class="calc-slbl" data-i="cs_seats">Seats per tier</div>
+          <div class="cpr">
+            <div class="cph"><span class="cpn" data-i="cp_n1">Inner Circle</span><span class="cpv"><span id="v-n1">20</span></span></div>
+            <input type="range" min="5" max="40" value="20" id="r-n1" oninput="updCalc()">
+          </div>
+          <div class="cpr">
+            <div class="cph"><span class="cpn" data-i="cp_n2">Core</span><span class="cpv"><span id="v-n2">80</span></span></div>
+            <input type="range" min="20" max="160" value="80" id="r-n2" oninput="updCalc()">
+          </div>
+          <div class="cpr">
+            <div class="cph"><span class="cpn" data-i="cp_n3">Observers</span><span class="cpv"><span id="v-n3">50</span></span></div>
+            <input type="range" min="10" max="100" value="50" id="r-n3" oninput="updCalc()">
+          </div>
+        </div>
+
+        <div class="calc-ssec">
+          <div class="calc-slbl" data-i="cs_premium">Auction premium per tier</div>
+          <div class="cpr">
+            <div class="cph"><span class="cpn" data-i="cp_m1">Inner Circle ×</span><span class="cpv"><span id="v-m1">1.17</span>×</span></div>
+            <input type="range" min="100" max="300" value="117" id="r-m1" oninput="updCalc()">
+          </div>
+          <div class="cpr">
+            <div class="cph"><span class="cpn" data-i="cp_m2">Core ×</span><span class="cpv"><span id="v-m2">1.17</span>×</span></div>
+            <input type="range" min="100" max="300" value="117" id="r-m2" oninput="updCalc()">
+          </div>
+          <div class="cpr">
+            <div class="cph"><span class="cpn" data-i="cp_m3">Observers ×</span><span class="cpv"><span id="v-m3">1.17</span>×</span></div>
+            <input type="range" min="100" max="300" value="117" id="r-m3" oninput="updCalc()">
+          </div>
+        </div>
+
+        <div class="calc-ssec">
+          <div class="calc-slbl" data-i="cs_alloc">Allocation across initiatives</div>
+          <div class="cpr">
+            <div class="cph"><span class="cpn" data-i="cp_a1">PM2.5 smoke</span><span class="cpv"><span id="v-a1">17</span></span></div>
+            <input type="range" min="0" max="100" value="17" id="r-a1" oninput="updCalc()">
+          </div>
+          <div class="cpr">
+            <div class="cph"><span class="cpn" data-i="cp_a2">Child drowning</span><span class="cpv"><span id="v-a2">17</span></span></div>
+            <input type="range" min="0" max="100" value="17" id="r-a2" oninput="updCalc()">
+          </div>
+          <div class="cpr">
+            <div class="cph"><span class="cpn" data-i="cp_a3">Stateless people</span><span class="cpv"><span id="v-a3">17</span></span></div>
+            <input type="range" min="0" max="100" value="17" id="r-a3" oninput="updCalc()">
+          </div>
+          <div class="cpr">
+            <div class="cph"><span class="cpn" data-i="cp_a4">Ageing population</span><span class="cpv"><span id="v-a4">17</span></span></div>
+            <input type="range" min="0" max="100" value="17" id="r-a4" oninput="updCalc()">
+          </div>
+          <div class="cpr">
+            <div class="cph"><span class="cpn" data-i="cp_a5">Marine plastic</span><span class="cpv"><span id="v-a5">16</span></span></div>
+            <input type="range" min="0" max="100" value="16" id="r-a5" oninput="updCalc()">
+          </div>
+          <div class="cpr">
+            <div class="cph"><span class="cpn" data-i="cp_a6">Youth mental health</span><span class="cpv"><span id="v-a6">16</span></span></div>
+            <input type="range" min="0" max="100" value="16" id="r-a6" oninput="updCalc()">
+          </div>
+        </div>
+
+        <button class="btn btn-ghost" onclick="resetCalc()" data-i="btn_reset">Reset to defaults</button>
+      </div>
+
+      <div class="calc-out">
+
+        <div class="bigtotal">
+          <div class="bigtotal-lbl" data-i="big_lbl">Total raised for charity</div>
+          <div class="bigtotal-val"><span id="big-val">355 800 000</span> ฿</div>
+          <div class="bigtotal-sub" data-i="big_sub">Direct contribution to the six initiatives. Held in escrow until the Royal Household confirms the ceremony, then released to the funds.</div>
+        </div>
+
+        <table class="brk">
+          <thead>
+            <tr>
+              <th data-i="brk_tier">Tier</th>
+              <th class="num" data-i="brk_seats">Seats</th>
+              <th class="num" data-i="brk_avg">Avg ฿/seat</th>
+              <th class="num" data-i="brk_sub">Subtotal ฿</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td data-i="tier_inner">Tier I · Inner Circle</td><td class="num" id="b-n1">20</td><td class="num" id="b-p1">11 700 000</td><td class="num" id="b-s1">234 000 000</td></tr>
+            <tr><td data-i="tier_core">Tier II · Core</td><td class="num" id="b-n2">80</td><td class="num" id="b-p2">1 170 000</td><td class="num" id="b-s2">93 600 000</td></tr>
+            <tr><td data-i="tier_obs">Tier III · Observers</td><td class="num" id="b-n3">50</td><td class="num" id="b-p3">585 000</td><td class="num" id="b-s3">29 250 000</td></tr>
+            <tr class="total"><td data-i="brk_total">Total</td><td class="num" id="b-nt">150</td><td class="num">—</td><td class="num" id="b-st">356 850 000</td></tr>
+          </tbody>
+        </table>
+
+        <div class="impact" id="impact-list"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     CREATOR BLOCK
+═════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="slabel"><span data-i="lbl_creator">For creators · what the organiser sees</span></div>
+  <h2 class="stitle" data-i="ttl_creator">What the creator of the experience receives</h2>
+  <p class="slead" data-i="led_creator">A figure of god-level status moving toward an audience requires infrastructure. Ehipas absorbs all of it, leaving the creator to focus on protocol and substance.</p>
+
+  <div class="creator">
+    <div class="creator-list">
+      <div class="creator-item">
+        <div class="creator-h" data-i="cri1_h">Ready-made infrastructure</div>
+        <div class="creator-d" data-i="cri1_d">Verification, auction, escrow, allocation, reporting — already operational. The creator does not build any of this from scratch.</div>
+      </div>
+      <div class="creator-item">
+        <div class="creator-h" data-i="cri2_h">The figure's dignity is protected</div>
+        <div class="creator-d" data-i="cri2_d">A ceremonial format with strict protocol — not a retail service. The figure remains in their status. The frame is a charitable convocation, not a commercial transaction.</div>
+      </div>
+      <div class="creator-item">
+        <div class="creator-h" data-i="cri3_h">Public legitimacy</div>
+        <div class="creator-d" data-i="cri3_d">Pre-declared expense commitments and KPIs neutralise the question "why is the figure offering time" before it can be asked.</div>
+      </div>
+      <div class="creator-item">
+        <div class="creator-h" data-i="cri4_h">Repeatable template</div>
+        <div class="creator-d" data-i="cri4_d">A format assembled once is preserved as a template on the platform and replayed yearly with the same toolkit. Not one-off heroism.</div>
+      </div>
+      <div class="creator-item">
+        <div class="creator-h" data-i="cri5_h">A buyer base, ready</div>
+        <div class="creator-d" data-i="cri5_d">A pre-verified audience of capital and curiosity from across the world — the creator does not hunt for guests one by one.</div>
+      </div>
+      <div class="creator-item">
+        <div class="creator-h" data-i="cri6_h">Reputation that compounds</div>
+        <div class="creator-d" data-i="cri6_d">Each successful ceremony raises both the creator's standing and the platform's. Creator and platform grow together, not at each other's expense.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     WHY EHIPAS — six bottlenecks removed
+═════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="slabel"><span data-i="lbl_why">Why this format only holds together on Ehipas</span></div>
+  <h2 class="stitle" data-i="ttl_why">Six bottlenecks the platform removes</h2>
+
+  <div class="why">
+    <article class="wcard">
+      <div class="wcard-num">01</div>
+      <div class="wcard-h" data-i="w1_h">Verification of participants</div>
+      <div class="wcard-b" data-i="w1_b">A platform with multi-level identity and solvency checks. Without it the wrong people reach the monarch — with the wrong protocol, the wrong intent, or simply unprepared.</div>
+    </article>
+    <article class="wcard">
+      <div class="wcard-num">02</div>
+      <div class="wcard-h" data-i="w2_h">Simultaneous flash auction</div>
+      <div class="wcard-b" data-i="w2_b">A fixed Ehipas mechanism, validated across one thousand simulation runs — gives <strong>+16.6%</strong> over an English auction. Every additional baht goes to the initiatives.</div>
+    </article>
+    <article class="wcard">
+      <div class="wcard-num">03</div>
+      <div class="wcard-h" data-i="w3_h">Escrow until the fact of the ceremony</div>
+      <div class="wcard-b" data-i="w3_b">Funds are held by the platform until the Royal Household confirms the event has taken place. Released directly to the initiatives — no intermediaries.</div>
+    </article>
+    <article class="wcard">
+      <div class="wcard-num">04</div>
+      <div class="wcard-h" data-i="w4_h">Allocation locked before the bid</div>
+      <div class="wcard-b" data-i="w4_b">Each participant sees the exact distribution across the six initiatives and the committed outcomes <strong>before</strong> paying. No post-fact substitution.</div>
+    </article>
+    <article class="wcard">
+      <div class="wcard-num">05</div>
+      <div class="wcard-h" data-i="w5_h">Annual reporting</div>
+      <div class="wcard-b" data-i="w5_b">Structured twelve-month reports to every participant on the funded initiatives — wired into the ticket terms. Not a press release a month later.</div>
+    </article>
+    <article class="wcard">
+      <div class="wcard-num">06</div>
+      <div class="wcard-h" data-i="w6_h">A Thai platform with a repeatable format</div>
+      <div class="wcard-b" data-i="w6_b">A regulatory track inside Thailand. The format is templated for annual repetition with the same toolkit — not the one-off heroism of the Royal Household.</div>
+    </article>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     FOOTER
+═════════════════════════════════════════════════ -->
+<footer class="ftr">
+  <div class="ftr-row">
+    <div class="ftr-l">EHIPAS · LIVE EXPERIENCES EXCHANGE</div>
+    <div class="ftr-r" data-i="ftr_note">Illustrative case. Numbers are model outputs.</div>
+  </div>
+</footer>
+
+</main>
+
+<script>
+
+// ════════════════════════════════════════════════
+// I18N — full translations for 4 languages
+// ════════════════════════════════════════════════
+const L = {
+
+en: {
+  hdr_title:'Royal Audience for Thailand · Illustrative Case',
+  th_sys:'System', th_light:'Light', th_dark:'Dark',
+
+  hero_eyebrow:'Live experiences exchange · Illustrative case',
+  hero_title:"A royal audience that funds the causes Thailand cannot postpone.",
+  hero_sub:'One ceremony. 150 seats. Every baht raised passes through public escrow into pre-declared charitable initiatives. The participant receives an experience not for sale anywhere else; the country receives the funds it is waiting for.',
+
+  chip_kyc:'Verification', chip_auc:'Auction', chip_esc:'Escrow', chip_alc:'Allocation', chip_rep:'Reporting',
+
+  lbl_tickets:'Ticket categories · 150 seats total',
+  ttl_tickets:'Three tiers of access',
+  led_tickets:"Every ticket is a verified contribution to charitable initiatives plus a seat in the hall. Starting prices below; the final price is set by the simultaneous flash auction held on Ehipas.",
+  tier_inner:'Tier I · Inner Circle', tier_core:'Tier II · Core', tier_obs:'Tier III · Observers',
+  t1_name:'Inner Circle', t2_name:'Core', t3_name:'Observers',
+  lbl_seats:'Seats', lbl_start:'Starting price',
+  t1_right:"A personal audience with the reigning monarch, 5–10 minutes. Direct, by name, on a topic of the participant's choosing.",
+  t2_right:'A short personal audience with the monarch, 1–3 minutes. A real, face-to-face meeting recorded into the official chronicles of the event.',
+  t3_right:'Physical presence in the throne hall and the right to submit a brief written proposal. Selected proposals are read aloud before the monarch.',
+
+  lbl_benefits:'What the participant receives',
+  ttl_benefits:'A double benefit, exactly',
+  led_benefits:"This is not philanthropy with a moral premium. It is an opportunity that cannot be purchased anywhere else in the world, paired with direct influence on the country's path. The guest receives what cannot be bought; the country receives the resources it lacks. Both sides win.",
+  b1_name:'What no money buys elsewhere', b2_name:'A short, real meeting', b3_name:'Presence at history',
+  b_irreplaceable:'Irreplaceable', b_convertible:'Convertible value',
+  b1_a1:'Personal audience with the reigning monarch, 5–10 minutes — direct, no intermediaries.',
+  b1_a2:'The right to ask a personally chosen question and hear the answer.',
+  b1_a3:'Lifetime belonging to a closed circle of twenty equals.',
+  b1_a4:'A direct channel to ministers and experts shaping the initiative.',
+  b1_a5:'A family heirloom — the invitation, photograph and royal blessing pass to children and grandchildren.',
+  b1_a6:'By-name inclusion in the historical chronicles of the ceremony.',
+  b1_a7:'First voice in choosing the initiative to be funded.',
+  b1_c1:'A network of twenty — recurring partnerships across the next decade.',
+  b1_c2:'Reputation moved from "wealthy person" to "person who changed Thailand".',
+  b1_c3:'Capital that acquires a name — protection against the erosion of fortune.',
+  b2_a1:'Short but real meeting with the monarch — 1–3 minutes face to face.',
+  b2_a2:'Belonging to the nationally recognised circle of eighty.',
+  b2_a3:'A family heirloom — the invitation document and group photograph.',
+  b2_a4:'A voice within the small group shaping the initiative.',
+  b2_a5:'By-name inclusion in the annual report of results.',
+  b2_a6:'Full participant rights across all protocol sections of the ceremony.',
+  b2_c1:'A circle of eighty for the next decade — relationships denser than any conference can produce.',
+  b2_c2:'A public-facing record of meaningful participation in a national act.',
+  b3_a1:'Physical presence in the hall during the audience — an experience available to a handful per generation.',
+  b3_a2:"The right to submit a written proposal to the monarch — 5–10 selected proposals are read aloud at the ceremony, with the author's name announced.",
+  b3_a3:'Participant certificate, group photograph.',
+  b3_a4:'Regular updates on the funded projects.',
+  b3_c1:'For those whose proposal is read aloud — a turning life event with national audibility.',
+  b3_c2:'Story currency that stays with the family for generations.',
+
+  lbl_godlevel:'Genre · access to people of god-level',
+  ttl_godlevel:'Who are the people of god-level',
+  def_h:'Definition',
+  def_body:'<strong>Those whose time cannot be bought retail at any price.</strong> The category is not defined by a single trait. It is defined by the absence of an ordinary channel of access.',
+  led_sources:'Four sources of such status — the Thai case is the first source applied, the format extends to the other three.',
+  src1_h:'Inherited or ritual power', src1_d:'Reigning monarchs. Heads of closed dynasties. Leaders of traditional religious schools.',
+  src2_h:'Wealth at world scale', src2_d:'Forbes top-10 and top-50. Founders of global corporations. Old-capital family foundations whose time is either bound to a public role or insulated from outsiders.',
+  src3_h:'Living cultural greatness', src3_d:'Nobel laureates and equivalents whose names became common nouns. Living legends of art, science and sport.',
+  src4_h:'Concentration of knowledge', src4_d:'Keepers of unique traditions — the last living master of a craft, the sole speaker of a language, the heads of closed schools.',
+  who_creators:'Who creates the experience', who_buyers:'Who buys the ticket',
+  cr1:"Royal household, monarch's protocol service",
+  cr2:'Monastic community, spiritual order, religious institution',
+  cr3:'Family office or chief of staff of a billionaire',
+  cr4:'Charitable foundation, cultural institution',
+  cr5:'Auction house in partnership',
+  cr6:'Personal access broker, trusted intermediary of the figure',
+  cr7:'Diplomatic mission, embassy',
+  bu1:'Wealthy individuals seeking experience unavailable otherwise',
+  bu2:'Family offices building a dynastic narrative',
+  bu3:'Corporate principals needing soft diplomacy and elite access',
+  bu4:'Diaspora seeking a connection to the home country',
+  bu5:'Devoted patrons of religious and cultural movements',
+  bu6:'New capital — technology, digital — integrating into established circles',
+  bu7:'Dynastic families at generational handover moments',
+  bu8:'Representatives of sovereign wealth funds',
+
+  lbl_dram:'Dramaturgy · 8 phases', ttl_dram:'Anatomy of the ceremony',
+  led_dram:'From the briefing one month before to the closing benediction. Durations are indicative. The key scene is the royal walkthrough — five small groups, a long audience for the Inner Circle, a short one for the Core, a ritual reading-aloud of the strongest written proposals from Observers.',
+  ph1_t:'PHASE 1 · T−30…T+45 MIN',
+  ph2_t:'PHASE 2 · T+45 MIN…T+1H 15',
+  ph3_t:'PHASE 3 · T+1H 15…T+1H 30',
+  ph4_t:'PHASE 4 · T+1H 30…T+3H',
+  ph5_t:'PHASE 5 · T+3H…T+5H · KEY SCENE',
+  ph6_t:'PHASE 6 · T+5H…T+5H 30',
+  ph7_t:'PHASE 7 · T+5H 30…T+6H',
+  ph8_t:'PHASE 8 · T+6H…NIGHT',
+  ph1_h:'Preparation & arrival',
+  ph1_b:'In advance of the ceremony all 150 receive a protocol briefing — dress code, forms of address, posture. Each gets a dossier of 4–6 candidate initiatives with metrics. Observers prepare a written proposal, one page. On the day, separate registration desks for the three tiers — visible to one another, so the structure is plain. Tea, ceremonial greeting. Observers deposit their proposals.',
+  ph2_h:'Opening',
+  ph2_b:"A procession. The monarch enters in full regalia. The royal anthem. An opening address by His Majesty — 8 to 12 minutes, the year's frame and priorities. The shortlist of initiatives is announced, each defended briefly by a minister or expert.",
+  ph3_h:'Group formation',
+  ph3_b:'Five small groups of approximately thirty people each, deliberately mixed — every group contains Inner Circle, Core and Observers. No segregation by tier. Each group is matched to one shortlisted initiative and given an expert moderator, two notaries to record decisions, and a translator.',
+  ph4_h:'Council',
+  ph4_b:"Ninety minutes of structured discussion: problem · scale · concrete plan · budget · success metrics over twelve months. In parallel, royal aides triage Observer proposals and prepare thematic summaries for the monarch — one page per theme. Each group elects a spokesperson — most often, but not always, an Inner Circle member.",
+  ph5_h:'Royal walkthrough',
+  ph5_b:'The monarch visits each of the five groups in sequence. Within each:',
+  ph5_l1:'Inner Circle (4 per group) — individual audience of 5–10 minutes in a separate niche of the group. Deep dialogue: what will you personally do beyond the contribution.',
+  ph5_l2:'Core (16 per group) — short address, 1–3 minutes, in clusters of 4–5.',
+  ph5_l3:'Observers (10 per group) — collective blessing. 3–5 strongest proposals from this group are read aloud by the royal aide while the monarch is present; the author rises. This is ritual recognition.',
+  ph5_l4:'Between groups, summarised proposals are handed to the monarch in transitions.',
+  ph6_h:'Assembly',
+  ph6_b:'All return to the main hall. The five spokespersons present the final plan of their initiative — three minutes each. The monarch offers a brief comment and blessing for each.',
+  ph7_h:'Announcement',
+  ph7_b:'The Royal Charitable Council — advisors plus independent experts — announces the final allocation of funds. On the main screen: total raised, breakdown by initiative, committed KPIs and timelines. Donor names are listed, by participant choice — public or anonymous. A closing benediction.',
+  ph8_h:'Continuation',
+  ph8_b:'Reception — Thai cuisine, classical music, traditional dance. Each participant receives a commemorative folio: personal invitation, photograph, and the Ehipas commitment to a twelve-month report on the funded initiatives.',
+
+  lbl_eff:'Effects · 6 levels × 3 horizons',
+  ttl_eff:'What this experience leaves behind',
+  led_eff:"The ceremony's effects scale by horizon — hours, months, decades — and reach far beyond the 150 in the hall. Switch the level to see what each audience receives.",
+  eff_l1:'Inner Circle guest', eff_l2:'Core guest', eff_l3:'Observer',
+  eff_l4:'Charity recipients', eff_l5:'Thai society', eff_l6:'Monarchy & nation',
+  hor_short:'Short · hours to weeks', hor_mid:'Mid · months to a year', hor_long:'Long · years to decades',
+  e1s:"A perceptual shift. A personal dialogue with the sovereign reorders the participant's relation to their own money. A sharp reputation gain inside the business community.",
+  e1m:'The network of twenty becomes a half-closed club. Tangible engagement with the chosen initiative converts into new partnerships and ventures.',
+  e1l:'Often a catalyst for a "second life" — a turn into philanthropy or public service. The family mythology is passed to grandchildren as a foundational story.',
+  e2s:'A short but real meeting with the monarch. The sense of being seen as a citizen with weight, not a statistic.',
+  e2m:'Inclusion in the informal community of the eighty. Continued ability to track the progress of the initiative one helped shape.',
+  e2l:'A family heirloom — the invitation document and the photograph. In fifty years grandchildren show it to guests.',
+  e3s:'For those whose proposal is read aloud — a turning life event. For the rest — presence at history.',
+  e3m:"Written proposals enter real channels. Some become projects on the platform's project register.",
+  e3l:'Modest social mobility, but the story of having been there serves the family for generations.',
+  e4s:'A one-time inflow on the order of three hundred and fifty million baht into the chosen initiatives. A sharp visibility boost for partner organisations.',
+  e4m:'Programmes operate one to three years with measurable outcomes and quarterly reporting. Tens of thousands of direct beneficiaries.',
+  e4l:'If the format is institutionalised as annual — a recurring flow of billions of baht over a decade. Real possibility of resolving specific national problems.',
+  e5s:'The information agenda is dominated for one to two weeks. The ceremony is discussed everywhere.',
+  e5m:'A shift in civic discourse. The narrative "the wealthy can be useful" is reinforced with a concrete model.',
+  e5l:'A cultural pattern: high status becomes attached to public philanthropy rather than to consumption.',
+  e6s:'A fresh demonstration of relevance. International press of high quality.',
+  e6m:'The monarchy as a convening force, beyond the ceremonial role. Thai soft power abroad rises.',
+  e6l:'A precedent of "moral economy". The format may be studied and adapted outside Thailand, by other royal houses and dynasties.',
+
+  lbl_prob:'Where the funds go · 6 initiatives',
+  ttl_prob:'Six problems that cannot be postponed',
+  led_prob:'Selected by acute severity, chronic underfunding and convertibility of money into measurable outcome. The participant chooses, before bidding, how the contribution is allocated across the six.',
+  p1_h:'PM2.5 smoke in the north', p1_d:"Thousands of premature deaths each year in Chiang Mai, Mae Hong Son and the upper provinces — driven by agricultural burning. Children's lungs take the worst of it.",
+  p1_what:'What we fund:', p1_what2:'subsidies for farmers who stop burning, satellite monitoring, school-grade air purifiers.', p1_unit:'Approximately',
+  p2_h:'Child drowning', p2_d:'The leading cause of death for Thai children aged 1 to 14 — roughly one thousand children every year. Invisible in headlines, unmistakable in mortality statistics.',
+  p2_what:'What we fund:', p2_what2:'free swimming courses through schools, fencing of unsafe water bodies, life jackets in fishing villages.', p2_unit:'Approximately',
+  p3_h:'Stateless people', p3_d:'Over four hundred and eighty thousand residents — mostly hill tribe communities — without the right to legally work, receive healthcare or travel beyond their district.',
+  p3_what:'What we fund:', p3_what2:'legal clinics, document workflows, naturalisation programmes.', p3_unit:'Approximately',
+  p4_h:'An ageing population without infrastructure', p4_d:'By 2030 every fourth Thai citizen will be over sixty. The country is ageing faster than its care infrastructure is being built. Loneliness and untreated chronic conditions are the silent epidemic.',
+  p4_what:'What we fund:', p4_what2:'day centres for the elderly across one hundred districts, mobile medical screening teams.', p4_unit:'Approximately',
+  p5_h:'Marine plastic', p5_d:"Thailand sits among the ten worst sources of ocean plastic in the world. Coastal fishing communities — the country's culinary identity — pay first.",
+  p5_what:'What we fund:', p5_what2:'river-mouth waste interceptors, recycling infrastructure for fishing villages.', p5_unit:'Approximately',
+  p6_h:'Youth mental health', p6_d:'A rising rate of suicide among Thais aged fifteen to twenty-nine. Stigma keeps almost all of it underground. A generation is being lost in plain sight.',
+  p6_what:'What we fund:', p6_what2:'school psychologists, a national helpline, accessible therapy.', p6_unit:'Approximately',
+  unit_school:'per protected school', unit_child:'per child trained', unit_case:'per citizenship case',
+  unit_center:'per centre per year', unit_inter:'per interceptor', unit_psy:'per school psychologist per year',
+
+  lbl_genre:'Genre is repeatable · beyond Thailand',
+  ttl_genre:'The Thai case is the first, not the only one',
+  led_genre:'Six candidate formats from the four sources of god-level status. Each is a real possibility — a meeting with a figure to whom there is no ordinary access channel, paired with a cause worth the funds raised.',
+  src_power:'Power', src_wealth:'Wealth', src_knowledge:'Knowledge', src_greatness:'Greatness',
+  g1_w:'Bhutan', g1_who:'King Jigme Khesar', g1_what:"An audience in Tashichho Dzong in Thimphu, in the format of the Druk Gyalpo's annual royal council.", g1_money:'→ Gross National Happiness programme · rural schools and healthcare',
+  g2_w:'Vatican', g2_who:'Pope', g2_what:'A small-group personal audience in the Apostolic Palace, with a private blessing.', g2_money:'→ Caritas Internationalis · global refugee assistance',
+  g3_w:'United States', g3_who:'Warren Buffett', g3_what:'A dinner in the spirit of the Glide auction tradition, in an extended public format with strategic dialogue.', g3_money:'→ School meals for children in low-income districts of Southeast Asia',
+  g4_w:'India', g4_who:'Mukesh Ambani', g4_what:'A reception at Antilia with a view on the long-term strategic vision of an industrial dynasty.', g4_money:'→ Maternal health in rural states of India',
+  g5_w:'Japan', g5_who:'Living National Treasures', g5_what:'A tea ceremony with personal mentoring from Ningen Kokuhō — masters of crafts that exist in a single lineage.', g5_money:'→ Foundation for the preservation of intangible heritage',
+  g6_w:'India', g6_who:'Dalai Lama', g6_what:'A teaching and audience in Dharamsala, in the lineage tradition of the Gelug school.', g6_money:'→ Medical assistance for Tibetan refugees',
+  genre_coda:'Any format in which the holder of unique status takes a step forward and receives, in exchange, a direct contribution to a cause bound to their fate — can be assembled through Ehipas. The Thai case is one illustration of the mechanism.',
+
+  lbl_calc:'Calculator · scale of impact',
+  ttl_calc:'What 150 seats can fund',
+  led_calc:'Adjust seats per tier, the auction premium, and how the funds are allocated across the six initiatives. Every baht is translated into a unit of impact.',
+  cs_seats:'Seats per tier', cs_premium:'Auction premium per tier', cs_alloc:'Allocation across initiatives',
+  cp_n1:'Inner Circle', cp_n2:'Core', cp_n3:'Observers',
+  cp_m1:'Inner Circle ×', cp_m2:'Core ×', cp_m3:'Observers ×',
+  cp_a1:'PM2.5 smoke', cp_a2:'Child drowning', cp_a3:'Stateless people',
+  cp_a4:'Ageing population', cp_a5:'Marine plastic', cp_a6:'Youth mental health',
+  btn_reset:'Reset to defaults',
+  big_lbl:'Total raised for charity',
+  big_sub:'Direct contribution to the six initiatives. Held in escrow until the Royal Household confirms the ceremony, then released to the funds.',
+  brk_tier:'Tier', brk_seats:'Seats', brk_avg:'Avg ฿/seat', brk_sub:'Subtotal ฿', brk_total:'Total',
+  imp_school:'protected schools', imp_child:'children trained', imp_case:'citizenship cases',
+  imp_center:'day centres × 1 year', imp_inter:'river interceptors', imp_psy:'school psychologists × 1 year',
+
+  lbl_creator:'For creators · what the organiser sees',
+  ttl_creator:'What the creator of the experience receives',
+  led_creator:'A figure of god-level status moving toward an audience requires infrastructure. Ehipas absorbs all of it, leaving the creator to focus on protocol and substance.',
+  cri1_h:'Ready-made infrastructure', cri1_d:'Verification, auction, escrow, allocation, reporting — already operational. The creator does not build any of this from scratch.',
+  cri2_h:"The figure's dignity is protected", cri2_d:'A ceremonial format with strict protocol — not a retail service. The figure remains in their status. The frame is a charitable convocation, not a commercial transaction.',
+  cri3_h:'Public legitimacy', cri3_d:'Pre-declared expense commitments and KPIs neutralise the question "why is the figure offering time" before it can be asked.',
+  cri4_h:'Repeatable template', cri4_d:'A format assembled once is preserved as a template on the platform and replayed yearly with the same toolkit. Not one-off heroism.',
+  cri5_h:'A buyer base, ready', cri5_d:'A pre-verified audience of capital and curiosity from across the world — the creator does not hunt for guests one by one.',
+  cri6_h:'Reputation that compounds', cri6_d:"Each successful ceremony raises both the creator's standing and the platform's. Creator and platform grow together, not at each other's expense.",
+
+  lbl_why:'Why this format only holds together on Ehipas',
+  ttl_why:'Six bottlenecks the platform removes',
+  w1_h:'Verification of participants', w1_b:'A platform with multi-level identity and solvency checks. Without it the wrong people reach the monarch — with the wrong protocol, the wrong intent, or simply unprepared.',
+  w2_h:'Simultaneous flash auction', w2_b:'A fixed Ehipas mechanism, validated across one thousand simulation runs — gives <strong>+16.6%</strong> over an English auction. Every additional baht goes to the initiatives.',
+  w3_h:'Escrow until the fact of the ceremony', w3_b:'Funds are held by the platform until the Royal Household confirms the event has taken place. Released directly to the initiatives — no intermediaries.',
+  w4_h:'Allocation locked before the bid', w4_b:'Each participant sees the exact distribution across the six initiatives and the committed outcomes <strong>before</strong> paying. No post-fact substitution.',
+  w5_h:'Annual reporting', w5_b:'Structured twelve-month reports to every participant on the funded initiatives — wired into the ticket terms. Not a press release a month later.',
+  w6_h:'A Thai platform with a repeatable format', w6_b:'A regulatory track inside Thailand. The format is templated for annual repetition with the same toolkit — not the one-off heroism of the Royal Household.',
+
+  ftr_note:'Illustrative case. Numbers are model outputs.'
+},
+
+ru: {
+  hdr_title:'Королевская аудиенция Таиланда · Иллюстративный кейс',
+  th_sys:'Системная', th_light:'Светлая', th_dark:'Тёмная',
+
+  hero_eyebrow:'Биржа живых впечатлений · Иллюстративный кейс',
+  hero_title:'Королевская аудиенция, которая финансирует то, что Таиланд не может откладывать.',
+  hero_sub:'Одна церемония. 150 мест. Каждый бат проходит через публичный эскроу в заранее объявленные благотворительные инициативы. Участник получает переживание, которого нет в продаже больше нигде; страна получает средства, которых ждёт.',
+
+  chip_kyc:'Проверка', chip_auc:'Аукцион', chip_esc:'Эскроу', chip_alc:'Распределение', chip_rep:'Отчёт',
+
+  lbl_tickets:'Категории билетов · всего 150 мест',
+  ttl_tickets:'Три уровня доступа',
+  led_tickets:'Каждый билет — подтверждённый вклад в благотворительные инициативы плюс место в зале. Стартовые цены ниже; финальная определяется одновременным быстрым аукционом на Ehipas.',
+  tier_inner:'I · Ближний круг', tier_core:'II · Основные', tier_obs:'III · Наблюдатели',
+  t1_name:'Ближний круг', t2_name:'Основные', t3_name:'Наблюдатели',
+  lbl_seats:'Мест', lbl_start:'Стартовая цена',
+  t1_right:'Личная аудиенция с действующим монархом, 5–10 минут. Напрямую, поимённо, по выбранной участником теме.',
+  t2_right:'Короткая личная аудиенция с монархом, 1–3 минуты. Реальная встреча лицом к лицу, заносимая в официальные хроники мероприятия.',
+  t3_right:'Физическое присутствие в тронном зале и право подать краткое письменное предложение. Отобранные предложения зачитываются вслух при монархе.',
+
+  lbl_benefits:'Что получает участник',
+  ttl_benefits:'Двойная выгода — точно',
+  led_benefits:'Это не благотворительность с моральной премией. Это редчайшая возможность, которой нет больше нигде в мире, плюс прямое влияние на путь страны. Гость получает то, что нельзя купить; страна получает ресурсы, которых не хватает. Обе стороны выигрывают.',
+  b1_name:'Чего нельзя получить иначе', b2_name:'Короткая, но реальная встреча', b3_name:'Присутствие при истории',
+  b_irreplaceable:'Незаменимое', b_convertible:'Конвертируемая ценность',
+  b1_a1:'Личная аудиенция с действующим монархом, 5–10 минут — напрямую, без посредников.',
+  b1_a2:'Право задать лично выбранный вопрос и услышать ответ.',
+  b1_a3:'Пожизненная принадлежность к замкнутому кругу двадцати равных.',
+  b1_a4:'Прямой выход на министров и экспертов, формирующих инициативу.',
+  b1_a5:'Семейная реликвия — пригласительный документ, фотография, благословение монарха — переходит детям и внукам.',
+  b1_a6:'Поимённое включение в исторические хроники церемонии.',
+  b1_a7:'Право первого голоса при выборе финансируемой инициативы.',
+  b1_c1:'Сеть из двадцати — рекуррентные партнёрства на десятилетие вперёд.',
+  b1_c2:'Перевод репутации из категории «состоятельный человек» в категорию «человек, изменивший Таиланд».',
+  b1_c3:'Деньги, обретающие имя — защита от обесценивания капитала.',
+  b2_a1:'Короткая, но реальная встреча с монархом — 1–3 минуты лицом к лицу.',
+  b2_a2:'Принадлежность к узнаваемому в национальном масштабе кругу восьмидесяти.',
+  b2_a3:'Семейная реликвия — пригласительный документ и групповая фотография.',
+  b2_a4:'Голос внутри малой группы при формировании инициативы.',
+  b2_a5:'Поимённое включение в годовой отчёт о результатах.',
+  b2_a6:'Полные права участника всех протокольных секций церемонии.',
+  b2_c1:'Круг восьмидесяти на десятилетие вперёд — связи плотнее любого форума.',
+  b2_c2:'Публичная запись о значимом участии в национальном акте.',
+  b3_a1:'Физическое присутствие в зале в момент аудиенции — опыт, доступный единицам в поколение.',
+  b3_a2:'Право подать письменное предложение монарху — 5–10 лучших зачитываются на церемонии вслух с объявлением имени автора.',
+  b3_a3:'Сертификат участника, групповая фотография.',
+  b3_a4:'Регулярные отчёты о ходе финансируемых проектов.',
+  b3_c1:'Для тех, чьё предложение зачитано — переломное жизненное событие национального звучания.',
+  b3_c2:'Историческая валюта, остающаяся в семье поколениями.',
+
+  lbl_godlevel:'Жанр · доступ к людям уровня богов',
+  ttl_godlevel:'Кто такие люди уровня богов',
+  def_h:'Определение',
+  def_body:'<strong>Те, чьё время не покупается ни за какие деньги в розницу.</strong> Категория не определяется одним признаком. Она определяется отсутствием обычного канала доступа.',
+  led_sources:'Четыре источника такого статуса — тайский кейс работает с первым, формат расширяется на остальные три.',
+  src1_h:'Власть, унаследованная или ритуальная', src1_d:'Действующие монархи. Главы закрытых династий. Лидеры традиционных религиозных школ.',
+  src2_h:'Состояние мирового масштаба', src2_d:'Топ-10 и топ-50 списка Forbes. Основатели глобальных корпораций. Семейные фонды старого капитала, чьё время либо привязано к публичной роли, либо изолировано от посторонних.',
+  src3_h:'Культурное величие при жизни', src3_d:'Лауреаты Нобелевской премии и эквивалентных, чьё имя стало нарицательным. Живые легенды искусства, науки и спорта.',
+  src4_h:'Концентрация знания', src4_d:'Хранители уникальных традиций — последний живой мастер ремесла, единственный носитель языка, наставники закрытых школ.',
+  who_creators:'Кто создаёт впечатление', who_buyers:'Кто покупает билет',
+  cr1:'Королевский двор, протокольная служба монарха',
+  cr2:'Монашеская община, духовный орден, религиозная институция',
+  cr3:'Семейный офис или начальник штаба миллиардера',
+  cr4:'Благотворительный фонд, культурная институция',
+  cr5:'Аукционный дом в партнёрстве',
+  cr6:'Личный посредник, доверенный человек фигуры',
+  cr7:'Дипломатическая миссия, посольство',
+  bu1:'Состоятельные люди, ищущие переживание, недоступное иначе',
+  bu2:'Семейные офисы, выстраивающие династический нарратив',
+  bu3:'Главы корпораций, нуждающиеся в мягкой дипломатии и доступе к элите',
+  bu4:'Диаспоры, ищущие связь с родной страной',
+  bu5:'Преданные жертвователи религиозных и культурных движений',
+  bu6:'Новый капитал — технологический, цифровой — встраивающийся в признанные круги',
+  bu7:'Династические семьи в моменты передачи поколения',
+  bu8:'Представители суверенных фондов',
+
+  lbl_dram:'Драматургия · 8 фаз', ttl_dram:'Анатомия церемонии',
+  led_dram:'От брифинга за месяц до закрывающего благословения. Длительности оценочные. Главная сцена — королевский обход: пять малых групп, длинная аудиенция для Ближнего круга, короткая для Основных, ритуальное чтение лучших письменных предложений Наблюдателей.',
+  ph1_t:'ФАЗА 1 · T−30…T+45 МИН',
+  ph2_t:'ФАЗА 2 · T+45 МИН…T+1Ч 15',
+  ph3_t:'ФАЗА 3 · T+1Ч 15…T+1Ч 30',
+  ph4_t:'ФАЗА 4 · T+1Ч 30…T+3Ч',
+  ph5_t:'ФАЗА 5 · T+3Ч…T+5Ч · ГЛАВНАЯ СЦЕНА',
+  ph6_t:'ФАЗА 6 · T+5Ч…T+5Ч 30',
+  ph7_t:'ФАЗА 7 · T+5Ч 30…T+6Ч',
+  ph8_t:'ФАЗА 8 · T+6Ч…НОЧЬ',
+  ph1_h:'Подготовка и прибытие',
+  ph1_b:'Заранее все 150 проходят протокольный брифинг — дресс-код, формы обращения, осанка. Каждый получает досье на 4–6 кандидатных инициатив с метриками. Наблюдатели готовят письменное предложение на одну страницу. В день мероприятия раздельные регистрационные столы трёх категорий — видны друг другу, чтобы структура была прозрачна. Чай, церемониальное приветствие. Наблюдатели сдают предложения.',
+  ph2_h:'Открытие',
+  ph2_b:'Шествие. Король входит в полном регалии. Королевский гимн. Открывающая речь Его Величества — 8–12 минут, рамка года и приоритеты. Объявляется шорт-лист инициатив, каждую кратко защищает министр или эксперт.',
+  ph3_h:'Формирование групп',
+  ph3_b:'Пять малых групп примерно по тридцать человек, намеренно смешанных — в каждой есть Ближний круг, Основные и Наблюдатели. Никакой сегрегации по уровню. К каждой группе прикреплена одна инициатива из шорт-листа, эксперт-модератор, два нотариуса для фиксации решений и переводчик.',
+  ph4_h:'Совещание',
+  ph4_b:'Девяносто минут структурированной дискуссии: проблема · масштаб · конкретный план · бюджет · метрики успеха через двенадцать месяцев. Параллельно королевские помощники просеивают предложения Наблюдателей и готовят тематические сводки для монарха — одна страница на тему. Каждая группа выбирает спикера — чаще всего, но не всегда, представителя Ближнего круга.',
+  ph5_h:'Королевский обход',
+  ph5_b:'Король последовательно посещает все пять групп. Внутри каждой:',
+  ph5_l1:'Ближний круг (4 человека на группу) — индивидуальная аудиенция 5–10 минут в отдельной нише группы. Глубокий диалог: что лично вы готовы сделать сверх взноса.',
+  ph5_l2:'Основные (16 на группу) — короткое обращение 1–3 минуты, кластерами по 4–5.',
+  ph5_l3:'Наблюдатели (10 на группу) — общее благословение. 3–5 лучших предложений группы зачитывает помощник монарха при нём; автор встаёт. Это ритуальное признание.',
+  ph5_l4:'Между группами сводки предложений передаются монарху в переходах.',
+  ph6_h:'Сборка',
+  ph6_b:'Все возвращаются в главный зал. Спикеры пяти групп по очереди представляют итоговый план своей инициативы — три минуты каждый. Монарх даёт краткий комментарий и благословение каждому.',
+  ph7_h:'Объявление',
+  ph7_b:'Королевский благотворительный совет — советники плюс независимые эксперты — объявляет финальное распределение средств. На главном экране: общая сумма, разбивка по инициативам, обязательства по KPI и срокам. Имена жертвователей публикуются по выбору участника — публично или анонимно. Закрывающее благословение.',
+  ph8_h:'Продолжение',
+  ph8_b:'Приём — тайская кухня, классическая музыка, традиционный танец. Каждый получает коммеморативный фолио: личное приглашение, фотография, и обязательство Ehipas годовому отчёту о финансируемых инициативах.',
+
+  lbl_eff:'Эффекты · 6 уровней × 3 горизонта',
+  ttl_eff:'Что эта церемония оставляет после себя',
+  led_eff:'Эффекты церемонии масштабируются по горизонту — часы, месяцы, десятилетия — и достигают далеко за пределы 150 в зале. Переключите уровень, чтобы увидеть, что получает каждая аудитория.',
+  eff_l1:'Гость Ближнего круга', eff_l2:'Гость Основных', eff_l3:'Наблюдатель',
+  eff_l4:'Получатели благотворительности', eff_l5:'Тайское общество', eff_l6:'Монархия и нация',
+  hor_short:'Кратко · часы–недели', hor_mid:'Средне · месяцы–год', hor_long:'Долго · годы–десятилетия',
+  e1s:'Перцептивный сдвиг. Личный диалог с сувереном переупорядочивает отношение к собственным деньгам. Резкий рост репутации в деловом сообществе.',
+  e1m:'Сеть из двадцати становится полузакрытым клубом. Тангибельная вовлечённость в выбранную инициативу конвертируется в новые партнёрства и предприятия.',
+  e1l:'Часто катализатор «второй жизни» — поворот в филантропию или публичную службу. Семейная мифология передаётся внукам как основополагающая история.',
+  e2s:'Короткая, но реальная встреча с монархом. Ощущение, что тебя видят как гражданина с весом, не как статистику.',
+  e2m:'Включение в неформальную общность восьмидесяти. Возможность отслеживать прогресс инициативы, в формировании которой участвовал.',
+  e2l:'Семейная реликвия — пригласительный документ и фотография. Через пятьдесят лет внуки показывают её гостям.',
+  e3s:'Для тех, чьё предложение зачитано — переломное жизненное событие. Для остальных — присутствие при истории.',
+  e3m:'Письменные предложения уходят в реальные каналы. Некоторые становятся проектами на регистре платформы.',
+  e3l:'Скромная социальная мобильность, но история «я там был» служит семье поколениями.',
+  e4s:'Одномоментное вливание порядка трёхсот пятидесяти миллионов бат в выбранные инициативы. Резкий рост видимости партнёрских организаций.',
+  e4m:'Программы работают один–три года с измеримыми результатами и квартальной отчётностью. Десятки тысяч прямых получателей.',
+  e4l:'При институционализации формата как ежегодного — рекуррентный поток в миллиарды бат за десятилетие. Реальная возможность решения конкретных национальных проблем.',
+  e5s:'Информационная повестка доминирована одну–две недели. Церемонию обсуждают везде.',
+  e5m:'Сдвиг гражданского дискурса. Нарратив «богатый может быть полезен» подкрепляется конкретной моделью.',
+  e5l:'Культурный шаблон: высокий статус привязывается к публичной филантропии, а не к потреблению.',
+  e6s:'Свежая демонстрация релевантности. Международная пресса высокого качества.',
+  e6m:'Монархия как созывающая сила, за пределами церемониальной роли. Тайская мягкая сила за рубежом растёт.',
+  e6l:'Прецедент «моральной экономики». Формат может изучаться и адаптироваться вне Таиланда — другими королевскими домами и династиями.',
+
+  lbl_prob:'Куда идут средства · 6 инициатив',
+  ttl_prob:'Шесть проблем, которые нельзя откладывать',
+  led_prob:'Отобраны по остроте, хроническому недофинансированию и конвертируемости денег в измеримый результат. Участник до ставки выбирает, как взнос распределяется по шести.',
+  p1_h:'Дым PM2.5 на севере', p1_d:'Тысячи преждевременных смертей в год в Чианг Мае, Мае Хонг Соне и верхних провинциях — от сельскохозяйственного выжигания. Детские лёгкие принимают худший удар.',
+  p1_what:'Что финансируем:', p1_what2:'субсидии фермерам, отказывающимся от выжигания, спутниковый мониторинг, школьные воздухоочистители.', p1_unit:'Примерно',
+  p2_h:'Утопления детей', p2_d:'Главная причина смерти тайских детей 1–14 лет — около тысячи детей в год. Невидимо в заголовках, безусловно в статистике смертности.',
+  p2_what:'Что финансируем:', p2_what2:'бесплатные курсы плавания через школы, ограждения опасных водоёмов, спасжилеты в рыбацких деревнях.', p2_unit:'Примерно',
+  p3_h:'Лица без гражданства', p3_d:'Свыше четырёхсот восьмидесяти тысяч жителей — преимущественно горные племена — без права легально работать, получать медицинскую помощь, выезжать за пределы района.',
+  p3_what:'Что финансируем:', p3_what2:'юридические клиники, документооборот, программы натурализации.', p3_unit:'Примерно',
+  p4_h:'Стареющее население без инфраструктуры', p4_d:'К 2030 году каждый четвёртый таец будет старше шестидесяти. Страна стареет быстрее, чем строится инфраструктура ухода. Одиночество и нелеченые хронические заболевания — тихая эпидемия.',
+  p4_what:'Что финансируем:', p4_what2:'дневные центры для пожилых в ста районах, мобильные медицинские бригады.', p4_unit:'Примерно',
+  p5_h:'Морской пластик', p5_d:'Таиланд входит в десятку худших источников океанского пластика в мире. Прибрежные рыбацкие сообщества — кулинарная идентичность страны — платят первыми.',
+  p5_what:'Что финансируем:', p5_what2:'перехватчики мусора в устьях рек, инфраструктура переработки для рыбацких посёлков.', p5_unit:'Примерно',
+  p6_h:'Молодёжное психическое здоровье', p6_d:'Растущий уровень суицидов среди тайцев 15–29 лет. Стигма держит почти всё это в тени. Поколение теряется на виду.',
+  p6_what:'Что финансируем:', p6_what2:'школьные психологи, национальный телефон доверия, доступная терапия.', p6_unit:'Примерно',
+  unit_school:'на защищённую школу', unit_child:'на обученного ребёнка', unit_case:'на случай гражданства',
+  unit_center:'на центр в год', unit_inter:'на перехватчик', unit_psy:'на психолога в школе/год',
+
+  lbl_genre:'Жанр повторяем · за пределами Таиланда',
+  ttl_genre:'Тайский кейс — первый, не единственный',
+  led_genre:'Шесть кандидатных форматов из четырёх источников статуса уровня богов. Каждый — реальная возможность: встреча с фигурой, к которой нет обычного канала доступа, плюс дело, достойное собранных средств.',
+  src_power:'Власть', src_wealth:'Состояние', src_knowledge:'Знание', src_greatness:'Величие',
+  g1_w:'Бутан', g1_who:'Король Джигме Кхесар', g1_what:'Аудиенция в дзонге Ташичо в Тхимпху, в формате ежегодного королевского совета Друк Гьялпо.', g1_money:'→ Программа «Валовое национальное счастье» · сельские школы и здравоохранение',
+  g2_w:'Ватикан', g2_who:'Папа Римский', g2_what:'Личная аудиенция малыми группами в Апостольском дворце с приватным благословением.', g2_money:'→ Каритас Интернационалис · мировая помощь беженцам',
+  g3_w:'США', g3_who:'Уоррен Баффет', g3_what:'Ужин в духе традиции аукциона Glide, в расширенном публичном формате со стратегическим диалогом.', g3_money:'→ Школьное питание для детей из бедных районов Юго-Восточной Азии',
+  g4_w:'Индия', g4_who:'Мукеш Амбани', g4_what:'Приём в Антилии с обзором долгосрочного стратегического видения промышленной династии.', g4_money:'→ Здоровье матерей в сельских штатах Индии',
+  g5_w:'Япония', g5_who:'Живые человеческие сокровища', g5_what:'Чайная церемония с личным наставлением от Нинген Кокухо — мастеров ремёсел в единственной живой линии передачи.', g5_money:'→ Фонд сохранения нематериального наследия',
+  g6_w:'Индия', g6_who:'Далай-лама', g6_what:'Учение и аудиенция в Дхарамсале, в линии передачи школы Гелуг.', g6_money:'→ Медицинская помощь тибетским беженцам',
+  genre_coda:'Любой формат, в котором носитель уникального статуса делает шаг навстречу и получает взамен прямой вклад в дело его судьбы — может быть собран через Ehipas. Тайский кейс — иллюстрация механики.',
+
+  lbl_calc:'Калькулятор · масштаб воздействия',
+  ttl_calc:'Что могут профинансировать 150 мест',
+  led_calc:'Меняйте число мест по уровням, аукционную премию и распределение средств по шести инициативам. Каждый бат пересчитывается в единицу воздействия.',
+  cs_seats:'Мест по уровням', cs_premium:'Аукционная премия по уровням', cs_alloc:'Распределение по инициативам',
+  cp_n1:'Ближний круг', cp_n2:'Основные', cp_n3:'Наблюдатели',
+  cp_m1:'Ближний круг ×', cp_m2:'Основные ×', cp_m3:'Наблюдатели ×',
+  cp_a1:'Дым PM2.5', cp_a2:'Утопления детей', cp_a3:'Без гражданства',
+  cp_a4:'Стареющее население', cp_a5:'Морской пластик', cp_a6:'Молодёжное псих. здоровье',
+  btn_reset:'Сбросить к умолчаниям',
+  big_lbl:'Всего собрано на благотворительность',
+  big_sub:'Прямой взнос в шесть инициатив. Удерживается в эскроу до подтверждения проведения Королевским двором, затем высвобождается фондам.',
+  brk_tier:'Уровень', brk_seats:'Мест', brk_avg:'Ср. ฿/место', brk_sub:'Подытог ฿', brk_total:'Итого',
+  imp_school:'защищённых школ', imp_child:'обученных детей', imp_case:'случаев гражданства',
+  imp_center:'дневных центров × 1 год', imp_inter:'речных перехватчиков', imp_psy:'школьных психологов × 1 год',
+
+  lbl_creator:'Создателям · что видит организатор',
+  ttl_creator:'Что получает создатель впечатления',
+  led_creator:'Фигура уровня богов, делающая шаг навстречу аудитории, требует инфраструктуры. Ehipas принимает её на себя, оставляя создателю протокол и существо дела.',
+  cri1_h:'Готовая инфраструктура', cri1_d:'Проверка, аукцион, эскроу, распределение, отчётность — уже работают. Создатель ничего не строит с нуля.',
+  cri2_h:'Достоинство фигуры защищено', cri2_d:'Церемониальный формат с строгим протоколом — не услуга в розницу. Фигура остаётся в своём статусе. Рамка — благотворительное созывание, не коммерческая сделка.',
+  cri3_h:'Публичная легитимность', cri3_d:'Заранее объявленные обязательства по расходам и KPI снимают вопрос «зачем фигура отдаёт время» прежде, чем он задан.',
+  cri4_h:'Повторяемый шаблон', cri4_d:'Собранный один раз формат сохраняется на платформе как шаблон и проигрывается ежегодно тем же инструментарием. Не одноразовый героизм.',
+  cri5_h:'Готовая база покупателей', cri5_d:'Заранее проверенная аудитория капитала и любопытства со всего мира — создателю не нужно искать гостей по одному.',
+  cri6_h:'Репутация, которая накапливается', cri6_d:'Каждая успешная церемония поднимает и стояние создателя, и стояние платформы. Создатель и платформа растут вместе, не за счёт друг друга.',
+
+  lbl_why:'Почему этот формат держится только на Ehipas',
+  ttl_why:'Шесть узких мест, которые снимает платформа',
+  w1_h:'Проверка участников', w1_b:'Площадка с многоуровневой проверкой личности и платёжеспособности. Без неё к монарху попадают не те — с не тем протоколом, не тем намерением, или просто неподготовленные.',
+  w2_h:'Одновременный быстрый аукцион', w2_b:'Зафиксированный механизм Ehipas, проверенный на тысяче прогонов — даёт <strong>+16,6%</strong> против восходящего. Каждый дополнительный бат идёт инициативам.',
+  w3_h:'Эскроу до факта проведения', w3_b:'Средства удерживаются на платформе до подтверждения Королевским двором факта проведения. Высвобождаются напрямую инициативам — без посредников.',
+  w4_h:'Распределение зафиксировано до ставки', w4_b:'Каждый участник видит точное распределение по шести инициативам и обязательства по результату <strong>до</strong> оплаты. Никакой подмены постфактум.',
+  w5_h:'Регулярные годовые отчёты', w5_b:'Структурированные двенадцатимесячные отчёты каждому участнику о ходе финансируемых инициатив — встроены в условия билета. Не пресс-релиз через месяц.',
+  w6_h:'Тайская площадка с повторяемым форматом', w6_b:'Регуляторный трек внутри Таиланда. Формат шаблонизирован под ежегодное проведение тем же инструментарием — не одноразовый героизм Двора.',
+
+  ftr_note:'Иллюстративный кейс. Цифры — выходы модели.'
+},
+
+th: {
+  hdr_title:'พระราชอาคันตุกะแห่งประเทศไทย · กรณีศึกษาเชิงอธิบาย',
+  th_sys:'ระบบ', th_light:'สว่าง', th_dark:'มืด',
+
+  hero_eyebrow:'ตลาดประสบการณ์สด · กรณีศึกษาเชิงอธิบาย',
+  hero_title:'พระราชอาคันตุกะที่ระดมทุนเพื่อปัญหาที่ประเทศไทยรอไม่ได้',
+  hero_sub:'พิธีหนึ่งครั้ง 150 ที่นั่ง ทุกบาทผ่านบัญชีกลางสาธารณะไปยังโครงการการกุศลที่ประกาศไว้ล่วงหน้า ผู้เข้าร่วมได้รับประสบการณ์ที่ไม่มีจำหน่ายที่ใดในโลก ประเทศได้รับเงินที่กำลังรอ',
+
+  chip_kyc:'การตรวจสอบ', chip_auc:'การประมูล', chip_esc:'บัญชีกลาง', chip_alc:'การจัดสรร', chip_rep:'รายงาน',
+
+  lbl_tickets:'ประเภทตั๋ว · 150 ที่นั่งทั้งหมด',
+  ttl_tickets:'การเข้าถึงสามระดับ',
+  led_tickets:'ทุกตั๋วคือเงินบริจาคที่ได้รับการตรวจสอบบวกกับที่นั่งในห้อง ราคาเริ่มต้นด้านล่าง ราคาสุดท้ายกำหนดโดยการประมูลแฟลชพร้อมกันบน Ehipas',
+  tier_inner:'ระดับ I · วงใน', tier_core:'ระดับ II · หลัก', tier_obs:'ระดับ III · ผู้สังเกตการณ์',
+  t1_name:'วงใน', t2_name:'หลัก', t3_name:'ผู้สังเกตการณ์',
+  lbl_seats:'ที่นั่ง', lbl_start:'ราคาเริ่มต้น',
+  t1_right:'การเข้าเฝ้าส่วนตัวกับพระมหากษัตริย์ในรัชกาล 5–10 นาที โดยตรง ระบุชื่อ ในหัวข้อที่ผู้เข้าร่วมเลือก',
+  t2_right:'การเข้าเฝ้าส่วนตัวสั้นๆ 1–3 นาที การพบปะจริงต่อหน้าที่บันทึกในจดหมายเหตุของงาน',
+  t3_right:'การปรากฏตัวจริงในห้องท้องพระโรงและสิทธิ์ส่งข้อเสนอเป็นลายลักษณ์อักษร ข้อเสนอที่คัดเลือกจะถูกอ่านต่อหน้าพระพักตร์',
+
+  lbl_benefits:'สิ่งที่ผู้เข้าร่วมได้รับ',
+  ttl_benefits:'ผลประโยชน์สองด้านอย่างชัดเจน',
+  led_benefits:'นี่ไม่ใช่การกุศลที่มีพรีเมียมทางศีลธรรม แต่คือโอกาสที่ไม่อาจซื้อได้ที่อื่นในโลก พร้อมกับอิทธิพลโดยตรงต่อเส้นทางของประเทศ ผู้มาเยือนได้สิ่งที่เงินซื้อไม่ได้ ประเทศได้ทรัพยากรที่ขาดแคลน ทั้งสองฝ่ายชนะ',
+  b1_name:'สิ่งที่ไม่มีเงินใดในที่อื่นซื้อได้', b2_name:'การพบปะสั้นแต่จริง', b3_name:'การปรากฏตัวในประวัติศาสตร์',
+  b_irreplaceable:'ไม่สามารถแทนที่ได้', b_convertible:'มูลค่าที่แปลงได้',
+  b1_a1:'การเข้าเฝ้าส่วนตัวกับพระมหากษัตริย์ 5–10 นาที โดยตรง ไม่มีคนกลาง',
+  b1_a2:'สิทธิ์ในการตั้งคำถามที่เลือกเองและรับฟังคำตอบ',
+  b1_a3:'การเป็นสมาชิกตลอดชีวิตของวงปิดยี่สิบคนที่เท่าเทียมกัน',
+  b1_a4:'ช่องทางตรงสู่รัฐมนตรีและผู้เชี่ยวชาญที่กำหนดทิศทางโครงการ',
+  b1_a5:'มรดกตกทอดของครอบครัว — บัตรเชิญ ภาพถ่าย และพระบารมี ส่งต่อสู่ลูกหลาน',
+  b1_a6:'การบันทึกชื่อลงในจดหมายเหตุประวัติศาสตร์ของพิธี',
+  b1_a7:'เสียงแรกในการเลือกโครงการที่จะได้รับการสนับสนุน',
+  b1_c1:'เครือข่ายยี่สิบคน — ความร่วมมือต่อเนื่องตลอดทศวรรษหน้า',
+  b1_c2:'การยกระดับชื่อเสียงจาก «คนรวย» เป็น «คนที่เปลี่ยนประเทศไทย»',
+  b1_c3:'เงินที่ได้ชื่อ — ปกป้องจากการเสื่อมค่าของทุน',
+  b2_a1:'การพบปะสั้นแต่จริงกับพระมหากษัตริย์ — 1–3 นาทีต่อหน้า',
+  b2_a2:'การเป็นสมาชิกของวงแปดสิบคนที่เป็นที่รู้จักระดับชาติ',
+  b2_a3:'มรดกตกทอดของครอบครัว — เอกสารเชิญและภาพถ่ายกลุ่ม',
+  b2_a4:'เสียงในกลุ่มย่อยที่กำหนดทิศทางโครงการ',
+  b2_a5:'การบันทึกชื่อลงในรายงานประจำปี',
+  b2_a6:'สิทธิ์ผู้เข้าร่วมเต็มในทุกพิธีการ',
+  b2_c1:'วงแปดสิบคนตลอดทศวรรษหน้า — ความสัมพันธ์ที่หนาแน่นกว่างานประชุมใดๆ',
+  b2_c2:'บันทึกสาธารณะของการมีส่วนร่วมที่มีความหมายในกิจกรรมระดับชาติ',
+  b3_a1:'การปรากฏตัวจริงในห้องในขณะเข้าเฝ้า — ประสบการณ์ที่มีไม่กี่คนต่อรุ่น',
+  b3_a2:'สิทธิ์ส่งข้อเสนอเป็นลายลักษณ์อักษร — 5–10 ฉบับที่คัดเลือกจะอ่านในพิธีพร้อมประกาศชื่อผู้เขียน',
+  b3_a3:'ใบรับรองผู้เข้าร่วม ภาพถ่ายกลุ่ม',
+  b3_a4:'รายงานต่อเนื่องเกี่ยวกับโครงการที่ได้รับเงินทุน',
+  b3_c1:'สำหรับผู้ที่ข้อเสนอถูกอ่าน — เหตุการณ์เปลี่ยนชีวิตที่ได้ยินทั่วประเทศ',
+  b3_c2:'มรดกเรื่องเล่าที่อยู่ในครอบครัวข้ามรุ่น',
+
+  lbl_godlevel:'ประเภท · การเข้าถึงคนระดับเทพ',
+  ttl_godlevel:'ใครคือคนระดับเทพ',
+  def_h:'นิยาม',
+  def_body:'<strong>คนที่เวลาของเขาซื้อปลีกไม่ได้ไม่ว่าราคาเท่าใด</strong> ประเภทไม่ได้นิยามด้วยลักษณะเดียว แต่นิยามด้วยการไม่มีช่องทางเข้าถึงปกติ',
+  led_sources:'สี่แหล่งที่มาของสถานะดังกล่าว — กรณีไทยใช้แหล่งแรก รูปแบบขยายไปอีกสามแหล่ง',
+  src1_h:'อำนาจที่สืบทอดหรือพิธีกรรม', src1_d:'พระมหากษัตริย์ในรัชกาล หัวหน้าราชวงศ์ที่ปิด ผู้นำสำนักศาสนาดั้งเดิม',
+  src2_h:'ทรัพย์สินระดับโลก', src2_d:'Forbes ท็อป-10 และท็อป-50 ผู้ก่อตั้งบริษัทระดับโลก มูลนิธิครอบครัวทุนเก่าที่เวลาของพวกเขาผูกกับบทบาทสาธารณะหรือแยกจากคนนอก',
+  src3_h:'ความยิ่งใหญ่ทางวัฒนธรรมที่ยังมีชีวิต', src3_d:'ผู้รับรางวัลโนเบลและเทียบเท่าที่ชื่อกลายเป็นคำสามัญ ตำนานที่ยังมีชีวิตในศิลปะ วิทยาศาสตร์ และกีฬา',
+  src4_h:'การรวมศูนย์ของความรู้', src4_d:'ผู้พิทักษ์ประเพณีเฉพาะ — ปรมาจารย์งานฝีมือคนสุดท้าย ผู้พูดภาษาเพียงคนเดียว หัวหน้าสำนักปิด',
+  who_creators:'ใครสร้างประสบการณ์', who_buyers:'ใครซื้อตั๋ว',
+  cr1:'ราชสำนัก พิธีการของพระมหากษัตริย์',
+  cr2:'ชุมชนสงฆ์ คณะจิตวิญญาณ สถาบันศาสนา',
+  cr3:'สำนักครอบครัวหรือหัวหน้าทีมของมหาเศรษฐี',
+  cr4:'มูลนิธิการกุศล สถาบันวัฒนธรรม',
+  cr5:'บ้านประมูลในความร่วมมือ',
+  cr6:'ตัวกลางส่วนตัว ผู้น่าเชื่อถือของบุคคล',
+  cr7:'คณะทูต สถานทูต',
+  bu1:'ผู้มั่งคั่งที่แสวงหาประสบการณ์ที่ไม่มีในที่อื่น',
+  bu2:'สำนักครอบครัวที่สร้างเรื่องเล่าราชวงศ์',
+  bu3:'หัวหน้าบริษัทที่ต้องการการทูตอ่อนและการเข้าถึงชนชั้นสูง',
+  bu4:'ชาวพลัดถิ่นที่แสวงหาการเชื่อมต่อกับประเทศบ้านเกิด',
+  bu5:'ผู้อุปถัมภ์ที่อุทิศตนของขบวนการศาสนาและวัฒนธรรม',
+  bu6:'ทุนใหม่ — เทคโนโลยี ดิจิทัล — ที่ผสมผสานเข้ากับวงที่ได้รับการยอมรับ',
+  bu7:'ครอบครัวราชวงศ์ในช่วงเวลาส่งต่อรุ่น',
+  bu8:'ผู้แทนของกองทุนความมั่งคั่งของรัฐ',
+
+  lbl_dram:'การจัดการ · 8 เฟส', ttl_dram:'กายวิภาคของพิธี',
+  led_dram:'จากการบรรยายสรุปก่อนหนึ่งเดือนไปจนถึงพระบรมราโชวาทปิด ระยะเวลาเป็นการประมาณ ฉากสำคัญคือการเสด็จราชดำเนิน — ห้ากลุ่มย่อย การเข้าเฝ้านานสำหรับวงใน สั้นสำหรับหลัก การอ่านข้อเสนอที่ดีที่สุดของผู้สังเกตการณ์อย่างเป็นพิธี',
+  ph1_t:'เฟส 1 · T−30…T+45 นาที',
+  ph2_t:'เฟส 2 · T+45 นาที…T+1 ชม. 15',
+  ph3_t:'เฟส 3 · T+1 ชม. 15…T+1 ชม. 30',
+  ph4_t:'เฟส 4 · T+1 ชม. 30…T+3 ชม.',
+  ph5_t:'เฟส 5 · T+3 ชม.…T+5 ชม. · ฉากสำคัญ',
+  ph6_t:'เฟส 6 · T+5 ชม.…T+5 ชม. 30',
+  ph7_t:'เฟส 7 · T+5 ชม. 30…T+6 ชม.',
+  ph8_t:'เฟส 8 · T+6 ชม.…กลางคืน',
+  ph1_h:'การเตรียมและการมาถึง',
+  ph1_b:'ก่อนพิธีทั้ง 150 คนได้รับการบรรยายสรุปพิธีการ — การแต่งกาย คำกราบบังคมทูล กิริยา แต่ละคนได้รับแฟ้มข้อมูลของ 4–6 โครงการพร้อมตัวชี้วัด ผู้สังเกตการณ์เตรียมข้อเสนอเป็นลายลักษณ์อักษรหนึ่งหน้า ในวันงาน โต๊ะลงทะเบียนแยกสามระดับ — มองเห็นกัน เพื่อโครงสร้างชัดเจน ชา การต้อนรับ ผู้สังเกตการณ์ส่งข้อเสนอ',
+  ph2_h:'พิธีเปิด',
+  ph2_b:'ขบวนแห่ พระมหากษัตริย์เสด็จเข้าในเครื่องราชอิสริยาภรณ์เต็มยศ เพลงสรรเสริญพระบารมี พระบรมราโชวาทเปิดพิธี — 8–12 นาที กรอบและลำดับความสำคัญของปี ประกาศรายชื่อโครงการสั้น แต่ละโครงการป้องกันสั้นๆ โดยรัฐมนตรีหรือผู้เชี่ยวชาญ',
+  ph3_h:'การจัดกลุ่ม',
+  ph3_b:'ห้ากลุ่มย่อยประมาณสามสิบคนต่อกลุ่ม ผสมผสานกันโดยตั้งใจ — แต่ละกลุ่มมีวงใน หลัก และผู้สังเกตการณ์ ไม่มีการแบ่งแยกตามระดับ แต่ละกลุ่มจับคู่กับโครงการหนึ่ง พร้อมผู้ดำเนินการที่เป็นผู้เชี่ยวชาญ ผู้บันทึกสองคน และล่าม',
+  ph4_h:'การประชุม',
+  ph4_b:'เก้าสิบนาทีของการอภิปรายเชิงโครงสร้าง: ปัญหา · ขนาด · แผนเฉพาะ · งบประมาณ · ตัวชี้วัดความสำเร็จในสิบสองเดือน ในเวลาเดียวกัน ผู้ช่วยราชสำนักคัดกรองข้อเสนอของผู้สังเกตการณ์และเตรียมสรุปตามหัวข้อสำหรับพระมหากษัตริย์ — หนึ่งหน้าต่อหัวข้อ แต่ละกลุ่มเลือกโฆษก — มักเป็นแต่ไม่เสมอไปสมาชิกวงใน',
+  ph5_h:'การเสด็จราชดำเนิน',
+  ph5_b:'พระมหากษัตริย์เสด็จไปยังห้ากลุ่มเป็นลำดับ ภายในแต่ละกลุ่ม:',
+  ph5_l1:'วงใน (4 คนต่อกลุ่ม) — การเข้าเฝ้าเดี่ยว 5–10 นาทีในมุมแยกของกลุ่ม การสนทนาลึกซึ้ง: ท่านจะทำอะไรเป็นการส่วนตัวนอกเหนือจากเงินบริจาค',
+  ph5_l2:'หลัก (16 ต่อกลุ่ม) — คำกล่าวสั้น 1–3 นาที เป็นกลุ่มละ 4–5',
+  ph5_l3:'ผู้สังเกตการณ์ (10 ต่อกลุ่ม) — พระบรมราชานุญาตรวม ข้อเสนอที่ดีที่สุด 3–5 ฉบับของกลุ่มถูกอ่านโดยผู้ช่วยราชสำนักต่อพระพักตร์ ผู้เขียนยืนขึ้น นี่คือการรับรองตามพิธี',
+  ph5_l4:'ระหว่างกลุ่ม สรุปข้อเสนอถูกถวายพระมหากษัตริย์ในช่วงเปลี่ยน',
+  ph6_h:'การประกอบ',
+  ph6_b:'ทุกคนกลับสู่ห้องหลัก โฆษกของห้ากลุ่มนำเสนอแผนสุดท้ายของโครงการตามลำดับ — สามนาทีต่อกลุ่ม พระมหากษัตริย์ทรงมีพระราชดำรัสและพระบรมราชานุญาตสั้นๆ สำหรับแต่ละกลุ่ม',
+  ph7_h:'การประกาศ',
+  ph7_b:'คณะกรรมการพระราชทานการกุศล — ที่ปรึกษาบวกผู้เชี่ยวชาญอิสระ — ประกาศการจัดสรรเงินสุดท้าย บนจอหลัก: ยอดรวม การแบ่งตามโครงการ KPI และกำหนดเวลา ชื่อผู้บริจาคแสดงตามเลือกของผู้เข้าร่วม — สาธารณะหรือไม่ระบุชื่อ พระบรมราโชวาทปิด',
+  ph8_h:'การต่อเนื่อง',
+  ph8_b:'งานเลี้ยง — อาหารไทย ดนตรีคลาสสิก การรำดั้งเดิม ผู้เข้าร่วมแต่ละคนได้รับโฟลิโอที่ระลึก: บัตรเชิญส่วนตัว ภาพถ่าย และพันธสัญญาของ Ehipas ในการจัดทำรายงานสิบสองเดือนเกี่ยวกับโครงการ',
+
+  lbl_eff:'ผลกระทบ · 6 ระดับ × 3 ขอบเขตเวลา',
+  ttl_eff:'สิ่งที่พิธีนี้ทิ้งไว้',
+  led_eff:'ผลกระทบของพิธีขยายตามขอบเขตเวลา — ชั่วโมง เดือน ทศวรรษ — และไปไกลเกินกว่า 150 คนในห้อง สลับระดับเพื่อดูสิ่งที่แต่ละกลุ่มได้รับ',
+  eff_l1:'แขกวงใน', eff_l2:'แขกหลัก', eff_l3:'ผู้สังเกตการณ์',
+  eff_l4:'ผู้รับการกุศล', eff_l5:'สังคมไทย', eff_l6:'สถาบันกษัตริย์และชาติ',
+  hor_short:'สั้น · ชั่วโมง–สัปดาห์', hor_mid:'กลาง · เดือน–ปี', hor_long:'ยาว · ปี–ทศวรรษ',
+  e1s:'การเปลี่ยนแปลงทางการรับรู้ การสนทนาส่วนตัวกับองค์อธิปไตยจัดเรียงความสัมพันธ์ของผู้เข้าร่วมกับเงินของตัวเองใหม่ การเพิ่มชื่อเสียงในชุมชนธุรกิจอย่างคมชัด',
+  e1m:'เครือข่ายยี่สิบคนกลายเป็นชมรมกึ่งปิด การมีส่วนร่วมที่จับต้องได้กับโครงการที่เลือกแปลงเป็นความร่วมมือและกิจการใหม่',
+  e1l:'มักเป็นตัวเร่ง «ชีวิตที่สอง» — การหันสู่การกุศลหรือการรับใช้สาธารณะ ตำนานครอบครัวส่งต่อสู่หลานเป็นเรื่องเล่าก่อตั้ง',
+  e2s:'การพบปะสั้นแต่จริงกับพระมหากษัตริย์ ความรู้สึกถูกมองว่าเป็นพลเมืองที่มีน้ำหนัก ไม่ใช่สถิติ',
+  e2m:'การรวมเข้าในชุมชนแปดสิบคนอย่างไม่เป็นทางการ ความสามารถต่อเนื่องในการติดตามความคืบหน้าของโครงการที่ช่วยกำหนดรูป',
+  e2l:'มรดกครอบครัว — เอกสารเชิญและภาพถ่าย ในห้าสิบปีหลานแสดงให้แขกดู',
+  e3s:'สำหรับผู้ที่ข้อเสนอถูกอ่าน — เหตุการณ์เปลี่ยนชีวิต สำหรับคนอื่น — การปรากฏตัวในประวัติศาสตร์',
+  e3m:'ข้อเสนอเป็นลายลักษณ์อักษรเข้าสู่ช่องทางจริง บางอย่างกลายเป็นโครงการในทะเบียนของแพลตฟอร์ม',
+  e3l:'การเลื่อนชั้นทางสังคมที่จำกัด แต่เรื่อง «ผมอยู่ที่นั่น» รับใช้ครอบครัวข้ามรุ่น',
+  e4s:'การไหลเข้าครั้งเดียวประมาณสามร้อยห้าสิบล้านบาทสู่โครงการที่เลือก การเพิ่มทัศนวิสัยอย่างคมชัดสำหรับองค์กรพันธมิตร',
+  e4m:'โครงการดำเนินการหนึ่งถึงสามปีพร้อมผลลัพธ์ที่วัดได้และการรายงานรายไตรมาส ผู้รับประโยชน์โดยตรงนับหมื่นคน',
+  e4l:'หากรูปแบบกลายเป็นสถาบันประจำปี — การไหลซ้ำของพันล้านบาทในทศวรรษ ความเป็นไปได้จริงในการแก้ปัญหาระดับชาติเฉพาะ',
+  e5s:'วาระข่าวถูกครอบงำหนึ่งถึงสองสัปดาห์ พิธีถูกอภิปรายทุกที่',
+  e5m:'การเปลี่ยนแปลงในวาทกรรมพลเมือง คำเล่า «คนรวยอาจเป็นประโยชน์» เสริมด้วยโมเดลที่เป็นรูปธรรม',
+  e5l:'รูปแบบทางวัฒนธรรม: สถานะสูงผูกกับการกุศลสาธารณะมากกว่าการบริโภค',
+  e6s:'การสาธิตความเกี่ยวข้องครั้งใหม่ สื่อมวลชนระหว่างประเทศคุณภาพสูง',
+  e6m:'สถาบันกษัตริย์ในฐานะพลังเรียกประชุม นอกเหนือบทบาทพิธีการ พลังอ่อนของไทยในต่างประเทศเพิ่มขึ้น',
+  e6l:'แบบอย่าง «เศรษฐกิจศีลธรรม» รูปแบบอาจถูกศึกษาและปรับใช้นอกประเทศไทย โดยราชวงศ์และตระกูลอื่น',
+
+  lbl_prob:'เงินไปที่ใด · 6 โครงการ',
+  ttl_prob:'หกปัญหาที่รอไม่ได้',
+  led_prob:'คัดเลือกตามความรุนแรง การขาดแคลนเงินทุนเรื้อรัง และความสามารถในการแปลงเงินเป็นผลลัพธ์ที่วัดได้ ผู้เข้าร่วมเลือกก่อนการประมูลว่าเงินบริจาคจะกระจายไปยังหกอย่างไร',
+  p1_h:'ฝุ่น PM2.5 ในภาคเหนือ', p1_d:'การเสียชีวิตก่อนกำหนดหลายพันรายต่อปีในเชียงใหม่ แม่ฮ่องสอน และจังหวัดตอนบน — จากการเผาทางการเกษตร ปอดของเด็กรับผลกระทบหนักที่สุด',
+  p1_what:'เราจัดสรร:', p1_what2:'เงินอุดหนุนเกษตรกรที่หยุดเผา การติดตามดาวเทียม เครื่องฟอกอากาศในโรงเรียน', p1_unit:'ประมาณ',
+  p2_h:'การจมน้ำของเด็ก', p2_d:'สาเหตุการเสียชีวิตอันดับหนึ่งของเด็กไทยอายุ 1–14 ปี — ประมาณหนึ่งพันคนต่อปี มองไม่เห็นในพาดหัวข่าว แต่ชัดเจนในสถิติการเสียชีวิต',
+  p2_what:'เราจัดสรร:', p2_what2:'หลักสูตรว่ายน้ำฟรีผ่านโรงเรียน รั้วกั้นน้ำที่อันตราย เสื้อชูชีพในหมู่บ้านชาวประมง', p2_unit:'ประมาณ',
+  p3_h:'คนไร้สัญชาติ', p3_d:'ผู้อาศัยกว่าสี่แสนแปดหมื่นคน — ส่วนใหญ่เป็นชาวเขา — ที่ไม่มีสิทธิ์ทำงานถูกกฎหมาย รับการรักษาพยาบาล หรือเดินทางออกนอกอำเภอ',
+  p3_what:'เราจัดสรร:', p3_what2:'คลินิกกฎหมาย กระบวนการเอกสาร โครงการขอสัญชาติ', p3_unit:'ประมาณ',
+  p4_h:'ประชากรสูงวัยที่ไม่มีโครงสร้างพื้นฐาน', p4_d:'ภายในปี 2030 คนไทยทุกหนึ่งในสี่จะอายุเกินหกสิบ ประเทศแก่เร็วกว่าโครงสร้างพื้นฐานการดูแลที่กำลังสร้าง ความเหงาและโรคเรื้อรังที่ไม่ได้รักษาเป็นโรคระบาดเงียบ',
+  p4_what:'เราจัดสรร:', p4_what2:'ศูนย์ดูแลผู้สูงอายุกลางวันในร้อยอำเภอ ทีมตรวจสุขภาพเคลื่อนที่', p4_unit:'ประมาณ',
+  p5_h:'พลาสติกในทะเล', p5_d:'ประเทศไทยอยู่ในสิบอันดับแหล่งที่มาของพลาสติกในมหาสมุทรที่แย่ที่สุดในโลก ชุมชนชาวประมงชายฝั่ง — เอกลักษณ์อาหารของประเทศ — จ่ายราคาก่อน',
+  p5_what:'เราจัดสรร:', p5_what2:'เครื่องดักขยะที่ปากแม่น้ำ โครงสร้างพื้นฐานรีไซเคิลสำหรับหมู่บ้านชาวประมง', p5_unit:'ประมาณ',
+  p6_h:'สุขภาพจิตของเยาวชน', p6_d:'อัตราการฆ่าตัวตายที่เพิ่มขึ้นในคนไทยอายุ 15–29 ปี การตีตราทำให้เกือบทั้งหมดอยู่ใต้ดิน รุ่นหนึ่งกำลังสูญเสียในที่แจ้ง',
+  p6_what:'เราจัดสรร:', p6_what2:'นักจิตวิทยาในโรงเรียน สายด่วนระดับชาติ การบำบัดที่เข้าถึงได้', p6_unit:'ประมาณ',
+  unit_school:'ต่อโรงเรียนที่ปลอดภัย', unit_child:'ต่อเด็กที่ฝึก', unit_case:'ต่อเคสสัญชาติ',
+  unit_center:'ต่อศูนย์ต่อปี', unit_inter:'ต่อเครื่องดัก', unit_psy:'ต่อนักจิตวิทยาในโรงเรียน/ปี',
+
+  lbl_genre:'ประเภทสามารถทำซ้ำได้ · นอกประเทศไทย',
+  ttl_genre:'กรณีไทยคือกรณีแรก ไม่ใช่กรณีเดียว',
+  led_genre:'หกรูปแบบที่เป็นไปได้จากสี่แหล่งที่มาของสถานะระดับเทพ แต่ละอันคือความเป็นไปได้จริง — การพบกับบุคคลที่ไม่มีช่องทางเข้าถึงปกติ พร้อมเป้าหมายที่คุ้มค่ากับเงินที่ระดมได้',
+  src_power:'อำนาจ', src_wealth:'ทรัพย์สิน', src_knowledge:'ความรู้', src_greatness:'ความยิ่งใหญ่',
+  g1_w:'ภูฏาน', g1_who:'พระราชาจิกมี เคซาร์', g1_what:'การเข้าเฝ้าที่ตาชิโชดซองในทิมพู ในรูปแบบสภาพระราชวงศ์ประจำปีของดรุก กยัลโป', g1_money:'→ โครงการความสุขมวลรวมประชาชาติ · โรงเรียนชนบทและสาธารณสุข',
+  g2_w:'นครรัฐวาติกัน', g2_who:'พระสันตปาปา', g2_what:'การเข้าเฝ้าส่วนตัวในกลุ่มเล็กที่พระราชวังอัครสาวก พร้อมการอวยพรส่วนตัว', g2_money:'→ การีตัสอินเตอร์เนชันแนลลิส · ความช่วยเหลือผู้ลี้ภัยทั่วโลก',
+  g3_w:'สหรัฐอเมริกา', g3_who:'วอร์เรน บัฟเฟตต์', g3_what:'งานเลี้ยงในจิตวิญญาณของประเพณีการประมูล Glide ในรูปแบบสาธารณะที่ขยายพร้อมการสนทนาเชิงกลยุทธ์', g3_money:'→ อาหารโรงเรียนสำหรับเด็กในเขตยากจนของเอเชียตะวันออกเฉียงใต้',
+  g4_w:'อินเดีย', g4_who:'มูเกศ อัมบานี', g4_what:'การต้อนรับที่ Antilia พร้อมมุมมองวิสัยทัศน์เชิงกลยุทธ์ระยะยาวของราชวงศ์อุตสาหกรรม', g4_money:'→ สุขภาพมารดาในรัฐชนบทของอินเดีย',
+  g5_w:'ญี่ปุ่น', g5_who:'สมบัติแห่งชาติที่ยังมีชีวิต', g5_what:'พิธีชงชาพร้อมการสอนส่วนตัวจาก Ningen Kokuhō — ปรมาจารย์งานฝีมือที่อยู่ในสายเลือดเดียว', g5_money:'→ มูลนิธิเพื่อการอนุรักษ์มรดกที่ไม่ใช่วัตถุ',
+  g6_w:'อินเดีย', g6_who:'องค์ทะไลลามะ', g6_what:'คำสอนและการเข้าเฝ้าในธรรมศาลา ในประเพณีสายของสำนัก Gelug', g6_money:'→ ความช่วยเหลือทางการแพทย์สำหรับผู้ลี้ภัยทิเบต',
+  genre_coda:'รูปแบบใดๆ ที่ผู้ถือสถานะเฉพาะก้าวเข้ามาและรับเป็นการแลกเปลี่ยน เงินบริจาคโดยตรงสู่เป้าหมายที่ผูกกับชะตาของเขา — สามารถจัดผ่าน Ehipas กรณีไทยเป็นภาพประกอบหนึ่งของกลไก',
+
+  lbl_calc:'เครื่องคำนวณ · ขนาดผลกระทบ',
+  ttl_calc:'150 ที่นั่งสามารถระดมทุนอะไรได้',
+  led_calc:'ปรับจำนวนที่นั่งต่อระดับ พรีเมียมประมูล และวิธีจัดสรรเงินไปยังหกโครงการ ทุกบาทถูกแปลเป็นหน่วยผลกระทบ',
+  cs_seats:'ที่นั่งต่อระดับ', cs_premium:'พรีเมียมประมูลต่อระดับ', cs_alloc:'การจัดสรรไปยังโครงการ',
+  cp_n1:'วงใน', cp_n2:'หลัก', cp_n3:'ผู้สังเกตการณ์',
+  cp_m1:'วงใน ×', cp_m2:'หลัก ×', cp_m3:'ผู้สังเกตการณ์ ×',
+  cp_a1:'PM2.5', cp_a2:'จมน้ำของเด็ก', cp_a3:'ไร้สัญชาติ',
+  cp_a4:'ผู้สูงอายุ', cp_a5:'พลาสติกในทะเล', cp_a6:'สุขภาพจิตเยาวชน',
+  btn_reset:'รีเซ็ตค่าเริ่มต้น',
+  big_lbl:'รวมที่ระดมได้เพื่อการกุศล',
+  big_sub:'เงินบริจาคโดยตรงไปยังหกโครงการ ถือไว้ในบัญชีกลางจนกว่าราชสำนักยืนยันพิธีจัดขึ้น แล้วปล่อยให้กองทุน',
+  brk_tier:'ระดับ', brk_seats:'ที่นั่ง', brk_avg:'ค่าเฉลี่ย ฿/ที่นั่ง', brk_sub:'รวมย่อย ฿', brk_total:'รวม',
+  imp_school:'โรงเรียนที่ป้องกัน', imp_child:'เด็กที่ฝึก', imp_case:'เคสสัญชาติ',
+  imp_center:'ศูนย์กลางวัน × 1 ปี', imp_inter:'เครื่องดักแม่น้ำ', imp_psy:'นักจิตวิทยาในโรงเรียน × 1 ปี',
+
+  lbl_creator:'สำหรับผู้สร้าง · สิ่งที่ผู้จัดเห็น',
+  ttl_creator:'สิ่งที่ผู้สร้างประสบการณ์ได้รับ',
+  led_creator:'บุคคลระดับเทพที่เคลื่อนเข้าหาผู้ชมต้องการโครงสร้างพื้นฐาน Ehipas รับมือทั้งหมด ปล่อยให้ผู้สร้างมุ่งเน้นพิธีการและสาระ',
+  cri1_h:'โครงสร้างพื้นฐานพร้อมใช้', cri1_d:'การตรวจสอบ การประมูล บัญชีกลาง การจัดสรร การรายงาน — ใช้งานได้แล้ว ผู้สร้างไม่ต้องสร้างใดๆ จากศูนย์',
+  cri2_h:'ศักดิ์ศรีของบุคคลถูกปกป้อง', cri2_d:'รูปแบบพิธีการพร้อมพิธีเข้มงวด — ไม่ใช่บริการขายปลีก บุคคลคงอยู่ในสถานะ กรอบคือการเรียกประชุมการกุศล ไม่ใช่ธุรกรรมเชิงพาณิชย์',
+  cri3_h:'ความชอบธรรมสาธารณะ', cri3_d:'พันธสัญญาค่าใช้จ่ายและ KPI ที่ประกาศล่วงหน้า ทำให้คำถาม «ทำไมบุคคลให้เวลา» เป็นกลางก่อนถูกถาม',
+  cri4_h:'แม่แบบที่ทำซ้ำได้', cri4_d:'รูปแบบที่ประกอบครั้งหนึ่งถูกเก็บเป็นแม่แบบบนแพลตฟอร์มและเล่นซ้ำประจำปีด้วยชุดเครื่องมือเดียวกัน ไม่ใช่ความกล้าหาญครั้งเดียว',
+  cri5_h:'ฐานผู้ซื้อพร้อม', cri5_d:'ผู้ชมที่ได้รับการตรวจสอบล่วงหน้าจากทุนและความอยากรู้ทั่วโลก — ผู้สร้างไม่ต้องตามล่าแขกทีละคน',
+  cri6_h:'ชื่อเสียงที่สะสม', cri6_d:'พิธีที่ประสบความสำเร็จแต่ละครั้งเพิ่มทั้งสถานะของผู้สร้างและของแพลตฟอร์ม ผู้สร้างและแพลตฟอร์มเติบโตด้วยกัน ไม่ใช่ในต้นทุนของกันและกัน',
+
+  lbl_why:'ทำไมรูปแบบนี้ถึงอยู่ได้บน Ehipas เท่านั้น',
+  ttl_why:'หกคอขวดที่แพลตฟอร์มกำจัด',
+  w1_h:'การตรวจสอบผู้เข้าร่วม', w1_b:'แพลตฟอร์มที่มีการตรวจสอบตัวตนและความสามารถในการชำระเงินหลายระดับ ขาดมัน คนผิดเข้าถึงพระมหากษัตริย์ — ด้วยพิธีการผิด เจตนาผิด หรือเพียงไม่พร้อม',
+  w2_h:'การประมูลแฟลชพร้อมกัน', w2_b:'กลไก Ehipas ที่ตรึงไว้ ตรวจสอบแล้วในหนึ่งพันรอบจำลอง — ให้ <strong>+16.6%</strong> เหนือการประมูลแบบอังกฤษ ทุกบาทเพิ่มเติมไปสู่โครงการ',
+  w3_h:'บัญชีกลางจนกว่าจะยืนยันพิธี', w3_b:'เงินถูกถือโดยแพลตฟอร์มจนกว่าราชสำนักยืนยันว่าเหตุการณ์เกิดขึ้น ปล่อยตรงสู่โครงการ — ไม่มีคนกลาง',
+  w4_h:'การจัดสรรล็อกก่อนการเสนอราคา', w4_b:'ผู้เข้าร่วมแต่ละคนเห็นการกระจายที่แม่นยำในหกโครงการและผลลัพธ์ที่ผูกพัน <strong>ก่อน</strong> ชำระเงิน ไม่มีการแทนที่หลังเหตุการณ์',
+  w5_h:'รายงานประจำปี', w5_b:'รายงานสิบสองเดือนที่มีโครงสร้างให้ผู้เข้าร่วมทุกคนเกี่ยวกับโครงการที่ได้รับเงินทุน — เข้าสายเงื่อนไขตั๋ว ไม่ใช่ข่าวประชาสัมพันธ์ในเดือนต่อมา',
+  w6_h:'แพลตฟอร์มไทยที่มีรูปแบบทำซ้ำได้', w6_b:'เส้นทางการกำกับภายในประเทศไทย รูปแบบมีแม่แบบสำหรับการทำซ้ำประจำปีด้วยชุดเครื่องมือเดียวกัน — ไม่ใช่ความกล้าหาญครั้งเดียวของราชสำนัก',
+
+  ftr_note:'กรณีศึกษาเชิงอธิบาย ตัวเลขเป็นผลลัพธ์ของแบบจำลอง'
+},
+
+zh: {
+  hdr_title:'泰国王室觐见 · 示例案例',
+  th_sys:'跟随系统', th_light:'浅色', th_dark:'深色',
+
+  hero_eyebrow:'现场体验交易所 · 示例案例',
+  hero_title:'一场资助泰国不能再拖延之事的王室觐见。',
+  hero_sub:'一次仪式。150个席位。每一泰铢通过公开托管流入预先公布的慈善项目。参与者获得世界上别处买不到的体验;国家获得正在等待的资金。',
+
+  chip_kyc:'验证', chip_auc:'拍卖', chip_esc:'托管', chip_alc:'分配', chip_rep:'报告',
+
+  lbl_tickets:'票务类别 · 共150席',
+  ttl_tickets:'三层级别的访问',
+  led_tickets:'每张票都是经过验证的慈善捐款加上大厅中的一席。下方为起拍价;最终价格由 Ehipas 上同时进行的闪电拍卖决定。',
+  tier_inner:'I 级 · 内圈', tier_core:'II 级 · 核心', tier_obs:'III 级 · 观察者',
+  t1_name:'内圈', t2_name:'核心', t3_name:'观察者',
+  lbl_seats:'席位', lbl_start:'起拍价',
+  t1_right:'与在位君主进行5–10分钟的私人觐见。直接、点名、就参与者所选主题。',
+  t2_right:'与君主进行1–3分钟的简短私人觐见。一次真实的面对面会面,记入活动的官方编年史。',
+  t3_right:'在大殿内的实际出席,以及提交简短书面建议的权利。所选建议在君主面前朗读。',
+
+  lbl_benefits:'参与者获得什么',
+  ttl_benefits:'恰好是双重收益',
+  led_benefits:'这不是带有道德溢价的慈善。这是世界上别处买不到的机会,加上对国家道路的直接影响。客人获得无法购买之物;国家获得所缺乏的资源。双方都赢。',
+  b1_name:'别处任何金钱都买不到的', b2_name:'简短而真实的会面', b3_name:'见证历史',
+  b_irreplaceable:'不可替代', b_convertible:'可转换价值',
+  b1_a1:'与在位君主进行5–10分钟的私人觐见 — 直接、无中介。',
+  b1_a2:'提出亲自选择的问题并听到答复的权利。',
+  b1_a3:'终生归属于二十位平等者的封闭圈子。',
+  b1_a4:'通往塑造倡议的部长和专家的直接渠道。',
+  b1_a5:'家族传家宝 — 邀请函、照片和王室祝福传递给子孙。',
+  b1_a6:'记入仪式历史编年史的具名收录。',
+  b1_a7:'选择资助项目的首席发言权。',
+  b1_c1:'二十人的网络 — 未来十年的持续合作。',
+  b1_c2:'声誉从「富人」转为「改变了泰国的人」。',
+  b1_c3:'获得名誉的资本 — 抵御财富贬值。',
+  b2_a1:'与君主的简短而真实的会面 — 1–3分钟面对面。',
+  b2_a2:'归属于全国公认的八十人圈子。',
+  b2_a3:'家族传家宝 — 邀请文件和团体照片。',
+  b2_a4:'在塑造倡议的小组内的发言权。',
+  b2_a5:'记入年度结果报告的具名收录。',
+  b2_a6:'仪式所有礼仪环节的完整参与者权利。',
+  b2_c1:'未来十年的八十人圈子 — 比任何会议都更紧密的关系。',
+  b2_c2:'参与国家行为的有意义记录,面向公众。',
+  b3_a1:'觐见时在大厅内的实际出席 — 每代人只有少数可得的体验。',
+  b3_a2:'向君主提交书面建议的权利 — 所选5–10份在仪式上朗读,作者姓名宣读。',
+  b3_a3:'参与者证书,团体照片。',
+  b3_a4:'关于资助项目的定期更新。',
+  b3_c1:'对建议被朗读者 — 具有全国可闻度的转折性人生事件。',
+  b3_c2:'在家族中代代相传的故事货币。',
+
+  lbl_godlevel:'体裁 · 通往神级人物的途径',
+  ttl_godlevel:'谁是神级人物',
+  def_h:'定义',
+  def_body:'<strong>那些时间无论何价都无法零售购买的人。</strong>这一类别不由单一特征定义。它由普通访问渠道的缺失定义。',
+  led_sources:'此类地位的四个来源 — 泰国案例适用第一来源,形式扩展到其他三个。',
+  src1_h:'继承或仪式权力', src1_d:'在位君主。封闭王朝的领袖。传统宗教学派的领袖。',
+  src2_h:'世界级财富', src2_d:'福布斯前10和前50。全球公司的创始人。旧资本家族基金会,他们的时间或被绑定于公开角色或与外人隔绝。',
+  src3_h:'活着的文化伟大', src3_d:'诺贝尔奖得主和等同者,他们的名字成为通用名词。艺术、科学和体育的活传奇。',
+  src4_h:'知识的集中', src4_d:'独特传统的守护者 — 一项工艺最后的活大师、一种语言的唯一使用者、封闭学派的领袖。',
+  who_creators:'谁创造体验', who_buyers:'谁购买票',
+  cr1:'王室,君主的礼仪部门',
+  cr2:'僧团,精神修会,宗教机构',
+  cr3:'家族办公室或亿万富翁的幕僚长',
+  cr4:'慈善基金会,文化机构',
+  cr5:'合作的拍卖行',
+  cr6:'个人访问中介,人物的可信中间人',
+  cr7:'外交使团,大使馆',
+  bu1:'寻求他处不可得体验的富人',
+  bu2:'构建王朝叙事的家族办公室',
+  bu3:'需要软外交和精英访问的企业首脑',
+  bu4:'寻求与祖国连接的海外侨民',
+  bu5:'宗教和文化运动的虔诚资助者',
+  bu6:'融入既定圈子的新资本 — 科技、数字',
+  bu7:'处于代际交替时刻的王朝家族',
+  bu8:'主权财富基金的代表',
+
+  lbl_dram:'戏剧 · 8个阶段', ttl_dram:'仪式的解剖',
+  led_dram:'从一个月前的简报到闭幕祝福。时长为指示性。关键场面是王室巡视 — 五个小组、内圈的长觐见、核心的短觐见、观察者最强书面建议的仪式性朗读。',
+  ph1_t:'阶段 1 · T−30…T+45 分钟',
+  ph2_t:'阶段 2 · T+45 分钟…T+1 小时 15',
+  ph3_t:'阶段 3 · T+1 小时 15…T+1 小时 30',
+  ph4_t:'阶段 4 · T+1 小时 30…T+3 小时',
+  ph5_t:'阶段 5 · T+3 小时…T+5 小时 · 关键场面',
+  ph6_t:'阶段 6 · T+5 小时…T+5 小时 30',
+  ph7_t:'阶段 7 · T+5 小时 30…T+6 小时',
+  ph8_t:'阶段 8 · T+6 小时…夜晚',
+  ph1_h:'准备与到达',
+  ph1_b:'仪式之前所有150人接受礼仪简报 — 着装规范、称呼形式、姿态。每人收到4–6个候选倡议的档案及指标。观察者准备一页书面建议。当日,三个层级各设登记台 — 彼此可见,以使结构清晰。茶,礼仪欢迎。观察者交付建议。',
+  ph2_h:'开幕',
+  ph2_b:'仪仗。君主以全礼服入场。皇家颂歌。陛下开幕致辞 — 8到12分钟,本年度框架与优先事项。倡议短名单宣布,每项由部长或专家简短辩护。',
+  ph3_h:'分组',
+  ph3_b:'五个小组,每组约三十人,刻意混合 — 每组都包含内圈、核心和观察者。无层级隔离。每组配一项短名单倡议、一名专家主持人、两名记录决定的公证员和一名翻译。',
+  ph4_h:'议事',
+  ph4_b:'九十分钟的结构化讨论:问题 · 规模 · 具体计划 · 预算 · 十二个月成功指标。同时,王室助手分类观察者建议并为君主准备主题摘要 — 每主题一页。每组选举发言人 — 通常但不总是内圈成员。',
+  ph5_h:'王室巡视',
+  ph5_b:'君主依次访问五个小组。每组内:',
+  ph5_l1:'内圈(每组4人) — 在小组的单独凹处进行5–10分钟的个人觐见。深度对话:除了捐款您将亲自做什么。',
+  ph5_l2:'核心(每组16人) — 简短致辞,1–3分钟,4–5人为一簇。',
+  ph5_l3:'观察者(每组10人) — 集体祝福。该组3–5份最强建议由王室助手在君主在场时朗读;作者起立。这是仪式性的认可。',
+  ph5_l4:'组间过渡时,摘要建议交予君主。',
+  ph6_h:'集合',
+  ph6_b:'所有人返回主厅。五位发言人依次呈现各自倡议的最终计划 — 每位三分钟。君主对每项给予简短评论和祝福。',
+  ph7_h:'宣布',
+  ph7_b:'王室慈善理事会 — 顾问加独立专家 — 宣布资金的最终分配。主屏幕上:总筹款额、按倡议分类、承诺的KPI和时间表。捐赠者姓名按参与者选择列出 — 公开或匿名。闭幕祝福。',
+  ph8_h:'延续',
+  ph8_b:'招待会 — 泰国美食、古典音乐、传统舞蹈。每位参与者获得纪念册:个人邀请函、照片,以及 Ehipas 对资助倡议十二个月报告的承诺。',
+
+  lbl_eff:'影响 · 6个层级 × 3个时间跨度',
+  ttl_eff:'这场体验留下了什么',
+  led_eff:'仪式的影响按时间跨度扩展 — 小时、月、十年 — 远远超出大厅内的150人。切换层级以查看每位受众获得什么。',
+  eff_l1:'内圈来宾', eff_l2:'核心来宾', eff_l3:'观察者',
+  eff_l4:'慈善受益者', eff_l5:'泰国社会', eff_l6:'王室与国家',
+  hor_short:'短期 · 数小时至数周', hor_mid:'中期 · 数月至一年', hor_long:'长期 · 数年至数十年',
+  e1s:'感知转变。与君主的私人对话重新排序参与者与自己金钱的关系。商业界声誉急速提升。',
+  e1m:'二十人的网络成为半封闭俱乐部。与所选倡议的具体参与转化为新合作和企业。',
+  e1l:'通常是「第二人生」的催化剂 — 转向慈善或公共服务。家族神话作为奠基故事传给孙辈。',
+  e2s:'与君主的简短而真实的会面。被视为有分量公民、而非统计数字的感觉。',
+  e2m:'纳入八十人的非正式社群。持续追踪曾参与塑造倡议的进展能力。',
+  e2l:'家族传家宝 — 邀请文件和照片。五十年后孙辈向客人展示。',
+  e3s:'对建议被朗读者 — 转折性人生事件。对其余人 — 见证历史。',
+  e3m:'书面建议进入真实渠道。一些成为平台项目登记的项目。',
+  e3l:'适度的社会流动,但「我曾在那里」的故事服务家族数代。',
+  e4s:'约三亿五千万泰铢一次性流入所选倡议。合作组织的可见度急剧提升。',
+  e4m:'项目运行一到三年,有可衡量结果和季度报告。数万直接受益者。',
+  e4l:'若形式制度化为年度 — 十年内数十亿泰铢的反复流入。解决具体国家问题的真正可能性。',
+  e5s:'信息议程被主导一到两周。仪式被到处讨论。',
+  e5m:'公民话语的转变。「富人可以有用」的叙事得到具体模型的强化。',
+  e5l:'文化模式:高地位与公共慈善而非消费挂钩。',
+  e6s:'相关性的新鲜展示。高质量国际媒体。',
+  e6m:'王室作为召集力量,超越仪式角色。泰国海外软实力上升。',
+  e6l:'「道德经济」的先例。形式可能在泰国之外被研究和适应,由其他王室和王朝。',
+
+  lbl_prob:'资金去向 · 6项倡议',
+  ttl_prob:'六个不能再拖延的问题',
+  led_prob:'按急迫性、慢性资金不足以及金钱转化为可衡量结果的能力筛选。参与者在出价前选择捐款如何在六者间分配。',
+  p1_h:'北部的PM2.5烟雾', p1_d:'每年清迈、湄宏顺和北部省份成千上万的过早死亡 — 由农业焚烧驱动。儿童的肺受冲击最严重。',
+  p1_what:'我们资助:', p1_what2:'停止焚烧的农民补贴、卫星监测、学校级空气净化器。', p1_unit:'约',
+  p2_h:'儿童溺水', p2_d:'1至14岁泰国儿童的首要死因 — 每年约一千人。在头条新闻中不可见,在死亡统计中明确无误。',
+  p2_what:'我们资助:', p2_what2:'通过学校的免费游泳课程、不安全水体的围栏、渔村的救生衣。', p2_unit:'约',
+  p3_h:'无国籍人士', p3_d:'四十八万多居民 — 主要是山地部落社区 — 没有合法工作、获得医疗或离开本区的权利。',
+  p3_what:'我们资助:', p3_what2:'法律诊所、文档流程、归化项目。', p3_unit:'约',
+  p4_h:'缺乏基础设施的老龄化人口', p4_d:'到2030年每四个泰国公民中就有一个超过六十岁。国家老龄化的速度超过照护基础设施的建设。孤独和未治疗的慢性病是无声的流行病。',
+  p4_what:'我们资助:', p4_what2:'一百个区的老人日间中心、移动医疗筛查队。', p4_unit:'约',
+  p5_h:'海洋塑料', p5_d:'泰国位列世界十大海洋塑料来源之一。沿海渔业社区 — 国家的烹饪身份 — 首当其冲。',
+  p5_what:'我们资助:', p5_what2:'河口废物拦截器、渔村回收基础设施。', p5_unit:'约',
+  p6_h:'青年心理健康', p6_d:'15至29岁泰国人自杀率上升。污名让几乎所有这些都隐藏在地下。一代人在众目睽睽下被失去。',
+  p6_what:'我们资助:', p6_what2:'学校心理学家、全国求助热线、可负担的治疗。', p6_unit:'约',
+  unit_school:'每所受保护学校', unit_child:'每位受训儿童', unit_case:'每个公民身份案例',
+  unit_center:'每个中心每年', unit_inter:'每台拦截器', unit_psy:'每位学校心理学家每年',
+
+  lbl_genre:'体裁可重复 · 泰国之外',
+  ttl_genre:'泰国案例是首例,而非唯一',
+  led_genre:'来自神级地位四个来源的六个候选形式。每一个都是真实可能 — 与无普通访问渠道之人物会面,加上配得起所筹资金的事业。',
+  src_power:'权力', src_wealth:'财富', src_knowledge:'知识', src_greatness:'伟大',
+  g1_w:'不丹', g1_who:'吉格梅·凯萨尔国王', g1_what:'在廷布扎西却宗的觐见,以德鲁克·嘉博年度王室会议形式。', g1_money:'→ 国民幸福总值项目 · 农村学校与医疗',
+  g2_w:'梵蒂冈', g2_who:'教皇', g2_what:'在使徒宫的小组私人觐见,附带私人祝福。', g2_money:'→ 国际明爱 · 全球难民援助',
+  g3_w:'美国', g3_who:'沃伦·巴菲特', g3_what:'秉承 Glide 拍卖传统精神的晚宴,在扩展的公开形式中进行战略对话。', g3_money:'→ 东南亚低收入地区儿童的学校膳食',
+  g4_w:'印度', g4_who:'穆克什·安巴尼', g4_what:'在 Antilia 的招待会,展望工业王朝的长期战略愿景。', g4_money:'→ 印度农村邦的孕产妇健康',
+  g5_w:'日本', g5_who:'活着的国宝', g5_what:'与人间国宝的茶道与个人指导 — 仅存于单一传承的工艺大师。', g5_money:'→ 非物质遗产保护基金会',
+  g6_w:'印度', g6_who:'达赖喇嘛', g6_what:'在达兰萨拉的教学与觐见,在格鲁派传承传统中。', g6_money:'→ 西藏难民的医疗援助',
+  genre_coda:'任何形式中,独特地位的持有者迈出一步,作为交换接收对其命运所系事业的直接捐款 — 都可以通过 Ehipas 组装。泰国案例是机制的一种说明。',
+
+  lbl_calc:'计算器 · 影响规模',
+  ttl_calc:'150个席位能资助什么',
+  led_calc:'调整每层席位、拍卖溢价以及资金如何在六项倡议间分配。每一泰铢翻译为一个影响单位。',
+  cs_seats:'每层席位', cs_premium:'每层拍卖溢价', cs_alloc:'倡议间分配',
+  cp_n1:'内圈', cp_n2:'核心', cp_n3:'观察者',
+  cp_m1:'内圈 ×', cp_m2:'核心 ×', cp_m3:'观察者 ×',
+  cp_a1:'PM2.5烟雾', cp_a2:'儿童溺水', cp_a3:'无国籍人士',
+  cp_a4:'老龄化人口', cp_a5:'海洋塑料', cp_a6:'青年心理健康',
+  btn_reset:'重置默认',
+  big_lbl:'为慈善筹集的总额',
+  big_sub:'对六项倡议的直接捐款。在王室确认仪式之前由托管持有,然后释放给基金。',
+  brk_tier:'层级', brk_seats:'席位', brk_avg:'平均 ฿/席', brk_sub:'小计 ฿', brk_total:'总计',
+  imp_school:'所受保护学校', imp_child:'位受训儿童', imp_case:'个公民身份案例',
+  imp_center:'个日间中心 × 1年', imp_inter:'台河口拦截器', imp_psy:'位学校心理学家 × 1年',
+
+  lbl_creator:'致创造者 · 组织者所见',
+  ttl_creator:'体验创造者获得什么',
+  led_creator:'神级地位人物迈向受众需要基础设施。Ehipas 全部承担,让创造者专注于礼仪和实质。',
+  cri1_h:'现成基础设施', cri1_d:'验证、拍卖、托管、分配、报告 — 已经运营。创造者无需从零构建任何东西。',
+  cri2_h:'人物的尊严受到保护', cri2_d:'带有严格礼仪的仪式形式 — 而非零售服务。人物保持其地位。框架是慈善召集,而非商业交易。',
+  cri3_h:'公开合法性', cri3_d:'预先公布的支出承诺和KPI在「人物为何提供时间」的问题被提出之前就将其中和。',
+  cri4_h:'可重复模板', cri4_d:'组装一次的形式作为模板保留在平台上,以同一工具集每年重演。不是一次性英勇。',
+  cri5_h:'就绪的购买者基础', cri5_d:'来自世界各地资本与好奇心的预先验证受众 — 创造者无需逐一寻找客人。',
+  cri6_h:'累积的声誉', cri6_d:'每场成功的仪式都提升创造者和平台的地位。创造者与平台共同成长,而非以彼此为代价。',
+
+  lbl_why:'为什么这种形式只在 Ehipas 上成立',
+  ttl_why:'平台移除的六个瓶颈',
+  w1_h:'参与者验证', w1_b:'具有多级身份和偿付能力检查的平台。没有它,错误的人到达君主 — 带着错误的礼仪、错误的意图,或仅仅未准备好。',
+  w2_h:'同时闪电拍卖', w2_b:'固定的 Ehipas 机制,在一千次模拟运行中验证 — 比英式拍卖给出 <strong>+16.6%</strong>。每一额外泰铢都流向倡议。',
+  w3_h:'托管至仪式实际发生', w3_b:'资金由平台持有,直至王室确认事件已发生。直接释放给倡议 — 无中介。',
+  w4_h:'出价前锁定分配', w4_b:'每位参与者在付款<strong>前</strong>看到六项倡议间的精确分配和承诺的结果。无事后替换。',
+  w5_h:'年度报告', w5_b:'对每位参与者关于资助倡议的结构化十二个月报告 — 嵌入票务条款。不是一个月后的新闻稿。',
+  w6_h:'具有可重复形式的泰国平台', w6_b:'泰国境内的监管轨道。形式以同一工具集为年度重复模板化 — 而非王室的一次性英勇。',
+
+  ftr_note:'示例案例。数字为模型输出。'
+}
+
+};
+
+// ════════════════════════════════════════════════
+// I18N — render
+// ════════════════════════════════════════════════
+let lang = 'en';
+const tx = (k) => (L[lang] && L[lang][k]) ?? L.en[k] ?? k;
+
+function applyLang() {
+  document.querySelectorAll('[data-i]').forEach(el => {
+    const k = el.getAttribute('data-i');
+    const v = tx(k);
+    // If translation contains HTML, use innerHTML; else textContent (safer)
+    if (typeof v === 'string' && v.indexOf('<') !== -1) el.innerHTML = v;
+    else el.textContent = v;
+  });
+  document.getElementById('ll').textContent = {en:'EN',th:'TH',zh:'中',ru:'RU'}[lang];
+  document.documentElement.lang = lang;
+  ['en','th','zh','ru'].forEach(l => {
+    const el = document.getElementById('lc-' + l);
+    if (el) el.textContent = (l === lang) ? '✓' : '';
+    const di = document.querySelector(`[data-l="${l}"]`);
+    if (di) di.classList.toggle('on', l === lang);
+  });
+  // Re-render impact list (uses translated labels)
+  if (typeof updCalc === 'function') updCalc();
+}
+
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('ehipas-lang', l);
+  closeDD();
+  applyLang();
+}
+
+// ════════════════════════════════════════════════
+// THEME
+// ════════════════════════════════════════════════
+let theme = 'system';
+const TICONS = { system: '⊙', light: '☀', dark: '☾' };
+const mql = window.matchMedia('(prefers-color-scheme: dark)');
+
+function resolveTheme(t) {
+  if (t === 'system') return mql.matches ? 'dark' : 'light';
+  return t;
+}
+
+function applyTheme(t) {
+  theme = t;
+  const r = resolveTheme(t);
+  document.body.setAttribute('data-theme', r);
+  document.documentElement.setAttribute('data-theme', r);
+  const ic = document.getElementById('ticon');
+  if (ic) ic.textContent = TICONS[t];
+  ['system','light','dark'].forEach(k => {
+    const el = document.getElementById('tc-' + k);
+    if (el) el.textContent = (k === t) ? '✓' : '';
+  });
+}
+
+function setTheme(t) {
+  localStorage.setItem('ehipas-theme', t);
+  closeDD();
+  applyTheme(t);
+}
+
+// React to system theme changes when in 'system' mode
+mql.addEventListener('change', () => { if (theme === 'system') applyTheme('system'); });
+
+// ════════════════════════════════════════════════
+// DROPDOWN
+// ════════════════════════════════════════════════
+let openDD = null;
+function togDD(id) {
+  const m = document.getElementById(id + '-dd');
+  const ov = document.getElementById('ov');
+  if (openDD === id) { closeDD(); return; }
+  closeDD();
+  m.classList.add('open');
+  ov.classList.add('on');
+  openDD = id;
+}
+function closeDD() {
+  document.querySelectorAll('.ddmenu').forEach(m => m.classList.remove('open'));
+  const ov = document.getElementById('ov');
+  if (ov) ov.classList.remove('on');
+  openDD = null;
+}
+
+// ════════════════════════════════════════════════
+// EFFECTS TABS
+// ════════════════════════════════════════════════
+function setEff(idx, btn) {
+  document.querySelectorAll('.efftab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  for (let i = 0; i < 6; i++) {
+    const p = document.getElementById('eff-' + i);
+    if (p) p.style.display = (i === idx) ? 'block' : 'none';
+  }
+}
+
+// ════════════════════════════════════════════════
+// CALCULATOR
+// ════════════════════════════════════════════════
+const STARTING = { 1: 10000000, 2: 1000000, 3: 500000 };
+const IMPACT_UNITS = [
+  { id: 'p1', cost: 50000,    unit: 'imp_school' },
+  { id: 'p2', cost: 1500,     unit: 'imp_child'  },
+  { id: 'p3', cost: 8000,     unit: 'imp_case'   },
+  { id: 'p4', cost: 1200000,  unit: 'imp_center' },
+  { id: 'p5', cost: 15000000, unit: 'imp_inter'  },
+  { id: 'p6', cost: 360000,   unit: 'imp_psy'    }
+];
+const PROB_KEYS = ['p1_h','p2_h','p3_h','p4_h','p5_h','p6_h'];
+
+const fmt = n => Math.round(n).toLocaleString('en-US').replace(/,/g, ' ');
+const getVal = id => parseFloat(document.getElementById(id).value);
+
+function updCalc() {
+  // Seats
+  const n1 = getVal('r-n1'), n2 = getVal('r-n2'), n3 = getVal('r-n3');
+  document.getElementById('v-n1').textContent = n1;
+  document.getElementById('v-n2').textContent = n2;
+  document.getElementById('v-n3').textContent = n3;
+
+  // Multipliers
+  const m1 = getVal('r-m1') / 100;
+  const m2 = getVal('r-m2') / 100;
+  const m3 = getVal('r-m3') / 100;
+  document.getElementById('v-m1').textContent = m1.toFixed(2);
+  document.getElementById('v-m2').textContent = m2.toFixed(2);
+  document.getElementById('v-m3').textContent = m3.toFixed(2);
+
+  // Prices
+  const p1 = STARTING[1] * m1;
+  const p2 = STARTING[2] * m2;
+  const p3 = STARTING[3] * m3;
+
+  // Subtotals
+  const s1 = n1 * p1, s2 = n2 * p2, s3 = n3 * p3;
+  const total = s1 + s2 + s3;
+
+  // Allocation weights
+  const allocs = [];
+  let allocSum = 0;
+  for (let i = 1; i <= 6; i++) {
+    const v = getVal('r-a' + i);
+    allocs.push(v);
+    allocSum += v;
+    document.getElementById('v-a' + i).textContent = v;
+  }
+
+  // Breakdown
+  document.getElementById('b-n1').textContent = n1;
+  document.getElementById('b-n2').textContent = n2;
+  document.getElementById('b-n3').textContent = n3;
+  document.getElementById('b-p1').textContent = fmt(p1);
+  document.getElementById('b-p2').textContent = fmt(p2);
+  document.getElementById('b-p3').textContent = fmt(p3);
+  document.getElementById('b-s1').textContent = fmt(s1);
+  document.getElementById('b-s2').textContent = fmt(s2);
+  document.getElementById('b-s3').textContent = fmt(s3);
+  document.getElementById('b-nt').textContent = n1 + n2 + n3;
+  document.getElementById('b-st').textContent = fmt(total);
+  document.getElementById('big-val').textContent = fmt(total);
+
+  // Impact list
+  const imp = document.getElementById('impact-list');
+  if (!imp) return;
+  imp.innerHTML = '';
+  for (let i = 0; i < 6; i++) {
+    const share = allocSum > 0 ? allocs[i] / allocSum : 0;
+    const amount = total * share;
+    const pct = Math.round(share * 100);
+    const meta = IMPACT_UNITS[i];
+    const units = Math.floor(amount / meta.cost);
+    const row = document.createElement('div');
+    row.className = 'impact-row';
+    row.innerHTML =
+      '<div class="impact-name">' + tx(PROB_KEYS[i]) + ' <span style="font-family:var(--mono);font-size:10px;color:var(--tx3)"> · ' + pct + '%</span></div>' +
+      '<div class="impact-val">' + fmt(amount) + ' ฿<small>≈ ' + units.toLocaleString('en-US').replace(/,/g, ' ') + ' ' + tx(meta.unit) + '</small></div>';
+    imp.appendChild(row);
+  }
+}
+
+function resetCalc() {
+  const defaults = { 'r-n1':20, 'r-n2':80, 'r-n3':50, 'r-m1':117, 'r-m2':117, 'r-m3':117,
+    'r-a1':17, 'r-a2':17, 'r-a3':17, 'r-a4':17, 'r-a5':16, 'r-a6':16 };
+  Object.keys(defaults).forEach(k => { document.getElementById(k).value = defaults[k]; });
+  updCalc();
+}
+
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+(function init() {
+  // Restore lang
+  const savedLang = localStorage.getItem('ehipas-lang');
+  if (savedLang && ['en','th','zh','ru'].includes(savedLang)) lang = savedLang;
+
+  // Restore theme
+  const savedTheme = localStorage.getItem('ehipas-theme') || 'system';
+
+  applyTheme(savedTheme);
+  applyLang();
+  updCalc();
+})();
+</script>
+
+</body>
+</html>
