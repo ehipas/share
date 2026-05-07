@@ -277,7 +277,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;backgroun
   <span class="ftr-item"><b data-i="ftr_ver">v2</b></span>
   <span class="ftr-sep">&#183;</span>
   <span class="ftr-item" data-i="ftr_date">7 May 2026</span>
-  <span class="ftr-sep">&#183;</span>
+  <span class="ftr-sep" id="view-sep">&#183;</span>
   <span class="ftr-item" id="view-count"></span>
 </footer>
 
@@ -853,18 +853,28 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () 
 // Public endpoint: /counter/[path].json — no auth required.
 // Timeout 3s. On any failure: hide element silently.
 (function () {
-  const el = document.getElementById('view-count');
+  const el  = document.getElementById('view-count');
+  const sep = document.getElementById('view-sep');
+  const hideAll = () => { if (el) el.style.display = 'none'; if (sep) sep.style.display = 'none'; };
   if (!el) return;
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 3000);
+
   fetch(
     'https://ehipas.goatcounter.com/counter/' +
     encodeURIComponent(window.location.pathname) + '.json',
     { signal: controller.signal }
   )
   .then(r => { clearTimeout(timer); if (!r.ok) throw new Error(); return r.json(); })
-  .then(d => { if (d && d.count) el.textContent = '👁 ' + d.count; else el.style.display = 'none'; })
-  .catch(() => { clearTimeout(timer); el.style.display = 'none'; });
+  .then(d => {
+    if (d && d.count && d.count !== '0') {
+      el.textContent = '👁 ' + d.count;
+    } else {
+      hideAll();
+    }
+  })
+  .catch(() => { clearTimeout(timer); hideAll(); });
 })();
 
 const savedLang  = localStorage.getItem('ehipas-lang')  || 'en';
