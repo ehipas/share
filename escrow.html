@@ -42,11 +42,15 @@
   --pur-dim:rgba(100,60,200,.07);
 }
 html,body{width:100%;overflow-x:hidden}
-body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px;line-height:1.5;transition:background .2s,color .2s;padding-top:var(--hdr-h)}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5;transition:background .2s,color .2s;padding-top:var(--hdr-h)}
+
+/* ── Header ── */
 .hdr{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--hdr-h);border-bottom:1px solid var(--bd);padding:0 14px;display:flex;align-items:center;gap:8px;background:var(--bg)}
 .logo{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.1em;color:var(--acc);text-transform:uppercase;flex-shrink:0}
 .hdr-title{font-size:11px;color:var(--tx3);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hdr-ctrls{display:flex;gap:5px;align-items:center;flex-shrink:0}
+
+/* ── Dropdowns ── */
 .ddwrap{position:relative;display:inline-block}
 .ddtrig{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--rs);color:var(--tx2);font-family:var(--mono);font-size:11px;padding:5px 8px;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;transition:border-color .15s,color .15s}
 .ddtrig:hover{border-color:var(--bd2);color:var(--tx)}
@@ -60,11 +64,30 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 .ddi .ck{font-size:10px;margin-left:auto;color:var(--acc)}
 .overlay{display:none;position:fixed;inset:0;z-index:99}
 .overlay.on{display:block}
-.wrap{display:grid;grid-template-columns:270px 1fr;min-height:calc(100vh - var(--hdr-h));align-items:start}
-@media(max-width:767px){.wrap{grid-template-columns:1fr}}
-.sb{border-right:1px solid var(--bd);padding:16px 13px;background:var(--bg);overflow:hidden}
-@media(min-width:768px){.sb{position:sticky;top:var(--hdr-h);height:calc(100vh - var(--hdr-h));overflow-y:auto}.sb::-webkit-scrollbar{width:3px}.sb::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}}
-@media(max-width:767px){.sb{border-right:none;border-bottom:1px solid var(--bd)}}
+
+/* ── Layout — ключевое исправление прыжка ──
+   Десктоп: обёртка — фиксированная высота = экран минус шапка.
+   Боковая панель и основная зона прокручиваются независимо.
+   Боковая панель больше не реагирует на рост контента справа.
+── */
+.wrap{display:grid;grid-template-columns:270px 1fr}
+@media(min-width:768px){
+  .wrap{height:calc(100vh - var(--hdr-h));overflow:hidden}
+}
+@media(max-width:767px){
+  .wrap{grid-template-columns:1fr;min-height:calc(100vh - var(--hdr-h))}
+}
+
+/* ── Sidebar ── */
+.sb{border-right:1px solid var(--bd);padding:16px 13px;background:var(--bg)}
+@media(min-width:768px){
+  .sb{height:100%;overflow-y:auto}
+  .sb::-webkit-scrollbar{width:3px}
+  .sb::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+}
+@media(max-width:767px){
+  .sb{border-right:none;border-bottom:1px solid var(--bd)}
+}
 .slbl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:11px;margin-top:3px}
 .ssec{margin-bottom:20px}
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
@@ -73,37 +96,68 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 .ph{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
 .pn{font-size:11px;color:var(--tx2);font-weight:300}
 .pv{font-family:var(--mono);font-size:11px;color:var(--acc);font-weight:500}
+
+/* ── Derived display (авторасчёт) ── */
+.derived-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--bg3);margin-bottom:13px;gap:8px}
+.derived-lbl{font-size:10px;color:var(--tx3);line-height:1.4}
+.derived-val{font-family:var(--mono);font-size:10px;color:var(--tx2);white-space:nowrap;flex-shrink:0}
+.derived-val span{color:var(--acc);font-weight:500}
+
+/* ── Range inputs ── */
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:var(--bd2);border-radius:1px;outline:none;cursor:pointer;display:block}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--acc-btn);border-radius:50%;cursor:pointer;transition:transform .15s}
 input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
 input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;background:var(--acc-btn);border-radius:50%;cursor:pointer}
+
+/* ── Scenario toggles ── */
 .tgrid{display:grid;grid-template-columns:1fr;gap:5px}
 @media(max-width:767px){.tgrid{grid-template-columns:1fr 1fr}}
 .ttog{display:flex;align-items:center;gap:8px;padding:8px 9px;border:1px solid var(--bd);border-radius:var(--rs);cursor:pointer;transition:border-color .2s,background .2s;user-select:none;background:var(--inp)}
 .ttog:hover{border-color:var(--bd2)}
 .ttog.on-ok{border-color:var(--ok-brd);background:var(--ok-dim)}
-.ttog.on-warn{border-color:var(--warn-brd);background:var(--warn-dim)}
 .ttog.on-err{border-color:var(--err-brd);background:var(--err-dim)}
 .ttog input{display:none}
 .tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .tname{font-size:11px;line-height:1.3}
+
+/* ── Buttons ── */
 .rbtn{width:100%;padding:11px;background:var(--acc-btn);color:var(--acc-btn-tx);border:none;border-radius:var(--rs);font-size:13px;font-weight:500;font-family:var(--sans);cursor:pointer;letter-spacing:.02em;transition:opacity .2s,transform .1s;margin-top:4px}
 .rbtn:hover{opacity:.88}
 .rbtn:active{transform:scale(.98)}
-.main{padding:18px 14px;background:var(--bg);min-width:0;overflow:hidden}
-@media(min-width:768px){.main{padding:22px 26px}}
+.rbtn-sec{width:100%;padding:8px;background:transparent;color:var(--tx3);border:1px solid var(--bd);border-radius:var(--rs);font-size:11px;font-weight:400;font-family:var(--sans);cursor:pointer;letter-spacing:.02em;transition:border-color .15s,color .15s;margin-top:6px}
+.rbtn-sec:hover{border-color:var(--bd2);color:var(--tx2)}
+.rbtn-sec:active{opacity:.7}
+
+/* ── Main area ── */
+.main{padding:18px 14px;background:var(--bg);min-width:0}
+@media(min-width:768px){
+  .main{padding:22px 26px;height:100%;overflow-y:auto}
+  .main::-webkit-scrollbar{width:4px}
+  .main::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+}
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:40vh;color:var(--tx3);text-align:center;gap:10px}
 .empty-icon{font-family:var(--mono);font-size:26px;color:var(--bd2)}
 .results{display:none;min-width:0}
 .results.on{display:block}
+
+/* ── Insight ── */
 .insight{border:1px solid var(--bd);border-left:3px solid var(--purple);border-radius:var(--r);padding:14px 16px;margin-bottom:20px;background:var(--pur-dim)}
 .insight-title{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:8px}
 .insight-body{font-size:11px;color:var(--tx2);line-height:1.75}
 .insight-body strong{color:var(--tx)}
+
+/* ── Notice (предварительная оговорка) ── */
+.notice-box{border:1px solid var(--bd);border-left:3px solid var(--tx3);border-radius:var(--r);padding:10px 14px;margin-bottom:16px;background:var(--bg3);font-size:10px;color:var(--tx3);line-height:1.65;font-family:var(--mono)}
+
+/* ── Warning ── */
 .warn-box{border:1px solid var(--warn-brd);border-left:3px solid var(--amber);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;background:var(--warn-dim);font-size:11px;color:var(--tx2);line-height:1.7}
 .warn-box strong{color:var(--tx)}
 .warn-icon{color:var(--amber);font-weight:500;margin-right:4px}
+
+/* ── Section sub-headers ── */
 .sec-sub{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;margin-top:20px}
+
+/* ── Flow ── */
 .flow{display:flex;flex-direction:column;gap:0;margin-bottom:4px}
 .fstep{display:grid;grid-template-columns:90px 1fr;border-left:2px solid var(--bd)}
 .fstep.hl-ok{border-left-color:var(--teal)}
@@ -124,6 +178,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;backgroun
 .ftag-red{color:var(--red);background:var(--err-dim);border-color:var(--err-brd)}
 .ftag-gray{color:var(--tx2);background:var(--bg3);border-color:var(--bd2)}
 .ftag-pur{color:var(--purple);background:var(--pur-dim);border-color:rgba(155,126,247,.3)}
+
+/* ── Balance cards ── */
 .bal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:20px}
 .bal-card{border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;background:var(--crd)}
 .bal-card.pos-card{border-color:var(--acc-brd);background:var(--acc-dim)}
@@ -135,26 +191,20 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;backgroun
 .bal-amount.pos{color:var(--acc)}
 .bal-amount.neg{color:var(--red)}
 .bal-amount.zero{color:var(--tx3)}
+
+/* ── Conclusion ── */
 .concl{border:1px solid var(--bd);border-radius:var(--r);padding:15px 16px;margin-bottom:20px}
 .concl.ok{border-left:3px solid var(--teal);background:var(--ok-dim)}
 .concl.err{border-left:3px solid var(--red);background:var(--err-dim)}
-.concl.warn{border-left:3px solid var(--amber);background:var(--warn-dim)}
 .concl-title{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
 .concl-title.ok{color:var(--teal)}
 .concl-title.err{color:var(--red)}
-.concl-title.warn{color:var(--amber)}
 .concl-body{font-size:11px;color:var(--tx2);line-height:1.75}
 .concl-body strong{color:var(--tx)}
-.editions-wrap{margin-bottom:4px}
-.edition-block{border:1px solid var(--bd);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
-.edition-hdr{padding:9px 14px;background:var(--bg3);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
-.edition-hdr-num{font-family:var(--mono);font-size:20px;font-weight:300;opacity:.2;line-height:1}
-.edition-hdr-title{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase}
-.edition-hdr-title.ed1{color:var(--amber)}
-.edition-hdr-title.ed2{color:var(--purple)}
-.edition-body{padding:14px 14px 6px}
-.edition-desc{font-size:11px;color:var(--tx2);line-height:1.75;margin-bottom:14px}
-.edition-desc strong{color:var(--tx)}
+
+/* ── Cancel sub-cases ── */
+.cancel-cases-wrap{border:1px solid var(--bd);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
+.cancel-cases-body{padding:14px 14px 6px}
 .sub-case{margin-top:4px;margin-bottom:4px}
 .sub-case-hdr{display:flex;align-items:center;gap:7px;padding:9px 0 7px;border-top:1px solid var(--bd)}
 .sub-case-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
@@ -163,14 +213,13 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;backgroun
 .sub-case-title.ins-off{color:var(--red)}
 .sub-case-desc{font-size:11px;color:var(--tx2);line-height:1.65;margin-bottom:10px}
 .sub-case-desc strong{color:var(--tx)}
+
+/* ── Footer ── */
 .ftr{border-top:1px solid var(--bd);padding:11px 14px;display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px;background:var(--bg)}
 @media(min-width:768px){.ftr{padding:11px 26px}}
 .ftr-item{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--tx3);display:flex;align-items:center;gap:5px}
 .ftr-item b{color:var(--tx2);font-weight:500}
 .ftr-sep{font-size:9px;color:var(--bd2);user-select:none}
-.rbtn-sec{width:100%;padding:8px;background:transparent;color:var(--tx3);border:1px solid var(--bd);border-radius:var(--rs);font-size:11px;font-weight:400;font-family:var(--sans);cursor:pointer;letter-spacing:.02em;transition:border-color .15s,color .15s;margin-top:6px}
-.rbtn-sec:hover{border-color:var(--bd2);color:var(--tx2)}
-.rbtn-sec:active{opacity:.7}
 </style>
 </head>
 <body data-theme="system-placeholder">
@@ -204,7 +253,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;backgroun
 <div class="wrap">
   <aside class="sb">
 
-    <!-- Ticket params -->
+    <!-- Параметры билета -->
     <div class="ssec">
       <div class="slbl" data-i="s_ticket">Ticket params</div>
       <div class="pgrid">
@@ -223,7 +272,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;backgroun
       </div>
     </div>
 
-    <!-- Fees -->
+    <!-- Комиссии -->
     <div class="ssec">
       <div class="slbl" data-i="s_fees">Fees</div>
       <div class="pgrid">
@@ -232,17 +281,33 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;backgroun
           <input type="range" min="5" max="20" value="10" oninput="upd('comm',this.value)">
         </div>
         <div class="pr">
-          <div class="ph"><span class="pn" data-i="p_roy">Creator royalty %</span><span class="pv" id="v-roy">5%</span></div>
+          <div class="ph"><span class="pn" data-i="p_roy">Creator royalty (secondary) %</span><span class="pv" id="v-roy">5%</span></div>
           <input type="range" min="0" max="10" value="5" oninput="upd('roy',this.value)">
         </div>
+      </div>
+      <!-- Авторасчёт: доля создателя на первичном рынке -->
+      <div class="derived-row">
+        <span class="derived-lbl" data-i="p_creator_primary_lbl">Creator share (primary)</span>
+        <span class="derived-val" id="v-creator-primary"><span>90%</span></span>
+      </div>
+    </div>
+
+    <!-- Банковский API -->
+    <div class="ssec">
+      <div class="slbl" data-i="s_bank">Bank API</div>
+      <div class="pgrid">
         <div class="pr">
-          <div class="ph"><span class="pn" data-i="p_gateway">Gateway fee %</span><span class="pv" id="v-gwFee">3%</span></div>
-          <input type="range" min="0" max="5" step="0.5" value="3" oninput="upd('gwFee',this.value)">
+          <div class="ph"><span class="pn" data-i="p_transfer">Transfer cost (THB)</span><span class="pv" id="v-transfer">3 THB</span></div>
+          <input type="range" min="0" max="10" step="1" value="3" oninput="upd('transfer',this.value)">
+        </div>
+        <div class="pr">
+          <div class="ph"><span class="pn" data-i="p_ins">Insurance premium %</span><span class="pv" id="v-ins">25%</span></div>
+          <input type="range" min="5" max="25" step="5" value="25" oninput="upd('ins',this.value)">
         </div>
       </div>
     </div>
 
-    <!-- Scenario -->
+    <!-- Сценарий -->
     <div class="ssec">
       <div class="slbl" data-i="s_scenario">Scenario</div>
       <div class="tgrid">
@@ -274,9 +339,9 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;backgroun
 </div>
 
 <footer class="ftr" id="ftr">
-  <span class="ftr-item"><b data-i="ftr_ver">v2</b></span>
+  <span class="ftr-item"><b data-i="ftr_ver">v4</b></span>
   <span class="ftr-sep">&#183;</span>
-  <span class="ftr-item" data-i="ftr_date">7 May 2026</span>
+  <span class="ftr-item" data-i="ftr_date">12 May 2026</span>
   <span class="ftr-sep" id="view-sep">&#183;</span>
   <span class="ftr-item" id="view-count"></span>
 </footer>
@@ -290,191 +355,222 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;backgroun
 const L = {
   en: {
     hdr_title: 'Escrow Flow Simulator',
-    s_ticket: 'Ticket params', s_fees: 'Fees', s_scenario: 'Scenario',
+    s_ticket: 'Ticket params', s_fees: 'Fees', s_scenario: 'Scenario', s_bank: 'Bank API',
     p_start: 'Start price (THB)', p_markup: 'Speculator markup %', p_resales: 'Resale rounds',
-    p_comm: 'Exchange fee %', p_roy: 'Creator royalty %', p_gateway: 'Gateway fee %',
+    p_comm: 'Exchange fee %', p_roy: 'Creator royalty (secondary) %',
+    p_creator_primary_lbl: 'Creator share — primary market',
+    p_transfer: 'Transfer cost (THB)', p_ins: 'Insurance premium %',
     sc_ok: 'Success', sc_bad: 'Cancel / Complaint',
     btn_run: 'Calculate →', btn_reset: 'Reset to defaults',
     empty_lbl: 'Configure parameters and calculate',
     th_sys: 'System', th_light: 'Light', th_dark: 'Dark',
-    ftr_ver: 'v2', ftr_date: '7 May 2026',
+    ftr_ver: 'v4', ftr_date: '12 May 2026',
 
-    insight_title: 'Key architecture decision',
-    insight_body: '<strong>Payment gateway escrow.</strong><br>Funds are held in the ticket exchange’s account at the payment gateway. All resales are database ownership changes — no fund movement. Gateway fee (~up to 3%) is charged once at final settlement, borne by the winner.<br><br>On cancellation or complaint — no final settlement. Refund = database reversal. Two editions define who covers the gateway fee in bad scenarios: <strong>Edition 1 — exchange</strong>; <strong>Edition 2 — buyer (optionally insured)</strong>.',
+    insight_title: 'Key architecture — v4',
+    insight_body: '<strong>All client funds are in the Thai bank client account.</strong><br>Buyers top up via PromptPay. Purchases and resales are internal ledger entries — no bank API cost at this stage.<br><br>Bank API cost arises <strong>only at algorithmic payout</strong>. At success: each recipient bears the cost of their own bank transfer; the exchange\'s transfer cost is shared equally by all participants (creator + all buyers). The exchange keeps its full commission intact.<br><br>On cancellation: refund transfers go to all buyers (winner + each speculator). <strong>Without insurance:</strong> transfer cost deducted from each refund. <strong>With insurance:</strong> full refund, cost covered by insurance fund. Creator sanctioned in both cases.',
 
     flow_title: 'Money flow', bal_title: 'Final balances', bal_result: 'Result',
-    editions_sec_title: 'Risk management — editions',
-
-    edition1_title: 'Edition 1 — Starting',
-    edition1_desc: 'The ticket exchange bears the financial risk (~up to 3%). In case of cancellation or a valid dispute caused by the creator, the exchange covers the payment gateway fee from its own profit. The buyer receives a full refund. Reputational, functional, operational and financial risks automatically transfer to the creator. The creator incurs a debt to the exchange equal to the gateway fee — the next experience can only be listed after the debt is repaid.',
-
-    edition2_title: 'Edition 2 — Development',
-    edition2_desc: 'Development of Edition 1. The financial risk (~up to 3%) is borne by the buyer. Before the auction, the ticket exchange informs the buyer of the risk and offers: accept the risk or purchase insurance. The ticket exchange provides a micro-insurance product. The insurance pool covers the gateway fee if a bad scenario occurs. Buyer settings: offer insurance at each payment / always include insurance / pay without insurance. The setting is saved and can be changed at any time. Reputational, functional, operational and financial risks automatically transfer to the creator. The creator incurs a debt to the insurance fund.',
+    cancel_cases_title: 'Bank transfer cost — risk allocation',
 
     sub_with_ins: 'With insurance',
-    sub_with_ins_desc: '<strong>Buyer is always protected.</strong> The insurance covers the payment gateway fee — the buyer receives a full 100% refund.',
+    sub_with_ins_desc: 'Buyer paid an insurance premium at time of purchase. On cancel: <strong>full refund</strong> — bank transfer cost covered by the insurance fund. Buyer net loss = <strong>premium only</strong>.',
     sub_no_ins: 'Without insurance — conscious risk',
-    sub_no_ins_desc: 'The buyer <strong>consciously accepted the risk</strong>. The gateway fee loss is a consequence of their informed choice. The sanction against the creator still applies — the ticket exchange recovers the debt in favour of the insurance fund, not the buyer.',
+    sub_no_ins_desc: 'Buyer consciously accepted the risk. On cancel: refund reduced by the bank transfer cost. Buyer net loss = <strong>transfer cost</strong>. Creator sanctioned in both cases — proceeds to insurance fund.',
+
+    notice_bank_api: '⚠  Preliminary model: allocation of bank API settlement costs will be adjusted once Thai bank API terms are confirmed.',
 
     concl_ok_title: '✓ Successful settlement',
-    concl_bad_title: '⚠ Cancel / Complaint — refund initiated',
+    concl_bad_title: '⚠ Cancel / Complaint — refunds initiated',
 
     lbl_creator: 'Creator', lbl_spec: (n) => `Speculator #${n}`, lbl_winner: 'Winner (final)',
-    lbl_exchange: 'Exchange', lbl_gateway: 'Payment gateway', lbl_ins_fund: 'Insurance fund',
-    lbl_creator_debt_exch: 'Creator debt → Exchange', lbl_creator_debt_fund: 'Creator debt → Fund',
+    lbl_exchange: 'Exchange', lbl_bank: 'Thai bank', lbl_ins_fund: 'Insurance fund',
 
     step_t0_title: (buyer) => `Creator → ${buyer}`,
-    step_t0_desc: (p) => `Buyer pays ${p} → payment gateway escrow. Exchange takes fee from primary price. Creator receives remainder.`,
+    step_t0_desc: (price, commAmt, creatorAmt) => `Buyer pays ${price} via PromptPay → Thai bank client account. Exchange accrues ${commAmt} (commission). Creator accrues ${creatorAmt}. All held in escrow — no bank API fee at purchase.`,
     step_resale_title: (n, s, b) => `Resale #${n}: ${s} → ${b}`,
-    step_resale_desc: (p) => `Price: ${p}. Stays in escrow. DB ownership change only. No gateway fee.`,
-    step_settle_title: 'Payment gateway settlement',
-    step_settle_desc: (g) => `Experience completed. No complaints for 48h. Funds released from escrow. Gateway fee: ${g} — borne by winner.`,
-    step_bad_title: '⚠ Creator at fault — reversal initiated',
-    step_bad_desc: 'Creator is at fault (cancellation or valid complaint). Ticket exchange initiates DB reversal — no movement of funds. Everyone gets back exactly what they paid.',
+    step_resale_desc: (price, commAmt, royAmt, specAmt) => `Resale price ${price}. Exchange accrues ${commAmt}. Creator royalty: ${royAmt}. Speculator accrues ${specAmt}. Old ticket cancelled, new one issued. No bank API fee at resale.`,
+    step_settle_title: 'T+48h — Algorithmic payout',
+    step_settle_desc: (n, perT, total) => `Experience completed. No complaints for 48h. Exchange initiates ${n} bank API transfers. Cost per transfer: ${perT}. Total bank API cost: ${total}. Each recipient bears their own transfer cost + equal share of the exchange transfer.`,
+    step_bad_title: '⚠ Creator at fault — refunds initiated',
+    step_bad_desc: 'Creator at fault (cancellation or valid complaint). Exchange initiates refund transfers to all buyers. Bank API cost per transfer deducted from each refund (or covered by insurance fund). Creator sanctioned — see risk allocation below.',
 
-    tag_escrow: '→ Escrow', tag_no_fee: 'No gateway fee',
-    tag_gateway: 'Gateway transfer', tag_creator: 'Creator', tag_exchange: 'Exchange',
-    tag_gateway_fee: 'Gateway fee', tag_refund: 'Refund',
+    tag_escrow: '→ Escrow',
+    tag_no_bank_fee: 'No API fee',
+    tag_bank_fee: 'Bank API fee',
+    tag_own_transfer: 'Own transfer cost',
+    tag_exch_share: 'Exch. transfer share',
+    tag_refund: 'Refund',
+    tag_creator: 'Creator', tag_exchange: 'Exchange',
+    tag_ins_premium: 'Insurance premium',
+    tag_sanction: 'Sanction → Fund',
 
     warn_spec_loss_title: '⚠ Economic note',
-    warn_spec_loss: (markup, fees) => `With markup ${markup}% and total fees ${fees}% (exchange + royalty), speculators operate at a loss on every resale. Raise the markup above ${fees}% to see positive speculator balances.`,
+    warn_spec_loss: (markup, fees) => `With markup ${markup}% and total trade fees ${fees}% (exchange + royalty), speculators operate at a loss on every resale. Bank API settlement costs further reduce net earnings. Raise markup to reach break-even.`,
 
-    concl_ok: (exch, creator, gw) => `Exchange earned <strong>${exch}</strong>. Creator received <strong>${creator}</strong> (primary + royalties). Gateway fee paid by winner: <strong>${gw}</strong>. Winner received the experience.`,
-    concl_bad: 'All participants receive back <strong>exactly what they paid</strong>. Creator is at fault — cancellation or valid complaint. See editions below for gateway fee allocation.',
+    concl_ok: (exch, creator, bankTotal) => `Exchange earned <strong>${exch}</strong> (full commissions). Creator received <strong>${creator}</strong> (net of transfer costs). Bank collected <strong>${bankTotal}</strong> in transfer fees. Winner received the experience.`,
+    concl_bad: 'Creator at fault. All buyers receive refund transfers. Without insurance: transfer cost deducted from each refund. With insurance: covered by insurance fund. Creator balance debited by total transfer costs → insurance fund.',
   },
 
   th: {
     hdr_title: 'จำลองการไหลของเอสโครว์',
-    s_ticket: 'พารามิเตอร์ต๋ัว', s_fees: 'ค่าธรรมเนียม', s_scenario: 'สถานการณ์',
+    s_ticket: 'พารามิเตอร์ตั๋ว', s_fees: 'ค่าธรรมเนียม', s_scenario: 'สถานการณ์', s_bank: 'API ธนาคาร',
     p_start: 'ราคาเริ่มต้น (THB)', p_markup: 'ค่านายหน้าของนักเก็งกำไร %', p_resales: 'รอบขายต่อ',
-    p_comm: 'ค่าธรรมเนียมตลาด %', p_roy: 'ค่าลิขสิทธิ์ผู้สร้าง %', p_gateway: 'ค่าธรรมเนียมเกตเวย์ %',
+    p_comm: 'ค่าธรรมเนียมตลาด %', p_roy: 'ค่าลิขสิทธิ์ผู้สร้าง (ตลาดรอง) %',
+    p_creator_primary_lbl: 'ส่วนแบ่งผู้สร้าง — ตลาดหลัก',
+    p_transfer: 'ค่าโอน (บาท)', p_ins: 'เบี้ยประกัน %',
     sc_ok: 'สำเร็จ', sc_bad: 'ยกเลิก / ร้องเรียน',
     btn_run: 'คำนวณ →', btn_reset: 'รีเซ็ตค่าเริ่มต้น',
     empty_lbl: 'ตั้งค่าพารามิเตอร์และคำนวณ',
     th_sys: 'ระบบ', th_light: 'สว่าง', th_dark: 'มืด',
-    ftr_ver: 'v2', ftr_date: '7 พ.ค. 2569',
+    ftr_ver: 'v4', ftr_date: '12 พ.ค. 2569',
 
-    insight_title: 'การตัดสินใจทางสถาปัตยกรรมหลัก',
-    insight_body: '<strong>เอสโครว์ผ่านเกตเวย์การชำระเงิน</strong><br>เงินถูกเก็บไว้ในบัญชีของตลาดต๋ัวที่เกตเวย์การชำระเงิน ค่าธรรมเนียมเกตเวย์ (~สูงสุด 3%) เรียกเก็บครั้งเดียว โดยผู้ชนะ<br><br>เมื่อยกเลิกหรือมีข้อร้องเรียน — ไม่มีการชำระครั้งสุดท้าย สองฉบับกำหนดว่าใครครอบคลุมค่าธรรมเนียม: <strong>ฉบับที่ 1 — ตลาด</strong>; <strong>ฉบับที่ 2 — ผู้ซื้อ (ประกันได้)</strong>',
+    insight_title: 'สถาปัตยกรรมหลัก — v4',
+    insight_body: '<strong>เงินของลูกค้าทั้งหมดอยู่ในบัญชีลูกค้าของธนาคารไทย</strong><br>ผู้ซื้อเติมเงินผ่าน PromptPay การซื้อและการขายต่อเป็นการเปลี่ยนแปลงบัญชีภายใน — ไม่มีค่า API ธนาคารในขั้นตอนนี้<br><br>ค่า API ธนาคารเกิดขึ้น<strong>เฉพาะเมื่อมีการจ่ายเงินตามอัลกอริทึม</strong> เมื่อสำเร็จ: ผู้รับแต่ละรายรับผิดชอบค่าโอนของตน และทุกคนแบ่งค่าโอนของตลาดเท่าๆ กัน ตลาดได้รับค่าคอมมิชชั่นเต็มจำนวน<br><br>เมื่อยกเลิก: โอนเงินคืนให้ผู้ซื้อทุกคน <strong>ไม่มีประกัน:</strong> หักค่าโอนจากยอดคืน <strong>มีประกัน:</strong> คืนเต็มจำนวน ค่าโอนออกจากกองทุนประกัน ผู้สร้างได้รับโทษในทั้งสองกรณี',
 
     flow_title: 'การไหลของเงิน', bal_title: 'ยอดคงเหลือสุดท้าย', bal_result: 'ผลลัพธ์',
-    editions_sec_title: 'การบริหารความเสี่ยง — ฉบับ',
+    cancel_cases_title: 'ค่าโอนธนาคาร — การจัดสรรความเสี่ยง',
 
-    edition1_title: 'ฉบับที่ 1 — เริ่มต้น',
-    edition1_desc: 'ตลาดต๋ัวรับความเสี่ยงทางการเงิน (~สูงสุด 3%) ในกรณียกเลิกหรือข้อพิพาทที่ผู้สร้างเป็นผู้ผิด ตลาดจะครอบคลุมค่าธรรมเนียมเกตเวย์จากกำไรตัวเอง ผู้ซื้อได้รับคืนเงินเต็มจำนวน ความเสี่ยงทุกประเภทโอนไปยังผู้สร้างโดยอัตโนมัติ ผู้สร้างมีหนี้ต่อตลาดเท่ากับค่าธรรมเนียมเกตเวย์ — ต้องชำระหนี้ก่อนจึงลงรายการประสบการณ์ใหม่ได้',
-    edition2_title: 'ฉบับที่ 2 — พัฒนา',
-    edition2_desc: 'พัฒนาจากฉบับที่ 1 ความเสี่ยงทางการเงิน (~สูงสุด 3%) เป็นของผู้ซื้อ ก่อนการประมูล ตลาดแจ้งผู้ซื้อเกี่ยวกับความเสี่ยงและเสนอ: รับความเสี่ยงหรือซื้อประกัน ความเสี่ยงทุกประเภทโอนไปยังผู้สร้างโดยอัตโนมัติ ผู้สร้างมีหนี้ต่อกองทุนประกัน',
     sub_with_ins: 'มีประกัน',
-    sub_with_ins_desc: '<strong>ผู้ซื้อได้รับการคุ้มครองเสมอ</strong> ประกันครอบคลุมค่าธรรมเนียมเกตเวย์ — ผู้ซื้อได้รับคืนเงิน 100% เต็มจำนวน',
+    sub_with_ins_desc: 'ผู้ซื้อจ่ายเบี้ยประกันตอนซื้อ เมื่อยกเลิก: <strong>คืนเงินเต็มจำนวน</strong> — ค่าโอนธนาคารครอบคลุมโดยกองทุนประกัน ผู้ซื้อขาดทุนสุทธิ = <strong>เบี้ยประกันเท่านั้น</strong>',
     sub_no_ins: 'ไม่มีประกัน — รับความเสี่ยงโดยรู้ตัว',
-    sub_no_ins_desc: 'ผู้ซื้อ<strong>รับความเสี่ยงโดยรู้ตัว</strong> การลงโทษผู้สร้างยังคงมีผล — ตลาดเรียกคืนหนี้จากผู้สร้างเพื่อประโยชน์ของกองทุน ไม่ใช่ผู้ซื้อ',
+    sub_no_ins_desc: 'ผู้ซื้อรับความเสี่ยงโดยรู้ตัว เมื่อยกเลิก: ยอดคืนลดลงเท่ากับค่าโอนธนาคาร ผู้ซื้อขาดทุนสุทธิ = <strong>ค่าโอน</strong> ผู้สร้างได้รับโทษในทั้งสองกรณี',
+
+    notice_bank_api: '⚠  แบบจำลองเบื้องต้น: การจัดสรรค่าใช้จ่าย API ธนาคาร ณ เวลาชำระบัญชีจะได้รับการปรับหลังจากยืนยันเงื่อนไขการใช้ API ธนาคารไทย',
+
     concl_ok_title: '✓ ชำระเสร็จสิ้น',
     concl_bad_title: '⚠ ยกเลิก / ร้องเรียน — เริ่มคืนเงิน',
+
     lbl_creator: 'ผู้สร้าง', lbl_spec: (n) => `นักเก็งกำไร #${n}`, lbl_winner: 'ผู้ชนะ (สุดท้าย)',
-    lbl_exchange: 'ตลาด', lbl_gateway: 'เกตเวย์การชำระเงิน', lbl_ins_fund: 'กองทุนประกัน',
-    lbl_creator_debt_exch: 'หนี้ผู้สร้าง → ตลาด', lbl_creator_debt_fund: 'หนี้ผู้สร้าง → กองทุน',
+    lbl_exchange: 'ตลาด', lbl_bank: 'ธนาคารไทย', lbl_ins_fund: 'กองทุนประกัน',
+
     step_t0_title: (buyer) => `ผู้สร้าง → ${buyer}`,
-    step_t0_desc: (p) => `ผู้ซื้อจ่าย ${p} → เอสโครว์เกตเวย์ ตลาดรับค่าธรรมเนียมจากราคาหลัก ผู้สร้างได้รับส่วนที่เหลือ`,
+    step_t0_desc: (price, commAmt, creatorAmt) => `ผู้ซื้อชำระ ${price} ผ่าน PromptPay → บัญชีลูกค้าธนาคารไทย ตลาดสะสม ${commAmt} (ค่าคอมฯ) ผู้สร้างสะสม ${creatorAmt} ทั้งหมดอยู่ในเอสโครว์ — ไม่มีค่า API ธนาคารตอนซื้อ`,
     step_resale_title: (n, s, b) => `ขายต่อ #${n}: ${s} → ${b}`,
-    step_resale_desc: (p) => `ราคา: ${p} อยู่ใน escrow เปลี่ยนเจ้าของใน DB เท่านั้น ไม่มีค่าธรรมเนียมเกตเวย์`,
-    step_settle_title: 'ชำระผ่านเกตเวย์การชำระเงิน',
-    step_settle_desc: (g) => `ประสบการณ์เสร็จสิ้น ไม่มีร้องเรียน 48 ชม. เงินถูกปล่อยจาก escrow ค่าธรรมเนียมเกตเวย์: ${g} — โดยผู้ชนะ`,
-    step_bad_title: '⚠ ผู้สร้างผิด — เริ่มพลิกกลับ',
-    step_bad_desc: 'ผู้สร้างผิด (ยกเลิกหรือร้องเรียนที่มีเหตุผล) ตลาดต๋ัวเริ่มพลิกกลับใน DB ทุกคนได้รับคืนเท่าที่จ่าย',
-    tag_escrow: '→ Escrow', tag_no_fee: 'ไม่มีค่าธรรมเนียมเกตเวย์',
-    tag_gateway: 'โอนผ่านเกตเวย์', tag_creator: 'ผู้สร้าง', tag_exchange: 'ตลาด',
-    tag_gateway_fee: 'ค่าธรรมเนียมเกตเวย์', tag_refund: 'คืนเงิน',
+    step_resale_desc: (price, commAmt, royAmt, specAmt) => `ราคาขายต่อ ${price} ตลาดสะสม ${commAmt} ค่าลิขสิทธิ์ผู้สร้าง: ${royAmt} นักเก็งกำไรสะสม ${specAmt} บัตรเก่าถูกยกเลิก ออกบัตรใหม่ — ไม่มีค่า API ธนาคารตอนขายต่อ`,
+    step_settle_title: 'T+48 ชม. — การจ่ายเงินตามอัลกอริทึม',
+    step_settle_desc: (n, perT, total) => `ประสบการณ์เสร็จสิ้น ไม่มีร้องเรียน 48 ชม. ตลาดเริ่ม ${n} การโอนผ่าน API ธนาคาร ค่าโอนต่อครั้ง: ${perT} ค่า API รวม: ${total} ผู้รับแต่ละรายรับผิดชอบค่าโอนของตน + ส่วนแบ่งค่าโอนของตลาดเท่าๆ กัน`,
+    step_bad_title: '⚠ ผู้สร้างผิด — เริ่มคืนเงิน',
+    step_bad_desc: 'ผู้สร้างผิด (ยกเลิกหรือร้องเรียนที่มีเหตุผล) ตลาดเริ่มการโอนเงินคืนให้ผู้ซื้อทุกคน ค่าธรรมเนียม API ธนาคารหักจากยอดคืน (หรือครอบคลุมโดยกองทุนประกัน) ผู้สร้างได้รับโทษ — ดูการจัดสรรความเสี่ยงด้านล่าง',
+
+    tag_escrow: '→ Escrow', tag_no_bank_fee: 'ไม่มีค่า API',
+    tag_bank_fee: 'ค่า API ธนาคาร', tag_own_transfer: 'ค่าโอนของตน',
+    tag_exch_share: 'ส่วนแบ่งค่าโอนตลาด', tag_refund: 'คืนเงิน',
+    tag_creator: 'ผู้สร้าง', tag_exchange: 'ตลาด',
+    tag_ins_premium: 'เบี้ยประกัน', tag_sanction: 'โทษ → กองทุน',
+
     warn_spec_loss_title: '⚠ หมายเหตุทางเศรษฐกิจ',
-    warn_spec_loss: (markup, fees) => `ด้วยค่านายหน้า ${markup}% และค่าธรรมเนียมรวม ${fees}% นักเก็งกำไรขาดทุนในทุกการขายต่อ เพิ่มค่านายหน้าให้เกิน ${fees}% เพื่อเห็นยอดคงเหลือบวก`,
-    concl_ok: (e, c, g) => `ตลาดได้รับ <strong>${e}</strong> ผู้สร้างได้รับ <strong>${c}</strong> ค่าธรรมเนียมเกตเวย์ชำระโดยผู้ชนะ: <strong>${g}</strong>`,
-    concl_bad: 'ทุกคนได้รับคืน <strong>เท่าที่จ่าย</strong> ผู้สร้างผิด — ยกเลิกหรือร้องเรียนที่มีเหตุผล ดูฉบับด้านล่างสำหรับการจัดสรรค่าธรรมเนียมเกตเวย์',
+    warn_spec_loss: (markup, fees) => `ด้วยค่านายหน้า ${markup}% และค่าธรรมเนียมรวม ${fees}% นักเก็งกำไรขาดทุนในทุกการขายต่อ ค่า API ธนาคารยิ่งลดกำไรสุทธิ เพิ่มค่านายหน้าเพื่อถึงจุดคุ้มทุน`,
+
+    concl_ok: (exch, creator, bankTotal) => `ตลาดได้รับ <strong>${exch}</strong> (ค่าคอมฯ เต็มจำนวน) ผู้สร้างได้รับ <strong>${creator}</strong> (หลังหักค่าโอน) ธนาคารเก็บค่าโอนรวม <strong>${bankTotal}</strong> ผู้ชนะได้รับประสบการณ์`,
+    concl_bad: 'ผู้สร้างผิด ผู้ซื้อทุกคนได้รับการโอนเงินคืน ไม่มีประกัน: หักค่าโอนจากยอดคืน มีประกัน: ครอบคลุมโดยกองทุนประกัน ยอดผู้สร้างถูกหักเท่ากับค่าโอนรวม → กองทุนประกัน',
   },
 
   zh: {
     hdr_title: '资金托管流模拟器',
-    s_ticket: '票务参数', s_fees: '费用', s_scenario: '场景',
+    s_ticket: '票务参数', s_fees: '费用', s_scenario: '场景', s_bank: 'API银行',
     p_start: '起始价格 (THB)', p_markup: '投机者加价 %', p_resales: '转售轮次',
-    p_comm: '交易所佣金 %', p_roy: '创作者版税 %', p_gateway: '网关费率 %',
+    p_comm: '交易所佣金 %', p_roy: '创作者版税（二级市场）%',
+    p_creator_primary_lbl: '创作者份额 · 一级市场',
+    p_transfer: '转账费用（泰铢）', p_ins: '保险费率 %',
     sc_ok: '成功', sc_bad: '取消 / 投诉',
     btn_run: '计算 →', btn_reset: '重置为默认值',
     empty_lbl: '设置参数并计算',
     th_sys: '跟随系统', th_light: '浅色', th_dark: '深色',
-    ftr_ver: 'v2', ftr_date: '2026年5月7日',
-    insight_title: '核心架构决策',
-    insight_body: '<strong>支付网关托管</strong><br>资金存放在票务交易所在支付网关的账户中。所有转售仅为数据库所有权变更——无资金流动。网关手续费（剠3%以内）在最终结算时一次性收取，由获胜者承担。<br><br>取消或投诉时——不进行最终结算。退款=数据库回滚。两个版本定义谁在不良场景中承担网关手续费：<strong>版本1——交易所</strong>；<strong>版本2——买方（可选购保险）</strong>。',
+    ftr_ver: 'v4', ftr_date: '2026年5月12日',
+
+    insight_title: '核心架构 — v4',
+    insight_body: '<strong>所有客户资金存放在泰国银行客户账户中。</strong><br>买方通过PromptPay充值。购买和转售均为内部账务变动——此阶段无银行API费用。<br><br>银行API费用仅在<strong>算法支付时产生</strong>。成功时：每位收款方承担自己的转账费用；所有参与者（创作者+所有买方）平摊交易所的转账费用。交易所保留全额佣金。<br><br>取消时：退款转账仅给买方（获胜者+各投机者）。<strong>无保险：</strong>转账费从退款中扣除。<strong>有保险：</strong>全额退款，费用由保险基金承担。两种情况下创作者均受制裁。',
+
     flow_title: '资金流向', bal_title: '最终余额', bal_result: '结果',
-    editions_sec_title: '风险管理 — 版本',
-    edition1_title: '版本 1 — 起始版',
-    edition1_desc: '票务交易所承担金融风险（剠3%以内）。如发生取消或经核实的由主办方过错引发的纠纷，交易所将用自身利润支付支付网关手续费。买家获得全额退款。主办方对交易所产生等额债务——必须偿还债务后才能发布下一个体验。',
-    edition2_title: '版本 2 — 进阶版',
-    edition2_desc: '在版本1基础上发展。金融风险（剠3%以内）由买方承担。拍卖前告知买方风险，并提供选择：接受风险或购买保险。保险基金在不良情况发生时支付网关手续费。所有风险自动转移至创作者。创作者对保险基金产生债务。',
+    cancel_cases_title: '银行转账费 — 风险分配',
+
     sub_with_ins: '已购保险',
-    sub_with_ins_desc: '<strong>买方始终受到保护。</strong>保险覆盖支付网关手续费——买方获得100%全额退款。',
+    sub_with_ins_desc: '买方在购买时支付了保险费。取消时：<strong>全额退款</strong> — 银行转账费由保险基金承担。买方净损失 = <strong>仅保险费</strong>。',
     sub_no_ins: '未购保险 — 主动承担风险',
-    sub_no_ins_desc: '买方<strong>主动选择接受风险</strong>。网关手续费损失是其知情决策的结果。对创作者的制裁仍然适用——票务交易所代表保险基金（而非买方）向创作者追收债务。',
-    concl_ok_title: '✓ 成功结算', concl_bad_title: '⚠ 取消 / 投诉 — 退款已启动',
+    sub_no_ins_desc: '买方主动选择承担风险。取消时：退款减去银行转账费。买方净损失 = <strong>转账费用</strong>。两种情况下创作者均受制裁。',
+
+    notice_bank_api: '⚠  初步模型：结算时银行API费用的分配方式将在确认泰国银行API条款后进行调整。',
+
+    concl_ok_title: '✓ 成功结算',
+    concl_bad_title: '⚠ 取消 / 投诉 — 退款已启动',
+
     lbl_creator: '创作者', lbl_spec: (n) => `投机者 #${n}`, lbl_winner: '获胜者（最终）',
-    lbl_exchange: '交易所', lbl_gateway: '支付网关', lbl_ins_fund: '保险基金',
-    lbl_creator_debt_exch: '创作者债务 → 交易所', lbl_creator_debt_fund: '创作者债务 → 基金',
+    lbl_exchange: '交易所', lbl_bank: '泰国银行', lbl_ins_fund: '保险基金',
+
     step_t0_title: (buyer) => `创作者 → ${buyer}`,
-    step_t0_desc: (p) => `买方支付 ${p} → 支付网关托管。交易所从主价格中收取费用。创作者收到余额。`,
+    step_t0_desc: (price, commAmt, creatorAmt) => `买方通过PromptPay支付${price} → 泰国银行客户账户。交易所累积${commAmt}（佣金）。创作者累积${creatorAmt}。全部存入托管 — 购买时无银行API费用。`,
     step_resale_title: (n, s, b) => `转售 #${n}: ${s} → ${b}`,
-    step_resale_desc: (p) => `价格: ${p} 留在托管中 仅更改DB所有权 无网关手续费`,
-    step_settle_title: '支付网关结算',
-    step_settle_desc: (g) => `体验完成，48小时无投诉。资金从托管中释放。网关手续费: ${g}（由获胜者承担）`,
-    step_bad_title: '⚠ 主办方有过错 — 启动回滚',
-    step_bad_desc: '主办方有过错（取消或投诉成立）。票务交易所发起DB回滚——无资金流动。各方取回原款。',
-    tag_escrow: '→ 托管', tag_no_fee: '无网关手续费',
-    tag_gateway: '网关转账', tag_creator: '创作者', tag_exchange: '交易所',
-    tag_gateway_fee: '网关手续费', tag_refund: '退款',
+    step_resale_desc: (price, commAmt, royAmt, specAmt) => `转售价格${price}。交易所累积${commAmt}。创作者版税：${royAmt}。投机者累积${specAmt}。旧票作废，新票发行 — 转售时无银行API费用。`,
+    step_settle_title: 'T+48h — 算法支付',
+    step_settle_desc: (n, perT, total) => `体验完成，48小时无投诉。交易所发起${n}笔银行API转账。每笔费用：${perT}。银行API总费用：${total}。每位收款方承担自己的转账费用，并平摊交易所转账费用。`,
+    step_bad_title: '⚠ 主办方有过错 — 启动退款',
+    step_bad_desc: '主办方有过错（取消或投诉成立）。交易所向所有买方发起退款转账。银行API费用从每位买方退款中扣除（或由保险基金承担）。创作者受到制裁——请见下方风险分配。',
+
+    tag_escrow: '→ 托管', tag_no_bank_fee: '无API费用',
+    tag_bank_fee: '银行API费用', tag_own_transfer: '自身转账费',
+    tag_exch_share: '交易所转账分担', tag_refund: '退款',
+    tag_creator: '创作者', tag_exchange: '交易所',
+    tag_ins_premium: '保险费', tag_sanction: '制裁 → 基金',
+
     warn_spec_loss_title: '⚠ 经济说明',
-    warn_spec_loss: (markup, fees) => `加价 ${markup}% 低于总费率 ${fees}%，投机者每次转售都亏损。将加价提高到 ${fees}% 以上可看到正余额。`,
-    concl_ok: (e, c, g) => `交易所获得 <strong>${e}</strong> 创作者获得 <strong>${c}</strong> 网关手续费由获胜者支付: <strong>${g}</strong>`,
-    concl_bad: '各方取回<strong>原付款项</strong>。主办方有过错 — 取消或投诉成立。请参阅下方版本了解网关手续费分配。',
+    warn_spec_loss: (markup, fees) => `加价${markup}%、总交易费率${fees}%，投机者每次转售都亏损。银行API结算费用进一步降低净收益。提高加价以达到盈亏平衡。`,
+
+    concl_ok: (exch, creator, bankTotal) => `交易所获得<strong>${exch}</strong>（全额佣金）。创作者获得<strong>${creator}</strong>（扣除转账费后）。银行收取总转账费<strong>${bankTotal}</strong>。获胜者获得体验。`,
+    concl_bad: '主办方有过错。所有买方收到退款转账。无保险时转账费从退款中扣除，有保险时由保险基金承担。创作者账户被扣除总转账费用 → 保险基金。',
   },
 
   ru: {
     hdr_title: 'Симулятор потоков эскроу',
-    s_ticket: 'Параметры билета', s_fees: 'Комиссии', s_scenario: 'Сценарий',
-    p_start: 'Стартовая цена (THB)', p_markup: 'Наценка спекулянта %', p_resales: 'Раундов перепродаж',
-    p_comm: 'Комиссия биржи %', p_roy: 'Роялти создателя %', p_gateway: 'Комиссия шлюза %',
+    s_ticket: 'Параметры билета', s_fees: 'Комиссии', s_scenario: 'Сценарий', s_bank: 'API банка',
+    p_start: 'Стартовая цена (бат)', p_markup: 'Наценка спекулянта %', p_resales: 'Раундов перепродаж',
+    p_comm: 'Комиссия биржи %', p_roy: 'Роялти создателя (вторичный) %',
+    p_creator_primary_lbl: 'Доля создателя — первичный рынок',
+    p_transfer: 'Стоимость перевода (бат)', p_ins: 'Страховая премия %',
     sc_ok: 'Успех', sc_bad: 'Отмена / Жалоба',
     btn_run: 'Рассчитать →', btn_reset: 'Сбросить по умолчанию',
     empty_lbl: 'Настройте параметры и нажмите «Рассчитать»',
     th_sys: 'Системная', th_light: 'Светлая', th_dark: 'Тёмная',
-    ftr_ver: 'v2', ftr_date: '7 мая 2026',
-    insight_title: 'Ключевое архитектурное решение',
-    insight_body: '<strong>Эскроу через платёжный шлюз.</strong><br>Деньги хранятся на счёте тикет-биржи в платёжном шлюзе. Все перепродажи — смена владельца в БД, без движения средств. Комиссия шлюза (~до 3%) взимается один раз при финальном переводе и оплачивается победителем.<br><br>При отмене или жалобе — финального перевода нет. Возврат = разворот записей в БД. Две редакции определяют, кто покрывает комиссию шлюза: <strong>Редакция 1 — биржа</strong>; <strong>Редакция 2 — покупатель (опционально страхуется)</strong>.',
+    ftr_ver: 'v4', ftr_date: '12 мая 2026',
+
+    insight_title: 'Ключевая архитектура — v4',
+    insight_body: '<strong>Все средства клиентов — на отдельном счёте тайского банка.</strong><br>Покупатели пополняют баланс через PromptPay. Покупки и перепродажи — только записи в реестре биржи, без обращения к API банка.<br><br>Стоимость API банка возникает <strong>только при алгоритмической выплате</strong>. При успехе: каждый получатель несёт стоимость своего перевода; стоимость перевода бирже делится поровну между всеми участниками (создатель + все покупатели). Биржа получает свои 10% в полном объёме.<br><br>При отмене: переводы — только покупателям (победитель + каждый спекулянт). <strong>Без страховки:</strong> стоимость перевода вычитается из возврата. <strong>Со страховкой:</strong> полный возврат, стоимость — из страхового фонда. Санкция к создателю — в обоих случаях.',
+
     flow_title: 'Поток денег', bal_title: 'Итоговые балансы', bal_result: 'Итог',
-    editions_sec_title: 'Управление рисками — редакции',
-    edition1_title: 'Редакция 1 — стартовая',
-    edition1_desc: 'Тикет-биржа берёт на себя финансовый риск (~до 3%). В случае отмены или обоснованного спора по вине создателя — биржа покрывает комиссию платёжного шлюза из собственной прибыли. Покупатель получает полный возврат. Риски автоматически переходят к создателю. Следующее впечатление можно разместить только после погашения задолженности.',
-    edition2_title: 'Редакция 2 — развитие',
-    edition2_desc: 'Развитие Редакции 1. Финансовый риск (~до 3%) берёт на себя покупатель. До аукциона тикет-биржа информирует покупателя о риске и предлагает: принять риск или застраховать его. Страховой фонд покрывает комиссию шлюза при наступлении страхового случая. Риски автоматически переходят к создателю. У создателя образуется задолженность перед страховым фондом.',
+    cancel_cases_title: 'Стоимость переводов — распределение риска',
+
     sub_with_ins: 'Со страховкой',
-    sub_with_ins_desc: '<strong>Покупатель всегда защищён.</strong> Страховка покрывает комиссию платёжного шлюза — покупатель получает 100% возврат.',
+    sub_with_ins_desc: 'Покупатель уплатил страховую премию при покупке. При отмене: <strong>полный возврат</strong> — стоимость банковского перевода покрывается из страхового фонда. Нетто-потеря покупателя = <strong>только премия</strong>.',
     sub_no_ins: 'Без страховки — осознанный риск',
-    sub_no_ins_desc: 'Покупатель <strong>осознанно принял риск</strong>. Потеря комиссии шлюза — следствие его информированного выбора. Санкция против создателя действует в любом случае — тикет-биржа взыскивает долг в пользу страхового фонда, не покупателя.',
+    sub_no_ins_desc: 'Покупатель осознанно принял риск. При отмене: возврат уменьшается на стоимость банковского перевода. Нетто-потеря покупателя = <strong>стоимость перевода</strong>. Санкция к создателю — в обоих случаях.',
+
+    notice_bank_api: '⚠  Предварительная модель: логика распределения стоимости банковских переводов при расчёте уточняется после согласования условий API тайского банка.',
+
     concl_ok_title: '✓ Успешное завершение',
-    concl_bad_title: '⚠ Отмена / Жалоба — возврат инициирован',
+    concl_bad_title: '⚠ Отмена / Жалоба — возвраты инициированы',
+
     lbl_creator: 'Создатель', lbl_spec: (n) => `Спекулянт #${n}`, lbl_winner: 'Победитель (финальный)',
-    lbl_exchange: 'Биржа', lbl_gateway: 'Платёжный шлюз', lbl_ins_fund: 'Страховой фонд',
-    lbl_creator_debt_exch: 'Долг создателя → Бирже', lbl_creator_debt_fund: 'Долг создателя → Фонду',
+    lbl_exchange: 'Биржа', lbl_bank: 'Тайский банк', lbl_ins_fund: 'Страховой фонд',
+
     step_t0_title: (buyer) => `Создатель → ${buyer}`,
-    step_t0_desc: (p) => `Покупатель вносит ${p} → эскроу платёжного шлюза. Биржа удерживает комиссию с первичной цены. Создатель получает остаток.`,
+    step_t0_desc: (price, commAmt, creatorAmt) => `Покупатель вносит ${price} через PromptPay → клиентский счёт тайского банка. Биржа начисляет ${commAmt} (комиссия). Создателю начисляется ${creatorAmt}. Всё в эскроу — без стоимости API банка при покупке.`,
     step_resale_title: (n, s, b) => `Перепродажа #${n}: ${s} → ${b}`,
-    step_resale_desc: (p) => `Цена: ${p}. Остаётся в эскроу. Смена владельца в БД. Комиссии шлюза нет.`,
-    step_settle_title: 'Расчёт через платёжный шлюз',
-    step_settle_desc: (g) => `Впечатление прошло. 48ч без жалоб. Средства высвобождены из эскроу. Комиссия шлюза: ${g} — оплачивает победитель.`,
-    step_bad_title: '⚠ Создатель виновен — разворот инициирован',
-    step_bad_desc: 'Создатель виновен (отмена или обоснованная жалоба). Тикет-биржа инициирует разворот в БД — без движения средств. Каждый получает ровно то, что заплатил.',
-    tag_escrow: '→ Эскроу', tag_no_fee: 'Комиссии шлюза нет',
-    tag_gateway: 'Перевод через шлюз', tag_creator: 'Создателю', tag_exchange: 'Бирже',
-    tag_gateway_fee: 'Комиссия шлюза', tag_refund: 'Возврат',
+    step_resale_desc: (price, commAmt, royAmt, specAmt) => `Цена перепродажи ${price}. Биржа начисляет ${commAmt}. Роялти создателя: ${royAmt}. Спекулянту начисляется ${specAmt}. Старый билет аннулирован, выпущен новый — без стоимости API банка при перепродаже.`,
+    step_settle_title: 'T+48ч — Алгоритмическая выплата',
+    step_settle_desc: (n, perT, total) => `Впечатление прошло. 48ч без жалоб. Биржа инициирует ${n} банковских переводов через API. Стоимость одного перевода: ${perT}. Итого стоимость API банка: ${total}. Каждый получатель несёт стоимость своего перевода + равную долю за перевод бирже.`,
+    step_bad_title: '⚠ Создатель виновен — возвраты инициированы',
+    step_bad_desc: 'Создатель виновен (отмена или обоснованная жалоба). Биржа инициирует переводы возврата всем покупателям. Стоимость перевода вычитается из каждого возврата (или покрывается страховым фондом). Санкция к создателю — см. распределение риска ниже.',
+
+    tag_escrow: '→ Эскроу', tag_no_bank_fee: 'Без стоимости API',
+    tag_bank_fee: 'Стоимость перевода', tag_own_transfer: 'Свой перевод',
+    tag_exch_share: 'Доля перевода биржи', tag_refund: 'Возврат',
+    tag_creator: 'Создателю', tag_exchange: 'Бирже',
+    tag_ins_premium: 'Страховая премия', tag_sanction: 'Санкция → Фонд',
+
     warn_spec_loss_title: '⚠ Экономическое примечание',
-    warn_spec_loss: (markup, fees) => `При наценке ${markup}% и суммарных комиссиях ${fees}% спекулянты получают убыток с каждой перепродажи. Поднимите наценку выше ${fees}%, чтобы увидеть положительные балансы.`,
-    concl_ok: (e, c, g) => `Биржа заработала <strong>${e}</strong>. Создатель получил <strong>${c}</strong> (первичная + роялти). Комиссия шлюза оплачена победителем: <strong>${g}</strong>. Победитель получил впечатление.`,
-    concl_bad: 'Все участники получают обратно <strong>ровно то, что заплатили</strong>. Создатель виновен — отмена или обоснованная жалоба. Распределение комиссии шлюза — см. редакции ниже.',
+    warn_spec_loss: (markup, fees) => `При наценке ${markup}% и суммарных торговых комиссиях ${fees}% спекулянты несут убыток с каждой перепродажи. Стоимость банковских переводов при расчёте дополнительно снижает нетто-доход. Повысьте наценку для выхода на безубыточность.`,
+
+    concl_ok: (exch, creator, bankTotal) => `Биржа заработала <strong>${exch}</strong> (полные комиссии). Создатель получил <strong>${creator}</strong> (за вычетом стоимости переводов). Банк собрал <strong>${bankTotal}</strong> за переводы. Победитель получил впечатление.`,
+    concl_bad: 'Создатель виновен. Все покупатели получают переводы возврата. Без страховки: стоимость перевода вычитается из возврата; со страховкой — покрывается страховым фондом. Баланс создателя уменьшается на сумму всех стоимостей переводов → страховой фонд.',
   }
 };
 
@@ -503,6 +599,7 @@ function setLang(l) {
   localStorage.setItem('ehipas-lang', l);
   closeDD();
   applyLang();
+  updDerived();
   if (document.getElementById('res').classList.contains('on')) run();
 }
 
@@ -546,19 +643,29 @@ function closeDD() {
 }
 
 // ═══ PARAMS ══════════════════════════════════════════════
-const DEFAULTS = { start: 300, markup: 20, resales: 3, comm: 10, roy: 5, gwFee: 3 };
+const DEFAULTS = { start: 300, markup: 20, resales: 3, comm: 10, roy: 5, transfer: 3, ins: 25 };
 const P = { ...DEFAULTS };
 let scenario = 'ok';
 
 function upd(k, v) {
   const fv = parseFloat(v);
   const disp = {
-    start:  `${fv.toFixed(0)} THB`,
-    markup: fv + '%', resales: fv,
-    comm:   fv + '%', roy:     fv + '%', gwFee: fv + '%'
+    start:    `${fv.toFixed(0)}\u00a0THB`,
+    markup:   fv + '%',
+    resales:  fv,
+    comm:     fv + '%',
+    roy:      fv + '%',
+    transfer: `${fv.toFixed(0)}\u00a0THB`,
+    ins:      fv + '%'
   };
   document.getElementById('v-' + k).textContent = disp[k];
   P[k] = fv;
+  if (k === 'comm') updDerived();
+}
+
+function updDerived() {
+  const el = document.getElementById('v-creator-primary');
+  if (el) el.innerHTML = `<span>${(100 - P.comm).toFixed(0)}%</span>`;
 }
 
 function setScenario(s, lbl) {
@@ -568,14 +675,12 @@ function setScenario(s, lbl) {
 }
 
 function reset() {
-  // Reset all sliders and P values to defaults
   Object.entries(DEFAULTS).forEach(([k, v]) => {
     const el = document.querySelector(`input[oninput*="upd('${k}'"]`);
     if (el) { el.value = v; upd(k, v); }
   });
-  // Reset scenario to success
+  updDerived();
   setScenario('ok', document.getElementById('lbl-ok'));
-  // Clear results panel
   const res = document.getElementById('res');
   res.classList.remove('on');
   res.innerHTML = '';
@@ -585,14 +690,12 @@ function reset() {
 // ═══ HELPERS ══════════════════════════════════════════════
 const fc = n => `${(+n).toFixed(2)}\u00a0THB`;
 
-const specLabel            = n  => tx('lbl_spec', n);
-const winnerLabel          = () => tx('lbl_winner');
-const creatorLabel         = () => tx('lbl_creator');
-const exchangeLabel        = () => tx('lbl_exchange');
-const gatewayLabel         = () => tx('lbl_gateway');
-const insFundLabel         = () => tx('lbl_ins_fund');
-const creatorDebtExchLabel = () => tx('lbl_creator_debt_exch');
-const creatorDebtFundLabel = () => tx('lbl_creator_debt_fund');
+const specLabel    = n  => tx('lbl_spec', n);
+const winnerLabel  = () => tx('lbl_winner');
+const creatorLabel = () => tx('lbl_creator');
+const exchangeLabel= () => tx('lbl_exchange');
+const bankLabel    = () => tx('lbl_bank');
+const insFundLabel = () => tx('lbl_ins_fund');
 
 // ═══ ECONOMIC ENGINE ════════════════════════════════════════
 function run() {
@@ -600,7 +703,7 @@ function run() {
   const resEl = document.getElementById('res');
   resEl.classList.add('on');
 
-  // ─ Build price chain ─
+  // ─ Build price chain (no per-transaction bank fee) ─
   const chain = [];
   let price = P.start;
 
@@ -621,35 +724,52 @@ function run() {
   }
 
   const finalPrice = price;
-  const gwFee = finalPrice * P.gwFee / 100;
 
-  // ─ Primary ─
+  // ─ Primary market ─
   const primComm      = chain[0].price * P.comm / 100;
-  const primToCreator = chain[0].price - primComm;
+  const primToCreator = chain[0].price - primComm;   // creator accrues 90%
 
-  // ─ Secondary ─
+  // ─ Secondary market ─
   const secCalc = chain.slice(1).map(item => {
     const secComm    = item.price * P.comm / 100;
     const secRoy     = item.price * P.roy  / 100;
-    const sellerGets = item.price - secComm - secRoy;
-    return { ...item, secComm, secRoy, sellerGets };
+    const specAccrued = item.price - secComm - secRoy;  // speculator accrues 85%
+    return { ...item, secComm, secRoy, specAccrued };
   });
 
   const exchTotal    = primComm + secCalc.reduce((s, x) => s + x.secComm, 0);
   const creatorTotal = primToCreator + secCalc.reduce((s, x) => s + x.secRoy, 0);
 
-  // ─ Flow steps ─
+  // ─ Bank API cost parameters ─
+  // Success: N+2 transfers (creator + N specs + exchange)
+  const numTransfersOk   = P.resales + 2;
+  const bankTotalOk      = numTransfersOk * P.transfer;
+  // Each participant shares exchange transfer equally:
+  // participants = creator + all specs + winner = P.resales + 2
+  const numParticipants  = P.resales + 2;
+  const exchSharePerHead = P.transfer / numParticipants;
+
+  // Cancel: N+1 transfers (winner + N specs), no exchange transfer
+  const numTransfersBad  = P.resales + 1;
+  const bankTotalBad     = numTransfersBad * P.transfer;
+  const sanction         = bankTotalBad;  // creator sanction = total buyer losses
+
+  // Insurance premium per transfer
+  const insPremium = P.transfer * P.ins / 100;
+
+  // ─ Flow steps (shared: T0 + resales) ─
   const steps = [];
 
   steps.push({
     time: 'T0', cls: 'hl-pur',
     title: tx('step_t0_title', chain[0].buyer),
-    desc:  tx('step_t0_desc', fc(chain[0].price)),
+    desc:  tx('step_t0_desc', fc(chain[0].price), fc(primComm), fc(primToCreator)),
     tags: [
-      { l: fc(chain[0].price),                           c:'ftag-acc'  },
-      { l: `${tx('tag_exchange')}: ${fc(primComm)}`,     c:'ftag-ok'   },
-      { l: `${tx('tag_creator')}: ${fc(primToCreator)}`, c:'ftag-pur'  },
-      { l: tx('tag_escrow'),                             c:'ftag-gray' },
+      { l: fc(chain[0].price),                              c:'ftag-acc'  },
+      { l: `${tx('tag_exchange')}: ${fc(primComm)}`,        c:'ftag-ok'   },
+      { l: `${tx('tag_creator')}: ${fc(primToCreator)}`,    c:'ftag-pur'  },
+      { l: tx('tag_no_bank_fee'),                           c:'ftag-gray' },
+      { l: tx('tag_escrow'),                                c:'ftag-gray' },
     ]
   });
 
@@ -657,13 +777,14 @@ function run() {
     steps.push({
       time: `T${i+1}`, cls: '',
       title: tx('step_resale_title', i+1, s.seller, s.buyer),
-      desc:  tx('step_resale_desc', fc(s.price)),
+      desc:  tx('step_resale_desc', fc(s.price), fc(s.secComm), fc(s.secRoy), fc(s.specAccrued)),
       tags: [
-        { l: fc(s.price),                                c:'ftag-acc'   },
-        { l: `${tx('tag_exchange')}: ${fc(s.secComm)}`,  c:'ftag-ok'    },
-        { l: `${tx('tag_creator')}: ${fc(s.secRoy)}`,    c:'ftag-pur'   },
-        { l: `${fc(s.sellerGets)} \u2192 ${s.seller}`,  c:'ftag-amber' },
-        { l: tx('tag_no_fee'),                           c:'ftag-gray'  },
+        { l: fc(s.price),                                   c:'ftag-acc'   },
+        { l: `${tx('tag_exchange')}: ${fc(s.secComm)}`,     c:'ftag-ok'    },
+        { l: `${tx('tag_creator')}: ${fc(s.secRoy)}`,       c:'ftag-pur'   },
+        { l: `${fc(s.specAccrued)} \u2192 ${s.seller}`,    c:'ftag-amber' },
+        { l: tx('tag_no_bank_fee'),                         c:'ftag-gray'  },
+        { l: tx('tag_escrow'),                              c:'ftag-gray'  },
       ]
     });
   });
@@ -674,46 +795,57 @@ function run() {
     steps.push({
       time: 'T+48h', cls: 'hl-ok',
       title: tx('step_settle_title'),
-      desc:  tx('step_settle_desc', fc(gwFee)),
+      desc:  tx('step_settle_desc', numTransfersOk, fc(P.transfer), fc(bankTotalOk)),
       tags: [
-        { l: `${tx('tag_creator')}: ${fc(creatorTotal)}`, c:'ftag-pur'  },
-        { l: `${tx('tag_exchange')}: ${fc(exchTotal)}`,   c:'ftag-ok'   },
-        { l: `${tx('tag_gateway_fee')}: ${fc(gwFee)}`,    c:'ftag-gray' },
-        { l: tx('tag_gateway'),                           c:'ftag-acc'  },
+        { l: `${tx('tag_creator')}: ${fc(creatorTotal - P.transfer - exchSharePerHead)}`, c:'ftag-pur'  },
+        { l: `${tx('tag_exchange')}: ${fc(exchTotal)}`,                                   c:'ftag-ok'   },
+        { l: `${tx('tag_bank_fee')}: ${fc(bankTotalOk)}`,                                 c:'ftag-gray' },
       ]
     });
 
+    // ─ Success balances ─
     const balances = {};
-    balances[exchangeLabel()] = { v: exchTotal };
-    balances[creatorLabel()]  = { v: creatorTotal };
-    balances[gatewayLabel()]  = { v: gwFee };
 
+    // Creator: total earnings minus own transfer cost minus exchange share
+    balances[creatorLabel()]  = { v: creatorTotal - P.transfer - exchSharePerHead };
+
+    // Exchange: full commissions (no deduction)
+    balances[exchangeLabel()] = { v: exchTotal };
+
+    // Thai bank: all transfer costs
+    balances[bankLabel()]     = { v: bankTotalOk };
+
+    // Speculators: (accrued from sale - purchase price) - own transfer - exchange share
     if (P.resales > 0) {
-      const specPaid = {}, specReceived = {};
-      specPaid[specLabel(1)] = chain[0].price;
-      secCalc.forEach(s => {
-        specReceived[s.seller] = (specReceived[s.seller] || 0) + s.sellerGets;
-        if (!s.isLast) specPaid[s.buyer] = (specPaid[s.buyer] || 0) + s.price;
-      });
       for (let i = 1; i <= P.resales; i++) {
-        const key = specLabel(i);
-        balances[key] = { v: (specReceived[key] || 0) - (specPaid[key] || 0) };
+        const accrued = secCalc[i-1].specAccrued;
+        const paid    = chain[i-1].price;
+        balances[specLabel(i)] = { v: accrued - paid - P.transfer - exchSharePerHead };
       }
     }
 
-    balances[winnerLabel()] = { v: -(finalPrice + gwFee) };
+    // Winner: paid finalPrice + their share of exchange transfer
+    balances[winnerLabel()] = { v: -(finalPrice + exchSharePerHead) };
 
+    // ─ Warn: spec unprofitable ─
     const totalFees = P.comm + P.roy;
-    const warn = (P.resales > 0 && (1 + P.markup/100) * (1 - totalFees/100) <= 1)
+    const warn = (P.resales > 0 &&
+      (1 + P.markup / 100) * (1 - totalFees / 100) <= 1)
       ? `<div class="warn-box"><span class="warn-icon">${tx('warn_spec_loss_title')}:</span> ${tx('warn_spec_loss', P.markup, totalFees)}</div>`
       : '';
 
+    // ─ Notice: preliminary bank API logic ─
+    const notice = `<div class="notice-box">${tx('notice_bank_api')}</div>`;
+
     resEl.innerHTML = renderResult(steps, balances,
-      warn +
-      `<div class="concl ok"><div class="concl-title ok">${tx('concl_ok_title')}</div><div class="concl-body">${tx('concl_ok', fc(exchTotal), fc(creatorTotal), fc(gwFee))}</div></div>`
+      warn + notice +
+      `<div class="concl ok">
+        <div class="concl-title ok">${tx('concl_ok_title')}</div>
+        <div class="concl-body">${tx('concl_ok', fc(exchTotal), fc(creatorTotal - P.transfer - exchSharePerHead), fc(bankTotalOk))}</div>
+      </div>`
     );
 
-  // ─ SCENARIO: BAD (cancel or complaint) ─
+  // ─ SCENARIO: CANCEL / COMPLAINT ─
   } else {
 
     steps.push({
@@ -721,15 +853,44 @@ function run() {
       title: tx('step_bad_title'),
       desc:  tx('step_bad_desc'),
       tags: [
-        { l: tx('tag_no_fee'), c:'ftag-gray' },
-        { l: tx('tag_refund'), c:'ftag-ok'   }
+        { l: tx('tag_refund'),  c:'ftag-ok'  },
+        { l: tx('tag_bank_fee'), c:'ftag-red' },
+        { l: tx('tag_sanction'), c:'ftag-red' },
       ]
     });
 
-    // Variant B: conclusion first, editions below
+    // ─ Cancel balances: without insurance ─
+    const balNoIns = {};
+    // Each buyer (winner + all specs) loses P.transfer from refund
+    balNoIns[winnerLabel()] = { v: -P.transfer };
+    for (let i = 1; i <= P.resales; i++) {
+      balNoIns[specLabel(i)] = { v: -P.transfer };
+    }
+    balNoIns[creatorLabel()]  = { v: -sanction };
+    balNoIns[insFundLabel()]  = { v: sanction };
+    balNoIns[bankLabel()]     = { v: bankTotalBad };
+    balNoIns[exchangeLabel()] = { v: 0 };
+
+    // ─ Cancel balances: with insurance ─
+    const totalPremiums = numTransfersBad * insPremium;
+    const balWithIns = {};
+    // Each buyer loses only their premium
+    balWithIns[winnerLabel()] = { v: -insPremium };
+    for (let i = 1; i <= P.resales; i++) {
+      balWithIns[specLabel(i)] = { v: -insPremium };
+    }
+    balWithIns[creatorLabel()]  = { v: -sanction };
+    // Insurance fund: premiums + sanction - bank payout = totalPremiums
+    balWithIns[insFundLabel()]  = { v: totalPremiums };
+    balWithIns[bankLabel()]     = { v: bankTotalBad };
+    balWithIns[exchangeLabel()] = { v: 0 };
+
     resEl.innerHTML = renderResult(steps, null,
-      `<div class="concl err"><div class="concl-title err">${tx('concl_bad_title')}</div><div class="concl-body">${tx('concl_bad')}</div></div>` +
-      renderEditions(gwFee)
+      `<div class="concl err">
+        <div class="concl-title err">${tx('concl_bad_title')}</div>
+        <div class="concl-body">${tx('concl_bad')}</div>
+      </div>` +
+      renderCancelSubCases(balNoIns, balWithIns)
     );
   }
 }
@@ -751,68 +912,26 @@ function renderBalCards(balances) {
   }).join('');
 }
 
-function renderEditions(gwFee) {
-  const specsZero = {};
-  for (let i = 1; i <= P.resales; i++) specsZero[specLabel(i)] = { v: 0 };
-
-  const balEd1 = {
-    [exchangeLabel()]:        { v: -gwFee },
-    [winnerLabel()]:          { v: 0 },
-    [gatewayLabel()]:         { v: gwFee },
-    [creatorDebtExchLabel()]: { v: -gwFee },
-    ...specsZero
-  };
-  const balEd2Ins = {
-    [winnerLabel()]:           { v: 0 },
-    [insFundLabel()]:          { v: -gwFee },
-    [creatorDebtFundLabel()]:  { v: -gwFee },
-    [gatewayLabel()]:          { v: gwFee },
-    ...specsZero
-  };
-  const balEd2NoIns = {
-    [winnerLabel()]:           { v: -gwFee },
-    [insFundLabel()]:          { v: gwFee },
-    [creatorDebtFundLabel()]:  { v: -gwFee },
-    [gatewayLabel()]:          { v: gwFee },
-    ...specsZero
-  };
-
+function renderCancelSubCases(balNoIns, balWithIns) {
   return `
-    <div class="sec-sub">${tx('editions_sec_title')}</div>
-    <div class="editions-wrap">
-      <div class="edition-block">
-        <div class="edition-hdr">
-          <span class="edition-hdr-num">1</span>
-          <span class="edition-hdr-title ed1">${tx('edition1_title')}</span>
-        </div>
-        <div class="edition-body">
-          <div class="edition-desc">${tx('edition1_desc')}</div>
-          <div class="bal-grid">${renderBalCards(balEd1)}</div>
-        </div>
-      </div>
-      <div class="edition-block">
-        <div class="edition-hdr">
-          <span class="edition-hdr-num">2</span>
-          <span class="edition-hdr-title ed2">${tx('edition2_title')}</span>
-        </div>
-        <div class="edition-body">
-          <div class="edition-desc">${tx('edition2_desc')}</div>
-          <div class="sub-case">
-            <div class="sub-case-hdr">
-              <span class="sub-case-dot" style="background:var(--teal)"></span>
-              <span class="sub-case-title ins-on">${tx('sub_with_ins')}</span>
-            </div>
-            <div class="sub-case-desc">${tx('sub_with_ins_desc')}</div>
-            <div class="bal-grid">${renderBalCards(balEd2Ins)}</div>
+    <div class="sec-sub">${tx('cancel_cases_title')}</div>
+    <div class="cancel-cases-wrap">
+      <div class="cancel-cases-body">
+        <div class="sub-case">
+          <div class="sub-case-hdr">
+            <span class="sub-case-dot" style="background:var(--red)"></span>
+            <span class="sub-case-title ins-off">${tx('sub_no_ins')}</span>
           </div>
-          <div class="sub-case">
-            <div class="sub-case-hdr">
-              <span class="sub-case-dot" style="background:var(--red)"></span>
-              <span class="sub-case-title ins-off">${tx('sub_no_ins')}</span>
-            </div>
-            <div class="sub-case-desc">${tx('sub_no_ins_desc')}</div>
-            <div class="bal-grid">${renderBalCards(balEd2NoIns)}</div>
+          <div class="sub-case-desc">${tx('sub_no_ins_desc')}</div>
+          <div class="bal-grid">${renderBalCards(balNoIns)}</div>
+        </div>
+        <div class="sub-case">
+          <div class="sub-case-hdr">
+            <span class="sub-case-dot" style="background:var(--teal)"></span>
+            <span class="sub-case-title ins-on">${tx('sub_with_ins')}</span>
           </div>
+          <div class="sub-case-desc">${tx('sub_with_ins_desc')}</div>
+          <div class="bal-grid">${renderBalCards(balWithIns)}</div>
         </div>
       </div>
     </div>`;
@@ -882,6 +1001,7 @@ const savedTheme = localStorage.getItem('ehipas-theme') || 'system';
 lang = savedLang;
 applyTheme(savedTheme);
 applyLang();
+updDerived();
 </script>
 </body>
 </html>
