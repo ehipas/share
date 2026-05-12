@@ -343,7 +343,7 @@ canvas{max-width:100%!important;height:auto!important}
 .ftr-sep{font-size:9px;color:var(--bd2);user-select:none}
 </style>
 </head>
-<body data-theme="dark">
+<body data-theme="system-placeholder">
 
 <div class="overlay" id="ov" onclick="closeDD()"></div>
 
@@ -372,9 +372,9 @@ canvas{max-width:100%!important;height:auto!important}
         <span id="ticon">&#9790;</span><span class="ddarrow">&#9662;</span>
       </button>
       <div class="ddmenu" id="theme-dd">
-        <div class="ddi" onclick="setTheme('system')">&#8857; <span data-i="th_sys">System</span><span class="ck" id="tc-sys"></span></div>
+        <div class="ddi on" onclick="setTheme('system')">&#8857; <span data-i="th_sys">System</span><span class="ck" id="tc-sys">&#10003;</span></div>
         <div class="ddi" onclick="setTheme('light')">&#9728; <span data-i="th_light">Light</span><span class="ck" id="tc-light"></span></div>
-        <div class="ddi" onclick="setTheme('dark')">&#9790; <span data-i="th_dark">Dark</span><span class="ck" id="tc-dark">&#10003;</span></div>
+        <div class="ddi" onclick="setTheme('dark')">&#9790; <span data-i="th_dark">Dark</span><span class="ck" id="tc-dark"></span></div>
       </div>
     </div>
   </div>
@@ -1102,7 +1102,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>
   if(theme==='system') applyTheme('system');
 });
 
-const savedTheme=localStorage.getItem('ehipas-theme')||'dark';
+const savedTheme=localStorage.getItem('ehipas-theme')||'system';
 const savedLang=localStorage.getItem('ehipas-lang')||'en';
 lang=savedLang;
 applyTheme(savedTheme);
