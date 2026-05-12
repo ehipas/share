@@ -569,6 +569,8 @@ const L={
     ch_dst:'Revenue distribution — best', ch_px:'Avg ticket price evolution',
     ty_en:'English + reserve', ty_enr:'English, no reserve',
     ty_fl:'Flash simultaneous', ty_du:'Dutch descending',
+    ty_en_s:'Eng. + res.', ty_enr_s:'Eng., no res.',
+    ty_fl_s:'Flash', ty_du_s:'Dutch',
     tg_cl:'classic', tg_op:'open', tg_fl:'all at once', tg_du:'reverse',
     th_sys:'System', th_light:'Light', th_dark:'Dark',
     lb_prim:'Primary', lb_sec:'Secondary',
@@ -596,6 +598,8 @@ const L={
     ch_dst:'การกระจายรายได้ — ดีที่สุด', ch_px:'วิวัฒนาการราคาตั๋ว',
     ty_en:'อังกฤษ + ราคาสำรอง', ty_enr:'อังกฤษ ไม่มีราคาสำรอง',
     ty_fl:'แฟลชพร้อมกัน', ty_du:'ดัตช์ลดราคา',
+    ty_en_s:'อังกฤษ+สำรอง', ty_enr_s:'อังกฤษ ไม่สำรอง',
+    ty_fl_s:'แฟลช', ty_du_s:'ดัตช์',
     tg_cl:'คลาสสิก', tg_op:'เปิด', tg_fl:'พร้อมกัน', tg_du:'ย้อนกลับ',
     th_sys:'ระบบ', th_light:'สว่าง', th_dark:'มืด',
     lb_prim:'ตลาดหลัก', lb_sec:'ตลาดรอง',
@@ -623,6 +627,8 @@ const L={
     ch_dst:'收益分布 — 最佳类型', ch_px:'平均票价演变',
     ty_en:'英式 + 底价', ty_enr:'英式，无底价',
     ty_fl:'闪拍（同时）', ty_du:'荷兰式降价',
+    ty_en_s:'英式+底价', ty_enr_s:'英式无底价',
+    ty_fl_s:'闪拍', ty_du_s:'荷兰式',
     tg_cl:'经典', tg_op:'开放', tg_fl:'同时', tg_du:'反向',
     th_sys:'跟随系统', th_light:'浅色', th_dark:'深色',
     lb_prim:'一级市场', lb_sec:'二级市场',
@@ -650,6 +656,8 @@ const L={
     ch_dst:'Распределение выручки — лучший', ch_px:'Динамика ср. цены билета',
     ty_en:'Английский + резерв', ty_enr:'Английский, без резерва',
     ty_fl:'Флэш-аукцион (одновременно)', ty_du:'Голландский (на понижение)',
+    ty_en_s:'Англ. + рез.', ty_enr_s:'Англ., без рез.',
+    ty_fl_s:'Флэш', ty_du_s:'Голл.',
     tg_cl:'классика', tg_op:'открытый', tg_fl:'одновременно', tg_du:'реверс',
     th_sys:'Системная', th_light:'Светлая', th_dark:'Тёмная',
     lb_prim:'Первичный', lb_sec:'Вторичный',
@@ -932,6 +940,7 @@ const f2=n=>(+n).toFixed(2);
 const f1=n=>(+n).toFixed(1);
 const pct=n=>((+n)*100).toFixed(1)+'%';
 const tln=t=>({english:tx('ty_en'),english_nr:tx('ty_enr'),flash:tx('ty_fl'),dutch:tx('ty_du')}[t]||t);
+const tlns=t=>({english:tx('ty_en_s'),english_nr:tx('ty_enr_s'),flash:tx('ty_fl_s'),dutch:tx('ty_du_s')}[t]||tln(t));
 
 function cdefs(){
   const dk=resolveTheme(theme)==='dark';
@@ -970,6 +979,7 @@ function renderRes(R){
 
   const cd=cdefs();
   const sl=sorted.map(r=>tln(r.type));
+  const slS=sorted.map(r=>tlns(r.type));
   const sc=sorted.map(r=>TCOL[r.type]);
   const chartOpts=(stacked)=>({
     plugins:{legend:{display:stacked,position:'bottom',labels:{boxWidth:10,font:{size:10},color:cd.tick}}},
@@ -984,18 +994,36 @@ function renderRes(R){
   destroyCh('rev');
   charts['rev']=new Chart(document.getElementById('ch-rev'),{
     type:'bar',
-    data:{labels:sl,datasets:[{data:sorted.map(r=>+f2(r.mT)),backgroundColor:sc.map(c=>c+'66'),borderColor:sc,borderWidth:1,borderRadius:4}]},
-    options:chartOpts(false)
+    data:{labels:slS,datasets:[{data:sorted.map(r=>+f2(r.mT)),backgroundColor:sc.map(c=>c+'66'),borderColor:sc,borderWidth:1,borderRadius:4}]},
+    options:{
+      indexAxis:'y',
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{grid:{color:cd.grid},ticks:{color:cd.tick,font:{size:10},maxRotation:0}},
+        x:{grid:{color:cd.grid},ticks:{color:cd.tick,font:{size:10}},beginAtZero:true}
+      },
+      animation:{duration:300},
+      responsive:true,maintainAspectRatio:true
+    }
   });
 
   destroyCh('spl');
   charts['spl']=new Chart(document.getElementById('ch-spl'),{
     type:'bar',
-    data:{labels:sl,datasets:[
+    data:{labels:slS,datasets:[
       {label:tx('lb_prim'),data:sorted.map(r=>+f2(r.mP)),backgroundColor:sc.map(c=>c+'99'),borderColor:sc,borderWidth:1,stack:'r'},
       {label:tx('lb_sec'), data:sorted.map(r=>+f2(r.mS)),backgroundColor:sc.map(c=>c+'33'),borderColor:sc.map(c=>c+'88'),borderWidth:1,stack:'r'}
     ]},
-    options:chartOpts(true)
+    options:{
+      indexAxis:'y',
+      plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:10},color:cd.tick}}},
+      scales:{
+        y:{stacked:true,grid:{color:cd.grid},ticks:{color:cd.tick,font:{size:10},maxRotation:0}},
+        x:{stacked:true,grid:{color:cd.grid},ticks:{color:cd.tick,font:{size:10}},beginAtZero:true}
+      },
+      animation:{duration:300},
+      responsive:true,maintainAspectRatio:true
+    }
   });
 
   const vals=w.raw.map(v=>+f2(v)).sort((a,b)=>a-b);
