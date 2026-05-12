@@ -58,15 +58,16 @@ body{
   font-size:14px;
   line-height:1.5;
   transition:background .2s,color .2s;
+  padding-top:var(--hdr-h); /* компенсация фиксированной шапки */
 }
 
-/* ── HEADER — закреплён, всегда на экране ── */
+/* ── HEADER — зафиксирован, всегда на экране (десктоп + мобильный) ── */
 .hdr{
   border-bottom:1px solid var(--bd);
   padding:0 14px;
   height:var(--hdr-h);
   display:flex; align-items:center; gap:8px;
-  position:sticky; top:0; z-index:200;
+  position:fixed; top:0; left:0; right:0; z-index:200;
   background:var(--bg);
 }
 .logo{
