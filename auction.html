@@ -16,6 +16,7 @@
   --sans:'DM Sans','Noto Sans Thai','Noto Sans SC',sans-serif;
   --r:10px; --rs:6px;
   --hdr-h:45px;
+  --ftr-h:37px;
   --c-english:#b8f73a; --c-english_nr:#4af7c9;
   --c-flash:#f74a4a;   --c-dutch:#9b7ef7;
   --teal:#4af7c9; --amber:#f7b74a;
@@ -120,7 +121,7 @@ body{
 ── */
 .wrap{display:grid;grid-template-columns:270px 1fr}
 @media(min-width:768px){
-  .wrap{height:calc(100vh - var(--hdr-h));overflow:hidden}
+  .wrap{height:calc(100vh - var(--hdr-h) - var(--ftr-h));overflow:hidden}
 }
 @media(max-width:767px){
   .wrap{grid-template-columns:1fr;min-height:calc(100vh - var(--hdr-h))}
@@ -333,13 +334,18 @@ canvas{max-width:100%!important;height:auto!important}
   display:flex;align-items:center;flex-wrap:wrap;
   gap:6px 14px;background:var(--bg);
 }
-@media(min-width:768px){.ftr{padding:11px 26px}}
+@media(min-width:768px){
+  .ftr{padding:0 24px;height:var(--ftr-h);
+       position:fixed;bottom:0;left:0;right:0;z-index:100;}
+}
 .ftr-item{
   font-family:var(--mono);font-size:9px;
-  letter-spacing:.08em;color:var(--tx3);
+  letter-spacing:.08em;color:var(--tx2);
   display:flex;align-items:center;gap:5px;
 }
 .ftr-item b{color:var(--tx2);font-weight:500}
+.ftr-item a{color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--bd2)}
+.ftr-item a:hover{color:var(--tx);border-color:var(--tx)}
 .ftr-sep{font-size:9px;color:var(--bd2);user-select:none}
 </style>
 </head>
@@ -533,10 +539,16 @@ canvas{max-width:100%!important;height:auto!important}
 <!-- FOOTER -->
 <footer class="ftr" id="ftr">
   <span class="ftr-item"><b data-i="ftr_ver">v2</b></span>
-  <span class="ftr-sep">&#183;</span>
+  <span class="ftr-sep">·</span>
   <span class="ftr-item" data-i="ftr_date">12 May 2026</span>
-  <span class="ftr-sep" id="view-sep">&#183;</span>
+  <span class="ftr-sep" id="view-sep">·</span>
   <span class="ftr-item" id="view-count"></span>
+  <span class="ftr-sep">·</span>
+  <span class="ftr-item">
+    <a data-i="ftr_src"
+       href="https://github.com/ehipas/share/blob/main/auction.html"
+       target="_blank" rel="noopener">Source</a>
+  </span>
 </footer>
 
 <script data-goatcounter="https://ehipas.goatcounter.com/count"
@@ -575,6 +587,7 @@ const L={
     th_sys:'System', th_light:'Light', th_dark:'Dark',
     lb_prim:'Primary', lb_sec:'Secondary',
     ftr_ver:'v2', ftr_date:'12 May 2026',
+    ftr_src:'Source',
   },
   th:{
     hdr_title:'จำลองกลไกการประมูล',
@@ -604,6 +617,7 @@ const L={
     th_sys:'ระบบ', th_light:'สว่าง', th_dark:'มืด',
     lb_prim:'ตลาดหลัก', lb_sec:'ตลาดรอง',
     ftr_ver:'v2', ftr_date:'12 พ.ค. 2569',
+    ftr_src:'ซอร์สโค้ด',
   },
   zh:{
     hdr_title:'拍卖机制模拟器',
@@ -633,6 +647,7 @@ const L={
     th_sys:'跟随系统', th_light:'浅色', th_dark:'深色',
     lb_prim:'一级市场', lb_sec:'二级市场',
     ftr_ver:'v2', ftr_date:'2026年5月12日',
+    ftr_src:'源码',
   },
   ru:{
     hdr_title:'Симулятор механик аукциона',
@@ -662,6 +677,7 @@ const L={
     th_sys:'Системная', th_light:'Светлая', th_dark:'Тёмная',
     lb_prim:'Первичный', lb_sec:'Вторичный',
     ftr_ver:'v2', ftr_date:'12 мая 2026',
+    ftr_src:'Исходный код',
   }
 };
 
