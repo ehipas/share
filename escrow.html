@@ -13,6 +13,7 @@
   --sans:'DM Sans','Noto Sans Thai','Noto Sans SC',sans-serif;
   --r:10px;--rs:6px;
   --hdr-h:45px;
+  --ftr-h:37px;
   --teal:#4af7c9;--amber:#f7b74a;--red:#f74a4a;--purple:#9b7ef7;
 }
 [data-theme="dark"]{
@@ -72,7 +73,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);font-size:14px
 ── */
 .wrap{display:grid;grid-template-columns:270px 1fr}
 @media(min-width:768px){
-  .wrap{height:calc(100vh - var(--hdr-h));overflow:hidden}
+  .wrap{height:calc(100vh - var(--hdr-h) - var(--ftr-h));overflow:hidden}
 }
 @media(max-width:767px){
   .wrap{grid-template-columns:1fr;min-height:calc(100vh - var(--hdr-h))}
@@ -216,9 +217,13 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;backgroun
 
 /* ── Footer ── */
 .ftr{border-top:1px solid var(--bd);padding:11px 14px;display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px;background:var(--bg)}
-@media(min-width:768px){.ftr{padding:11px 26px}}
-.ftr-item{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--tx3);display:flex;align-items:center;gap:5px}
+@media(min-width:768px){
+  .ftr{padding:0 24px;height:var(--ftr-h);position:fixed;bottom:0;left:0;right:0;z-index:100}
+}
+.ftr-item{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--tx2);display:flex;align-items:center;gap:5px}
 .ftr-item b{color:var(--tx2);font-weight:500}
+.ftr-item a{color:var(--tx2);text-decoration:none;border-bottom:1px solid var(--bd2)}
+.ftr-item a:hover{color:var(--tx);border-color:var(--tx)}
 .ftr-sep{font-size:9px;color:var(--bd2);user-select:none}
 </style>
 </head>
@@ -340,10 +345,16 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;backgroun
 
 <footer class="ftr" id="ftr">
   <span class="ftr-item"><b data-i="ftr_ver">v4</b></span>
-  <span class="ftr-sep">&#183;</span>
+  <span class="ftr-sep">·</span>
   <span class="ftr-item" data-i="ftr_date">12 May 2026</span>
-  <span class="ftr-sep" id="view-sep">&#183;</span>
+  <span class="ftr-sep" id="view-sep">·</span>
   <span class="ftr-item" id="view-count"></span>
+  <span class="ftr-sep">·</span>
+  <span class="ftr-item">
+    <a data-i="ftr_src"
+       href="https://github.com/ehipas/share/blob/main/escrow.html"
+       target="_blank" rel="noopener">Source</a>
+  </span>
 </footer>
 
 <script data-goatcounter="https://ehipas.goatcounter.com/count"
@@ -364,7 +375,7 @@ const L = {
     btn_run: 'Calculate →', btn_reset: 'Reset to defaults',
     empty_lbl: 'Configure parameters and calculate',
     th_sys: 'System', th_light: 'Light', th_dark: 'Dark',
-    ftr_ver: 'v4', ftr_date: '12 May 2026',
+    ftr_ver: 'v4', ftr_date: '12 May 2026', ftr_src: 'Source',
 
     insight_title: 'Key architecture — v4',
     insight_body: '<strong>All client funds are in the Thai bank client account.</strong><br>Buyers top up via PromptPay. Purchases and resales are internal ledger entries — no bank API cost at this stage.<br><br>Bank API cost arises <strong>only at algorithmic payout</strong>. At success: each recipient bears the cost of their own bank transfer; the exchange\'s transfer cost is shared equally by all participants (creator + all buyers). The exchange keeps its full commission intact.<br><br>On cancellation: refund transfers go to all buyers (winner + each speculator). <strong>Without insurance:</strong> transfer cost deducted from each refund. <strong>With insurance:</strong> full refund, cost covered by insurance fund. Creator sanctioned in both cases.',
@@ -422,7 +433,7 @@ const L = {
     btn_run: 'คำนวณ →', btn_reset: 'รีเซ็ตค่าเริ่มต้น',
     empty_lbl: 'ตั้งค่าพารามิเตอร์และคำนวณ',
     th_sys: 'ระบบ', th_light: 'สว่าง', th_dark: 'มืด',
-    ftr_ver: 'v4', ftr_date: '12 พ.ค. 2569',
+    ftr_ver: 'v4', ftr_date: '12 พ.ค. 2569', ftr_src: 'ซอร์สโค้ด',
 
     insight_title: 'สถาปัตยกรรมหลัก — v4',
     insight_body: '<strong>เงินของลูกค้าทั้งหมดอยู่ในบัญชีลูกค้าของธนาคารไทย</strong><br>ผู้ซื้อเติมเงินผ่าน PromptPay การซื้อและการขายต่อเป็นการเปลี่ยนแปลงบัญชีภายใน — ไม่มีค่า API ธนาคารในขั้นตอนนี้<br><br>ค่า API ธนาคารเกิดขึ้น<strong>เฉพาะเมื่อมีการจ่ายเงินตามอัลกอริทึม</strong> เมื่อสำเร็จ: ผู้รับแต่ละรายรับผิดชอบค่าโอนของตน และทุกคนแบ่งค่าโอนของตลาดเท่าๆ กัน ตลาดได้รับค่าคอมมิชชั่นเต็มจำนวน<br><br>เมื่อยกเลิก: โอนเงินคืนให้ผู้ซื้อทุกคน <strong>ไม่มีประกัน:</strong> หักค่าโอนจากยอดคืน <strong>มีประกัน:</strong> คืนเต็มจำนวน ค่าโอนออกจากกองทุนประกัน ผู้สร้างได้รับโทษในทั้งสองกรณี',
@@ -476,7 +487,7 @@ const L = {
     btn_run: '计算 →', btn_reset: '重置为默认值',
     empty_lbl: '设置参数并计算',
     th_sys: '跟随系统', th_light: '浅色', th_dark: '深色',
-    ftr_ver: 'v4', ftr_date: '2026年5月12日',
+    ftr_ver: 'v4', ftr_date: '2026年5月12日', ftr_src: '源码',
 
     insight_title: '核心架构 — v4',
     insight_body: '<strong>所有客户资金存放在泰国银行客户账户中。</strong><br>买方通过PromptPay充值。购买和转售均为内部账务变动——此阶段无银行API费用。<br><br>银行API费用仅在<strong>算法支付时产生</strong>。成功时：每位收款方承担自己的转账费用；所有参与者（创作者+所有买方）平摊交易所的转账费用。交易所保留全额佣金。<br><br>取消时：退款转账仅给买方（获胜者+各投机者）。<strong>无保险：</strong>转账费从退款中扣除。<strong>有保险：</strong>全额退款，费用由保险基金承担。两种情况下创作者均受制裁。',
@@ -530,7 +541,7 @@ const L = {
     btn_run: 'Рассчитать →', btn_reset: 'Сбросить по умолчанию',
     empty_lbl: 'Настройте параметры и нажмите «Рассчитать»',
     th_sys: 'Системная', th_light: 'Светлая', th_dark: 'Тёмная',
-    ftr_ver: 'v4', ftr_date: '12 мая 2026',
+    ftr_ver: 'v4', ftr_date: '12 мая 2026', ftr_src: 'Исходный код',
 
     insight_title: 'Ключевая архитектура — v4',
     insight_body: '<strong>Все средства клиентов — на отдельном счёте тайского банка.</strong><br>Покупатели пополняют баланс через PromptPay. Покупки и перепродажи — только записи в реестре биржи, без обращения к API банка.<br><br>Стоимость API банка возникает <strong>только при алгоритмической выплате</strong>. При успехе: каждый получатель несёт стоимость своего перевода; стоимость перевода бирже делится поровну между всеми участниками (создатель + все покупатели). Биржа получает свои 10% в полном объёме.<br><br>При отмене: переводы — только покупателям (победитель + каждый спекулянт). <strong>Без страховки:</strong> стоимость перевода вычитается из возврата. <strong>Со страховкой:</strong> полный возврат, стоимость — из страхового фонда. Санкция к создателю — в обоих случаях.',
@@ -970,7 +981,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () 
 
 // GoatCounter view counter.
 // Public endpoint: /counter/[path].json — no auth required.
-// Timeout 3s. On any failure: hide element silently.
+// Timeout 3s. On any failure or zero: hide silently.
 (function () {
   const el  = document.getElementById('view-count');
   const sep = document.getElementById('view-sep');
@@ -987,11 +998,12 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () 
   )
   .then(r => { clearTimeout(timer); if (!r.ok) throw new Error(); return r.json(); })
   .then(d => {
-    if (d && d.count && d.count !== '0') {
-      el.textContent = '👁 ' + d.count;
-    } else {
-      hideAll();
-    }
+    const n = d && parseInt(d.count_unique ?? d.count, 10);
+    if (!n) { hideAll(); return; }
+    const fmt = n >= 1e6 ? (n/1e6).toFixed(1).replace(/\.0$/,'') + 'M'
+              : n >= 1e3 ? (n/1e3).toFixed(1).replace(/\.0$/,'') + 'k'
+              : String(n);
+    el.textContent = '👁 ' + fmt;
   })
   .catch(() => { clearTimeout(timer); hideAll(); });
 })();
