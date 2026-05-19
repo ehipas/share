@@ -731,7 +731,7 @@ function setTheme(t){applyTheme(t);closeDD();}
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(theme==='system')applyTheme('system');});
 
 function applyLang(){localStorage.setItem('ehipas-lang',lang);document.getElementById('ll').textContent=lang.toUpperCase();['ru','en','th','zh'].forEach(l=>{const ck=document.getElementById('lc-'+l);if(ck)ck.textContent=(l===lang)?'✓':'';const di=document.getElementById('ld-'+l);if(di)di.classList.toggle('on',l===lang);});document.querySelectorAll('[data-i]').forEach(el=>{const v=tx(el.getAttribute('data-i'));if(v&&v!==el.getAttribute('data-i'))el.textContent=v;});document.getElementById('htl').textContent=tx('hdr_title');document.getElementById('qi').placeholder=tx('search_ph');document.getElementById('clbl').textContent=tx('count_label');document.getElementById('norlbl').textContent=tx('no_results');renderGrid();}
-function setLang(l){lang=l;applyLang();closeDD();}
+function setLang(l){lang=l;document.getElementById('qi').value='';document.getElementById('sw').classList.remove('has-text');applyLang();closeDD();}
 
 function togDD(id){const el=document.getElementById(id+'-dd'),ov=document.getElementById('ov'),was=el.classList.contains('open');document.querySelectorAll('.ddmenu').forEach(m=>m.classList.remove('open'));if(!was){el.classList.add('open');ov.classList.add('on');}else ov.classList.remove('on');}
 function closeDD(){document.querySelectorAll('.ddmenu').forEach(m=>m.classList.remove('open'));document.getElementById('ov').classList.remove('on');}
