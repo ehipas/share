@@ -948,7 +948,7 @@ modalEl.addEventListener('touchend', e => {
   var sep=document.getElementById('view-sep');
   var el=document.getElementById('view-count');
   var timer=setTimeout(function(){sep.style.display='none';el.style.display='none';},3000);
-  fetch('https://ehipas.goatcounter.com/counter//impressions.html.json',{signal:AbortSignal.timeout?AbortSignal.timeout(3000):undefined})
+  fetch('https://ehipas.goatcounter.com/counter/'+encodeURIComponent(window.location.pathname)+'.json',{signal:AbortSignal.timeout?AbortSignal.timeout(3000):undefined})
     .then(function(r){return r.ok?r.json():Promise.reject();})
     .then(function(d){
       clearTimeout(timer);
